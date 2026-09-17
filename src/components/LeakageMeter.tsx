@@ -72,25 +72,25 @@ export default function LeakageMeter({
   const residualInferences = getResidualInferences();
 
   return (
-    <div className="rounded-2xl border border-ink-700/80 bg-ink-950 p-5 space-y-5 text-xs text-slate-300 shadow-inner">
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 space-y-5 text-xs text-zinc-300 shadow-xl">
       
       {/* Header with Academic Honesty Banner */}
-      <div className="flex items-center justify-between border-b border-ink-800 pb-3">
+      <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
         <div className="flex items-center gap-2">
-          <Scale className="w-4 h-4 text-amber-400" />
-          <h4 className="font-bold text-white text-xs uppercase tracking-wider">
+          <Scale className="w-4 h-4 text-white" />
+          <h4 className="font-bold text-white text-xs uppercase tracking-wider font-condensed">
             Protocol Leakage Meter & Residual Inference Analysis
           </h4>
         </div>
-        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-950 text-amber-300 border border-amber-800">
+        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-900 text-zinc-200 border border-zinc-700">
           RESEARCH AUDIT ACTIVE
         </span>
       </div>
 
-      <div className="p-3 rounded-xl bg-amber-950/30 border border-amber-900/40 text-[11px] text-amber-200 leading-relaxed flex items-start gap-2.5">
-        <Info className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+      <div className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 leading-relaxed flex items-start gap-2.5">
+        <Info className="w-4 h-4 text-zinc-300 shrink-0 mt-0.5" />
         <p>
-          <strong>Scientific Honesty Note:</strong> Cryptographic selective disclosure eliminates direct diagnosis exposure, but <em>duration and timing</em> remain side-channel inference vectors. Vouch does not claim magical &quot;100% privacy&quot;—here is the exact breakdown:
+          <strong className="text-white font-semibold">Scientific Honesty Note:</strong> Cryptographic selective disclosure eliminates direct diagnosis exposure, but <em>duration and timing</em> remain side-channel inference vectors. Vouch does not claim magical &quot;100% privacy&quot;—here is the exact breakdown:
         </p>
       </div>
 
@@ -98,12 +98,12 @@ export default function LeakageMeter({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         
         {/* Pillar 1: Exactly What HR Learns */}
-        <div className="p-3.5 rounded-xl bg-ink-900/90 border border-ink-800 space-y-2.5">
-          <div className="flex items-center gap-1.5 text-seal-400 font-bold text-[11px] uppercase">
-            <CheckCircle2 className="w-3.5 h-3.5" />
+        <div className="p-3.5 rounded-xl bg-zinc-900/90 border border-zinc-800 space-y-2.5">
+          <div className="flex items-center gap-1.5 text-white font-bold text-[11px] uppercase font-condensed tracking-wider">
+            <CheckCircle2 className="w-3.5 h-3.5 text-white" />
             1. Exact Claims HR Learns
           </div>
-          <ul className="space-y-1.5 text-[11px] text-slate-300 list-disc list-inside">
+          <ul className="space-y-1.5 text-[11px] text-zinc-300 list-disc list-inside">
             <li>
               <strong className="text-white font-mono">coarseCategory:</strong> {coarseCategory}
             </li>
@@ -123,12 +123,12 @@ export default function LeakageMeter({
         </div>
 
         {/* Pillar 2: What HR Could Still Infer */}
-        <div className="p-3.5 rounded-xl bg-amber-950/20 border border-amber-900/50 space-y-2.5">
-          <div className="flex items-center gap-1.5 text-amber-400 font-bold text-[11px] uppercase">
-            <AlertTriangle className="w-3.5 h-3.5" />
+        <div className="p-3.5 rounded-xl bg-black border border-zinc-800 space-y-2.5">
+          <div className="flex items-center gap-1.5 text-zinc-200 font-bold text-[11px] uppercase font-condensed tracking-wider">
+            <AlertTriangle className="w-3.5 h-3.5 text-zinc-400" />
             2. Residual Inferences HR Can Make
           </div>
-          <div className="space-y-1.5 text-[11px] text-amber-200/90 leading-relaxed">
+          <div className="space-y-1.5 text-[11px] text-zinc-400 leading-relaxed font-sans">
             {residualInferences.map((inf, idx) => (
               <p key={idx}>• {inf}</p>
             ))}
@@ -136,12 +136,12 @@ export default function LeakageMeter({
         </div>
 
         {/* Pillar 3: What Raw PDF Would Have Leaked */}
-        <div className="p-3.5 rounded-xl bg-red-950/20 border border-red-900/50 space-y-2.5">
-          <div className="flex items-center gap-1.5 text-red-400 font-bold text-[11px] uppercase">
-            <ShieldAlert className="w-3.5 h-3.5" />
+        <div className="p-3.5 rounded-xl bg-zinc-900/40 border border-zinc-800 space-y-2.5">
+          <div className="flex items-center gap-1.5 text-zinc-400 font-bold text-[11px] uppercase font-condensed tracking-wider">
+            <ShieldAlert className="w-3.5 h-3.5 text-zinc-500" />
             3. Blocked Raw PDF Leaks
           </div>
-          <ul className="space-y-1 text-[11px] text-red-300/90 line-through">
+          <ul className="space-y-1 text-[11px] text-zinc-500 line-through">
             <li>ICD-10 Diagnostic Billing Codes</li>
             <li>Ultrasound / Surgical Complication Notes</li>
             <li>Prescription Dosages & Regimens</li>

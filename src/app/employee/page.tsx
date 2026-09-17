@@ -138,23 +138,23 @@ export default function EmployeePage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8 font-sans">
       
       {/* Employee Identity Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-ink-900 via-ink-850 to-ink-900 p-6 rounded-2xl border border-ink-800 shadow-xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-zinc-950 p-6 rounded-2xl border border-zinc-800 shadow-2xl">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-blue-500/20 border border-blue-400/40 flex items-center justify-center text-blue-400 shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white shrink-0">
             <UserCheck className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-blue-400 uppercase tracking-wider">Credential Holder</span>
-              <span className="px-2 py-0.5 rounded text-[10px] bg-blue-950 text-blue-300 border border-blue-800 font-mono">
+              <span className="text-xs font-mono font-bold text-zinc-300 uppercase tracking-wider font-condensed">Credential Holder</span>
+              <span className="px-2 py-0.5 rounded text-[10px] bg-zinc-900 text-zinc-300 border border-zinc-700 font-mono">
                 Self-Sovereign Vault
               </span>
             </div>
-            <h1 className="text-2xl font-bold text-white mt-0.5">Employee Credential Vault</h1>
-            <p className="text-xs text-slate-400">
+            <h1 className="text-2xl font-bold text-white mt-0.5 font-sans">Employee Credential Vault</h1>
+            <p className="text-xs text-zinc-400 font-sans">
               Manage your signed attestations, policy quotas, and selective disclosure share codes.
             </p>
           </div>
@@ -164,22 +164,22 @@ export default function EmployeePage() {
         <div className="flex items-center gap-2 self-start md:self-auto">
           <Link
             href="/employee/redact"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-ink-950 hover:bg-ink-800 border border-ink-700 text-xs font-semibold text-slate-200 transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs font-semibold text-zinc-200 transition-colors font-condensed uppercase tracking-wider"
           >
-            <EyeOff className="w-4 h-4 text-seal-400" />
+            <EyeOff className="w-4 h-4 text-zinc-300" />
             <span>Redaction Lab</span>
           </Link>
         </div>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-ink-800 pb-1 overflow-x-auto">
+      <div className="flex items-center gap-2 border-b border-zinc-800 pb-1 overflow-x-auto font-condensed uppercase tracking-wider text-xs">
         <button
           onClick={() => setActiveTab('attestations')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all ${
             activeTab === 'attestations'
-              ? 'bg-seal-600 text-white shadow-md shadow-seal-600/30'
-              : 'text-slate-400 hover:text-white hover:bg-ink-900'
+              ? 'bg-white text-black shadow-sm'
+              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
           }`}
         >
           <ShieldCheck className="w-4 h-4" />
@@ -188,10 +188,10 @@ export default function EmployeePage() {
 
         <button
           onClick={() => setActiveTab('entitlements')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all ${
             activeTab === 'entitlements'
-              ? 'bg-seal-600 text-white shadow-md shadow-seal-600/30'
-              : 'text-slate-400 hover:text-white hover:bg-ink-900'
+              ? 'bg-white text-black shadow-sm'
+              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
           }`}
         >
           <PieChart className="w-4 h-4" />
@@ -200,10 +200,10 @@ export default function EmployeePage() {
 
         <button
           onClick={() => setActiveTab('shares')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all ${
             activeTab === 'shares'
-              ? 'bg-seal-600 text-white shadow-md shadow-seal-600/30'
-              : 'text-slate-400 hover:text-white hover:bg-ink-900'
+              ? 'bg-white text-black shadow-sm'
+              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
           }`}
         >
           <Share2 className="w-4 h-4" />
@@ -212,13 +212,13 @@ export default function EmployeePage() {
 
         <button
           onClick={() => setActiveTab('audit')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all ${
             activeTab === 'audit'
-              ? 'bg-seal-600 text-white shadow-md shadow-seal-600/30'
-              : 'text-slate-400 hover:text-white hover:bg-ink-900'
+              ? 'bg-white text-black shadow-sm'
+              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
           }`}
         >
-          <Link2 className="w-4 h-4 text-seal-400" />
+          <Link2 className="w-4 h-4 text-zinc-300" />
           <span>Receipt Hash Chain (F3)</span>
         </button>
       </div>
@@ -227,20 +227,20 @@ export default function EmployeePage() {
       {activeTab === 'attestations' && (
         <div className="space-y-6">
           
-          {/* F5: Pure Self-Declaration Callout (Deliberate Non-Clinician Standard) */}
-          <div className="p-5 rounded-2xl bg-gradient-to-r from-pink-950/40 via-ink-900 to-ink-950 border border-pink-900/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          {/* F5: Pure Self-Declaration Callout */}
+          <div className="p-5 rounded-2xl bg-zinc-950 border border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-start gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-pink-500/20 border border-pink-400/40 flex items-center justify-center text-pink-400 shrink-0 mt-0.5">
+              <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white shrink-0 mt-0.5">
                 <CalendarHeart className="w-5 h-5" />
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-white text-sm">Self-Declared Menstrual Leave</h3>
-                  <span className="px-2 py-0.5 rounded text-[10px] bg-pink-950 text-pink-300 font-mono border border-pink-800">
+                  <h3 className="font-bold text-white text-sm font-condensed uppercase tracking-wider">Self-Declared Menstrual Leave</h3>
+                  <span className="px-2 py-0.5 rounded text-[10px] bg-zinc-900 text-zinc-300 font-mono border border-zinc-700">
                     Policy F5 • No Doctor Note
                   </span>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed max-w-2xl">
+                <p className="text-xs text-zinc-400 leading-relaxed max-w-2xl font-sans">
                   <strong>Deliberate Product Decision:</strong> State and workplace policies that work deliberately require <em>zero doctor certificates</em>. Demanding a clinician note for recurring menstrual rest creates surveillance and doctor fees. Generate a pure self-declared share code directly.
                 </p>
               </div>
@@ -248,7 +248,7 @@ export default function EmployeePage() {
 
             <button
               onClick={handleSelfDeclaredMenstrualLeave}
-              className="px-4 py-2.5 rounded-xl bg-pink-600 hover:bg-pink-500 text-white text-xs font-bold shadow-lg shadow-pink-600/30 transition-all shrink-0 self-start md:self-auto"
+              className="px-4 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-bold shadow-sm transition-all shrink-0 self-start md:self-auto font-condensed uppercase tracking-wider"
             >
               Issue Self-Declared 1-Day Leave
             </button>
@@ -256,13 +256,13 @@ export default function EmployeePage() {
 
           {/* Self-Declared Success Toast */}
           {selfDeclaredSuccess && (
-            <div className="p-4 rounded-xl bg-seal-950 border border-seal-500 text-seal-200 text-xs flex items-center justify-between">
+            <div className="p-4 rounded-xl bg-black border border-zinc-700 text-zinc-200 text-xs flex items-center justify-between">
               <div>
                 <strong>Self-Declared Leave Generated:</strong> Share Code <span className="font-mono text-white font-bold">{selfDeclaredSuccess.code}</span> ready for HR.
               </div>
               <Link
                 href={`/hr?code=${selfDeclaredSuccess.code}`}
-                className="px-3 py-1 bg-seal-600 text-white rounded-lg font-semibold"
+                className="px-3 py-1 bg-white hover:bg-zinc-200 text-black rounded-lg font-semibold font-condensed uppercase tracking-wider text-xs"
               >
                 Test in HR
               </Link>
@@ -270,17 +270,17 @@ export default function EmployeePage() {
           )}
 
           {attestations.length === 0 ? (
-            <div className="p-12 text-center rounded-2xl bg-ink-900/50 border border-ink-800 space-y-4">
-              <ShieldCheck className="w-12 h-12 text-slate-600 mx-auto opacity-50" />
+            <div className="p-12 text-center rounded-2xl bg-zinc-950 border border-zinc-800 space-y-4">
+              <ShieldCheck className="w-12 h-12 text-zinc-600 mx-auto opacity-50" />
               <div className="space-y-1">
-                <h3 className="font-bold text-white text-base">No Attestations in Vault</h3>
-                <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                <h3 className="font-bold text-white text-base font-condensed uppercase tracking-wider">No Attestations in Vault</h3>
+                <p className="text-xs text-zinc-400 max-w-sm mx-auto font-sans">
                   Ask your doctor or visit the Clinic Issuer Studio to generate a signed Web Crypto attestation.
                 </p>
               </div>
               <Link
                 href="/issuer"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-seal-600 text-white text-xs font-semibold"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-semibold font-condensed uppercase tracking-wider"
               >
                 Go to Issuer Studio
               </Link>
@@ -303,10 +303,10 @@ export default function EmployeePage() {
       {/* Tab 2: F1 Policy Entitlements & Quotas */}
       {activeTab === 'entitlements' && (
         <div className="space-y-6">
-          <div className="p-6 rounded-2xl bg-ink-900/90 border border-ink-800 space-y-4">
+          <div className="p-6 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-4 shadow-2xl">
             <div>
-              <h3 className="font-bold text-white text-base">Your Statutory Policy Entitlements & Remaining Quotas</h3>
-              <p className="text-xs text-slate-400">
+              <h3 className="font-bold text-white text-base font-condensed uppercase tracking-wider">Your Statutory Policy Entitlements & Remaining Quotas</h3>
+              <p className="text-xs text-zinc-400 font-sans">
                 <strong>Privacy Guarantee:</strong> These exact day counters and prior leave histories are visible <em>only in your private wallet</em>. HR sees 4 pass/fail predicate booleans and never learns your remaining days.
               </p>
             </div>
@@ -322,32 +322,32 @@ export default function EmployeePage() {
                 return (
                   <div
                     key={rule.id}
-                    className="p-5 rounded-xl bg-ink-950 border border-ink-800 space-y-3 font-sans text-xs"
+                    className="p-5 rounded-xl bg-black border border-zinc-800 space-y-3 font-sans text-xs"
                   >
                     <div className="flex items-center justify-between">
                       <div>
                         <h4 className="font-bold text-white text-sm font-mono">{rule.coarseCategory}</h4>
-                        <p className="text-[11px] text-slate-400">{rule.source}</p>
+                        <p className="text-[11px] text-zinc-400">{rule.source}</p>
                       </div>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-ink-900 text-seal-400 border border-ink-800">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-900 text-zinc-300 border border-zinc-800">
                         {rule.id}
                       </span>
                     </div>
 
                     <div className="space-y-1">
                       <div className="flex justify-between text-[11px]">
-                        <span className="text-slate-400">Days Taken YTD: <strong className="text-white">{taken} days</strong></span>
-                        <span className="text-slate-400">Remaining: <strong className="text-seal-400">{remaining} days</strong></span>
+                        <span className="text-zinc-400">Days Taken YTD: <strong className="text-white">{taken} days</strong></span>
+                        <span className="text-zinc-400">Remaining: <strong className="text-white font-mono">{remaining} days</strong></span>
                       </div>
-                      <div className="w-full h-2.5 rounded-full bg-ink-800 overflow-hidden">
+                      <div className="w-full h-2 rounded-full bg-zinc-900 border border-zinc-800 overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-seal-500 to-teal-400 rounded-full transition-all"
+                          className="h-full bg-white rounded-full transition-all"
                           style={{ width: `${pct}%` }}
                         />
                       </div>
                     </div>
 
-                    <p className="text-[11px] text-slate-400 italic">
+                    <p className="text-[11px] text-zinc-500 italic">
                       {rule.description}
                     </p>
                   </div>
@@ -361,21 +361,21 @@ export default function EmployeePage() {
       {/* Tab 3: Active Share Codes */}
       {activeTab === 'shares' && (
         <div className="space-y-6">
-          <div className="bg-ink-900/90 rounded-2xl border border-ink-800 p-6 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-ink-800 pb-3">
+          <div className="bg-zinc-950 rounded-2xl border border-zinc-800 p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
               <div>
-                <h3 className="font-bold text-white text-base">Active & Revoked Share Codes</h3>
-                <p className="text-xs text-slate-400">
+                <h3 className="font-bold text-white text-base font-condensed uppercase tracking-wider">Active & Revoked Share Codes</h3>
+                <p className="text-xs text-zinc-400 font-sans">
                   Manage the policy-padded codes generated for HR. Revoke them anytime.
                 </p>
               </div>
-              <span className="text-xs text-slate-400 font-mono">
+              <span className="text-xs text-zinc-400 font-mono">
                 {shareCodes.filter(s => !s.isRevoked).length} Active Codes
               </span>
             </div>
 
             {shareCodes.length === 0 ? (
-              <p className="text-xs text-slate-500 text-center py-8">
+              <p className="text-xs text-zinc-500 text-center py-8 font-sans">
                 No share codes created yet. Open &quot;My Attestations&quot; and click &quot;Generate Selective Share Code&quot;.
               </p>
             ) : (
@@ -389,37 +389,37 @@ export default function EmployeePage() {
                       key={s.code}
                       className={`p-4 rounded-xl border transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 ${
                         isDead 
-                          ? 'bg-ink-950/40 border-ink-800/50 opacity-60' 
-                          : 'bg-ink-950 border-ink-700/80 hover:border-seal-500/50'
+                          ? 'bg-black border-zinc-900 opacity-60' 
+                          : 'bg-black border-zinc-800 hover:border-zinc-700'
                       }`}
                     >
                       <div className="space-y-1.5">
                         <div className="flex items-center gap-3">
-                          <span className="text-lg font-bold font-mono tracking-widest text-seal-300">
+                          <span className="text-lg font-bold font-mono tracking-widest text-white">
                             {s.code}
                           </span>
                           {s.isRevoked ? (
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-950 text-red-300 border border-red-800">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-900 text-zinc-500 border border-zinc-800">
                               REVOKED
                             </span>
                           ) : isExpired ? (
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-800">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-900 text-zinc-400 border border-zinc-800">
                               EXPIRED
                             </span>
                           ) : (
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-seal-950 text-seal-300 border border-seal-800">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-900 text-white border border-zinc-700">
                               ACTIVE (PADDED)
                             </span>
                           )}
-                          <span className="text-xs text-slate-400 font-mono">
+                          <span className="text-xs text-zinc-500 font-mono">
                             Policy: {s.policyVersion}
                           </span>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400">
-                          <span>Recipient: <strong className="text-slate-200">{s.intendedRecipient}</strong></span>
+                        <div className="flex flex-wrap items-center gap-4 text-xs text-zinc-400 font-sans">
+                          <span>Recipient: <strong className="text-zinc-200">{s.intendedRecipient}</strong></span>
                           <span>•</span>
-                          <span>Views: <strong className="text-slate-200">{s.viewCount || 0}</strong></span>
+                          <span>Views: <strong className="text-zinc-200">{s.viewCount || 0}</strong></span>
                           <span>•</span>
                           <span className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
@@ -428,20 +428,20 @@ export default function EmployeePage() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 self-end md:self-auto">
+                      <div className="flex items-center gap-2 self-end md:self-auto font-condensed uppercase tracking-wider text-xs">
                         {!isDead && (
                           <>
                             <button
                               onClick={() => copyCode(s.code)}
-                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-ink-800 hover:bg-ink-700 text-xs font-semibold text-slate-200 transition-colors"
+                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-xs font-semibold text-zinc-200 border border-zinc-800 transition-colors"
                             >
-                              {copiedCode === s.code ? <Check className="w-3.5 h-3.5 text-seal-400" /> : <Copy className="w-3.5 h-3.5" />}
+                              {copiedCode === s.code ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
                               <span>{copiedCode === s.code ? 'Copied' : 'Copy'}</span>
                             </button>
 
                             <Link
                               href={`/hr?code=${s.code}`}
-                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-seal-600 hover:bg-seal-500 text-xs font-semibold text-white transition-colors"
+                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white hover:bg-zinc-200 text-xs font-semibold text-black transition-colors"
                             >
                               <span>Test as HR</span>
                               <ExternalLink className="w-3.5 h-3.5" />
@@ -449,7 +449,7 @@ export default function EmployeePage() {
 
                             <button
                               onClick={() => handleRevoke(s.code)}
-                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-950/80 hover:bg-red-900 text-red-300 border border-red-800/80 text-xs font-semibold transition-colors"
+                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 text-xs font-semibold transition-colors"
                               title="Revoke access immediately"
                             >
                               <Trash2 className="w-3.5 h-3.5" />

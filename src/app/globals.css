@@ -4,88 +4,92 @@
 
 @layer base {
   :root {
-    --background: 222 47% 11%;
-    --foreground: 45 25% 96%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
   }
 
   body {
-    background-color: #080D1A;
-    color: #F8FAFC;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #000000;
+    color: #ffffff;
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     overflow-x: hidden;
+    letter-spacing: -0.01em;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.02em;
   }
 }
 
-/* Redacted text blackout effect */
+/* Formal Blackout Redaction Bar */
 .redacted-bar {
-  background-color: #0D1117;
+  background-color: #000000;
   color: transparent;
   user-select: none;
   display: inline-block;
   border-radius: 2px;
   padding: 0 4px;
   margin: 0 2px;
+  border: 1px solid #27272a;
   position: relative;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
+  transition: all 0.15s ease;
 }
 
 .redacted-bar:hover {
-  background-color: #1F2937;
-  color: #F87171;
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+  background-color: #18181b;
+  color: #ffffff;
+  border-color: #71717a;
 }
 
-/* Parchment paper styling */
+/* Formal Institutional Certificate Sheet */
 .parchment-sheet {
-  background: radial-gradient(circle at 10% 20%, #FFFDF9 0%, #FAF5EB 90%);
-  box-shadow: 
-    0 1px 1px rgba(0,0,0,0.08), 
-    0 2px 2px rgba(0,0,0,0.08), 
-    0 4px 4px rgba(0,0,0,0.08), 
-    0 8px 8px rgba(0,0,0,0.08),
-    0 16px 16px rgba(0,0,0,0.08);
-  border: 1px solid #E5DEC9;
+  background-color: #09090b;
+  border: 1px solid #27272a;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
 }
 
 .parchment-border {
-  border-color: #E2D7C3;
+  border-color: #27272a;
 }
 
-/* Wax Seal / Official Certificate Stamp */
+/* Formal Monochrome Institutional Stamp */
 .official-stamp {
-  border: 3px double #059669;
-  border-radius: 8px;
-  color: #059669;
+  border: 2px solid #ffffff;
+  border-radius: 4px;
+  color: #ffffff;
   text-transform: uppercase;
   letter-spacing: 0.15em;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-weight: 700;
   position: relative;
-  transform: rotate(-1.5deg);
-  background: rgba(16, 185, 129, 0.04);
+  background: transparent;
+  padding: 4px 10px;
 }
 
 .official-stamp-red {
-  border: 3px double #DC2626;
-  border-radius: 8px;
-  color: #DC2626;
+  border: 2px solid #a1a1aa;
+  border-radius: 4px;
+  color: #a1a1aa;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  transform: rotate(2deg);
-  background: rgba(220, 38, 38, 0.04);
+  font-family: 'Roboto Condensed', sans-serif;
+  font-weight: 700;
+  background: transparent;
+  padding: 4px 10px;
 }
 
-/* Custom Scrollbar */
+/* Minimalist Dark Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0B132B;
+  background: #000000;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
-  border-radius: 4px;
+  background: #27272a;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #3f3f46;
 }

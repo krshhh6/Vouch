@@ -39,31 +39,18 @@ export default function AttestationCard({
   const { payload } = attestation;
 
   const getCategoryColor = (cat: string) => {
-    switch (cat) {
-      case 'pregnancy':
-      case 'STATUTORY_MATERNITY':
-        return 'bg-pink-900/40 text-pink-300 border-pink-700/50';
-      case 'mental-health':
-      case 'surgery':
-      case 'STATUTORY_MEDICAL':
-        return 'bg-blue-900/40 text-blue-300 border-blue-700/50';
-      case 'bereavement':
-      case 'CAREGIVING':
-        return 'bg-purple-900/40 text-purple-300 border-purple-700/50';
-      default:
-        return 'bg-seal-900/40 text-seal-300 border-seal-700/50';
-    }
+    return 'bg-zinc-900 text-white border-zinc-700';
   };
 
   const getFitForDutyBadge = (status: string) => {
     switch (status) {
       case 'full-rest':
-        return { label: 'Unfit for Work / Total Rest Mandated', color: 'bg-amber-950 text-amber-300 border-amber-800/80' };
+        return { label: 'Unfit for Work / Total Rest Mandated', color: 'bg-zinc-900 text-zinc-200 border-zinc-700' };
       case 'partial-remote':
-        return { label: 'Fit for Remote / Modified Duty Only', color: 'bg-blue-950 text-blue-300 border-blue-800/80' };
+        return { label: 'Fit for Remote / Modified Duty Only', color: 'bg-zinc-900 text-zinc-200 border-zinc-700' };
       case 'fit-post-leave':
       default:
-        return { label: 'Fit to Resume Duty on Return Date', color: 'bg-seal-950 text-seal-300 border-seal-800/80' };
+        return { label: 'Fit to Resume Duty on Return Date', color: 'bg-zinc-900 text-zinc-200 border-zinc-700' };
     }
   };
 
@@ -71,22 +58,22 @@ export default function AttestationCard({
 
   return (
     <>
-      <div className="relative rounded-2xl border border-parchment-300/30 bg-parchment-100 text-slate-900 shadow-xl overflow-hidden font-sans transition-all hover:shadow-2xl">
+      <div className="relative rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-100 shadow-2xl overflow-hidden font-sans transition-all hover:border-zinc-700">
         
         {/* Top Security Header */}
-        <div className="bg-gradient-to-r from-ink-900 via-ink-850 to-ink-900 text-white px-6 py-4 flex flex-wrap items-center justify-between gap-3 border-b border-ink-800">
+        <div className="bg-zinc-900 text-white px-6 py-4 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-seal-500/20 border border-seal-400/40 flex items-center justify-center text-seal-400">
+            <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-white">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono tracking-wider uppercase text-slate-400">Attestation ID</span>
-                <span className="font-mono text-xs font-bold text-seal-300 bg-ink-800 px-2 py-0.5 rounded border border-ink-700">
+                <span className="text-xs font-condensed tracking-wider uppercase text-zinc-400 font-bold">Attestation ID</span>
+                <span className="font-mono text-xs font-bold text-white bg-black px-2 py-0.5 rounded border border-zinc-700">
                   {payload.attestationId}
                 </span>
               </div>
-              <h3 className="font-semibold text-sm text-slate-100 mt-0.5">
+              <h3 className="font-semibold text-sm text-white mt-0.5">
                 Official Medical Leave Certification
               </h3>
             </div>
@@ -94,35 +81,35 @@ export default function AttestationCard({
 
           <div className="flex items-center gap-2">
             {attestation.isRevokedByIssuer ? (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-950 border border-red-500/60 text-red-300">
-                <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-zinc-900 border border-zinc-600 text-zinc-300 font-mono">
+                <AlertTriangle className="w-3.5 h-3.5 text-zinc-400" />
                 REVOKED BY ISSUER
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-seal-950 border border-seal-500/40 text-seal-300">
-                <CheckCircle className="w-3.5 h-3.5 text-seal-400" />
-                ECDSA P-256 Signed
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono font-medium bg-black border border-zinc-700 text-zinc-200">
+                <CheckCircle className="w-3.5 h-3.5 text-white" />
+                ECDSA P-256 SIGNED
               </span>
             )}
           </div>
         </div>
 
-        {/* Main Parchment Certificate Body */}
-        <div className="p-6 space-y-6 relative">
+        {/* Main Certificate Body */}
+        <div className="p-6 space-y-6 relative bg-zinc-950">
           
-          <div className="absolute right-6 top-8 opacity-10 pointer-events-none select-none text-right">
-            <Award className="w-36 h-36 text-seal-900" />
+          <div className="absolute right-6 top-8 opacity-5 pointer-events-none select-none text-right">
+            <Award className="w-36 h-36 text-white" />
           </div>
 
           {/* Certified Holder & Dual Category Mapping Display */}
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-parchment-300/60">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-zinc-800">
             <div>
-              <p className="text-xs text-parchment-600 font-medium uppercase tracking-wider">Certified Holder (Wallet)</p>
-              <h4 className="text-xl font-bold text-ink-900 flex items-center gap-2 mt-0.5">
-                <User className="w-5 h-5 text-seal-700" />
+              <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider font-condensed">Certified Holder (Wallet)</p>
+              <h4 className="text-xl font-bold text-white flex items-center gap-2 mt-0.5">
+                <User className="w-5 h-5 text-zinc-400" />
                 {payload.employeeName}
                 {payload.employeeId && (
-                  <span className="text-xs font-mono font-normal text-slate-500 bg-parchment-200 px-2 py-0.5 rounded">
+                  <span className="text-xs font-mono font-normal text-zinc-400 bg-zinc-900 px-2 py-0.5 rounded border border-zinc-800">
                     {payload.employeeId}
                   </span>
                 )}
@@ -130,92 +117,92 @@ export default function AttestationCard({
             </div>
 
             <div className="flex flex-col items-end gap-1">
-              <span className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wide border ${getCategoryColor(payload.coarseCategory)} bg-white/80 shadow-sm`}>
+              <span className={`px-3 py-1 rounded-lg text-xs font-mono font-bold uppercase tracking-wide border ${getCategoryColor(payload.coarseCategory)} shadow-sm`}>
                 Statutory: {payload.coarseCategory}
               </span>
-              <span className="text-[10px] text-slate-500 font-mono">
+              <span className="text-[10px] text-zinc-500 font-mono">
                 Wallet Category: {payload.fineCategory} (Non-Disclosed)
               </span>
             </div>
           </div>
 
           {/* Certified Leave Period Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white/80 p-4 rounded-xl border border-parchment-300 shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-zinc-900/60 p-4 rounded-xl border border-zinc-800 shadow-sm">
             <div className="space-y-1">
-              <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-seal-600" /> Leave Start Date
+              <p className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5 font-condensed">
+                <Calendar className="w-3.5 h-3.5 text-zinc-300" /> Leave Start Date
               </p>
-              <p className="text-base font-bold text-ink-900 font-mono">
+              <p className="text-base font-bold text-white font-mono">
                 {payload.startDate}
               </p>
             </div>
 
             <div className="space-y-1">
-              <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-seal-600" /> Leave End Date
+              <p className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5 font-condensed">
+                <Calendar className="w-3.5 h-3.5 text-zinc-300" /> Leave End Date
               </p>
-              <p className="text-base font-bold text-ink-900 font-mono">
+              <p className="text-base font-bold text-white font-mono">
                 {payload.endDate}
               </p>
             </div>
 
             <div className="space-y-1">
-              <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-seal-600" /> Return to Work Date
+              <p className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5 font-condensed">
+                <Clock className="w-3.5 h-3.5 text-zinc-300" /> Return to Work Date
               </p>
-              <p className="text-base font-bold text-seal-800 font-mono">
+              <p className="text-base font-bold text-white font-mono">
                 {payload.expectedReturnDate}
               </p>
             </div>
           </div>
 
           {/* Fit for Duty & Clinical Accommodation */}
-          <div className="space-y-2 bg-white/60 p-4 rounded-xl border border-parchment-300/80">
+          <div className="space-y-2 bg-zinc-900/40 p-4 rounded-xl border border-zinc-800">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider font-condensed">
                 Occupational Fitness Directive
               </span>
-              <span className={`px-2.5 py-0.5 rounded text-xs font-medium border ${fitBadge.color}`}>
+              <span className={`px-2.5 py-0.5 rounded text-xs font-mono font-medium border ${fitBadge.color}`}>
                 {fitBadge.label}
               </span>
             </div>
             {payload.fitForDutyNotes && (
-              <p className="text-xs text-slate-700 italic bg-parchment-50 p-2.5 rounded-lg border border-parchment-200">
+              <p className="text-xs text-zinc-300 italic bg-black p-2.5 rounded-lg border border-zinc-800">
                 &ldquo;{payload.fitForDutyNotes}&rdquo;
               </p>
             )}
           </div>
 
           {/* Issuer Medical Authority Signature Block */}
-          <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t border-parchment-300/60 text-xs text-slate-700">
+          <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t border-zinc-800 text-xs text-zinc-300">
             <div className="space-y-1">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-1">
-                <Building2 className="w-3.5 h-3.5 text-slate-600" /> Accredited Medical Authority (Wallet Only)
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-1 font-condensed">
+                <Building2 className="w-3.5 h-3.5 text-zinc-400" /> Accredited Medical Authority (Wallet Only)
               </p>
-              <p className="font-semibold text-ink-900 text-sm">{payload.issuerName}</p>
-              <p className="text-slate-600 flex items-center gap-2">
+              <p className="font-semibold text-white text-sm">{payload.issuerName}</p>
+              <p className="text-zinc-400 flex items-center gap-2">
                 <span>{payload.doctorName}</span>
                 <span>•</span>
-                <span className="font-mono bg-parchment-200 px-1.5 py-0.5 rounded text-[11px] font-medium">
+                <span className="font-mono bg-zinc-900 px-1.5 py-0.5 rounded text-[11px] font-medium border border-zinc-800 text-zinc-300">
                   Reg: {payload.issuerRegNumber}
                 </span>
               </p>
             </div>
 
-            <div className="official-stamp px-4 py-2 text-center text-xs font-bold font-mono">
+            <div className="border-2 border-white rounded px-4 py-2 text-center text-xs font-bold font-condensed tracking-wider uppercase text-white bg-black">
               <div>✓ VERIFIED CLINICAL ATTESTATION</div>
-              <div className="text-[9px] tracking-normal font-sans font-normal opacity-80">
+              <div className="text-[9px] tracking-normal font-sans font-normal text-zinc-400">
                 Issued: {new Date(payload.issuedAt).toLocaleDateString()}
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="pt-3 flex flex-wrap items-center justify-between gap-2.5">
+          <div className="pt-3 flex flex-wrap items-center justify-between gap-2.5 font-condensed tracking-wider uppercase text-xs">
             {showShareButton && onShareClick && !attestation.isRevokedByIssuer && (
               <button
                 onClick={() => onShareClick(attestation)}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-seal-600 to-seal-700 hover:from-seal-500 hover:to-seal-600 text-white font-semibold text-xs shadow-md shadow-seal-600/30 transition-all hover:scale-[1.01]"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-semibold shadow-sm transition-all"
               >
                 <Share2 className="w-4 h-4" />
                 <span>Generate Selective Share Code</span>
@@ -224,27 +211,27 @@ export default function AttestationCard({
 
             <button
               onClick={() => setShowPaperQR(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-ink-900/10 hover:bg-ink-900/20 text-ink-900 text-xs font-medium transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 font-medium transition-colors"
               title="Print paper fallback certificate with QR"
             >
-              <QrCode className="w-3.5 h-3.5 text-slate-700" />
+              <QrCode className="w-3.5 h-3.5 text-zinc-300" />
               <span>Paper QR</span>
             </button>
 
             <button
               onClick={() => setShowBreakGlass(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-900/15 hover:bg-amber-900/25 text-amber-900 text-xs font-medium transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 font-medium transition-colors"
               title="Dual-consent break-glass dispute arbitration"
             >
-              <ShieldAlert className="w-3.5 h-3.5 text-amber-700" />
+              <ShieldAlert className="w-3.5 h-3.5 text-zinc-300" />
               <span>Break-Glass</span>
             </button>
 
             <button
               onClick={() => setShowCryptoDetails(!showCryptoDetails)}
-              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-ink-900/10 hover:bg-ink-900/20 text-ink-900 text-xs font-medium transition-colors"
+              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 font-medium transition-colors"
             >
-              <Key className="w-3.5 h-3.5 text-seal-700" />
+              <Key className="w-3.5 h-3.5 text-zinc-300" />
               <span>Proof</span>
               {showCryptoDetails ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
             </button>
@@ -252,12 +239,12 @@ export default function AttestationCard({
 
           {/* Cryptographic Inspector */}
           {showCryptoDetails && (
-            <div className="mt-4 p-4 rounded-xl bg-ink-950 text-slate-300 font-mono text-[11px] space-y-3 border border-ink-800 shadow-inner">
-              <div className="flex items-center justify-between border-b border-ink-800 pb-2 text-xs">
-                <span className="text-seal-400 font-bold flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" /> Web Crypto ECDSA (P-256 / SHA-256) Signature
+            <div className="mt-4 p-4 rounded-xl bg-black text-zinc-300 font-mono text-[11px] space-y-3 border border-zinc-800 shadow-inner">
+              <div className="flex items-center justify-between border-b border-zinc-800 pb-2 text-xs">
+                <span className="text-white font-bold flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-white" /> Web Crypto ECDSA (P-256 / SHA-256) Signature
                 </span>
-                <span className="text-slate-400">Curve: P-256</span>
+                <span className="text-zinc-500">Curve: P-256</span>
               </div>
 
               <div>

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { 
   IssuerIdentity, 
   FineCategory, 
-  CoarseCategory,
+  CoarseCategory, 
   FitForDutyStatus, 
   AttestationPayload, 
   SignedAttestation 
@@ -24,7 +24,7 @@ import {
   canonicalizeJson, 
   computeSHA256 
 } from '@/lib/crypto';
-import { mapFineToCoarseCategory, LEAVEGUARD_POLICY_SPEC } from '@/lib/policy';
+import { mapFineToCoarseCategory } from '@/lib/policy';
 import PaperAttestationQR from '@/components/PaperAttestationQR';
 import { 
   Stethoscope, 
@@ -32,27 +32,18 @@ import {
   Key, 
   Calendar, 
   User, 
-  Building2, 
   CheckCircle2, 
-  Sparkles, 
-  Send, 
   FileCheck, 
   Clock, 
-  Award,
-  ArrowRight,
-  RefreshCw,
-  Eye,
-  QrCode,
-  Trash2,
-  Scale,
-  AlertTriangle
+  Award, 
+  RefreshCw, 
+  QrCode
 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function IssuerPage() {
   const [selectedIssuer, setSelectedIssuer] = useState<IssuerIdentity>(TRUSTED_ISSUERS[0]);
-  const [isCustomKey, setIsCustomKey] = useState(false);
-  const [customKeyPair, setCustomKeyPair] = useState<{
+  const [customKeyPair] = useState<{
     privateKeyJwk: JsonWebKey;
     publicKeyJwk: JsonWebKey;
     publicKeyHex: string;
@@ -98,7 +89,6 @@ export default function IssuerPage() {
     const found = TRUSTED_ISSUERS.find(i => i.id === issuerId);
     if (found) {
       setSelectedIssuer(found);
-      setIsCustomKey(false);
     }
   };
 
@@ -198,37 +188,37 @@ export default function IssuerPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8 font-sans">
       
       {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-ink-900 via-ink-850 to-ink-900 p-6 rounded-2xl border border-ink-800 shadow-xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-zinc-950 p-6 rounded-2xl border border-zinc-800 shadow-2xl">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-seal-500/20 border border-seal-400/40 flex items-center justify-center text-seal-400 shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white shrink-0">
             <Stethoscope className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-seal-400 uppercase tracking-wider">Medical Portal</span>
-              <span className="px-2 py-0.5 rounded text-[10px] bg-seal-950 text-seal-300 border border-seal-800 font-mono">
+              <span className="text-xs font-mono font-bold text-zinc-300 uppercase tracking-wider font-condensed">Medical Portal</span>
+              <span className="px-2 py-0.5 rounded text-[10px] bg-zinc-900 text-zinc-300 border border-zinc-700 font-mono">
                 ECDSA P-256 Issuer
               </span>
             </div>
-            <h1 className="text-2xl font-bold text-white mt-0.5">Clinic Attestation Issuance Studio</h1>
-            <p className="text-xs text-slate-400">
+            <h1 className="text-2xl font-bold text-white mt-0.5 font-sans">Clinic Attestation Issuance Studio</h1>
+            <p className="text-xs text-zinc-400 font-sans">
               Sign certified leave attestations for patients with Web Crypto and paper-first QR print fallback.
             </p>
           </div>
         </div>
 
         {/* Doctor & Clinic Selector */}
-        <div className="bg-ink-950 p-3 rounded-xl border border-ink-800 space-y-1.5 self-start md:self-auto">
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+        <div className="bg-black p-3 rounded-xl border border-zinc-800 space-y-1.5 self-start md:self-auto">
+          <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider block font-condensed">
             Active Signing Identity (NMC Registry Stub)
           </span>
           <select
             value={selectedIssuer.id}
             onChange={(e) => handleIssuerChange(e.target.value)}
-            className="w-full bg-ink-900 text-xs font-semibold text-slate-200 border border-ink-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-seal-500"
+            className="w-full bg-zinc-900 text-xs font-semibold text-zinc-200 border border-zinc-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-white"
           >
             {TRUSTED_ISSUERS.map((i) => (
               <option key={i.id} value={i.id}>
@@ -236,9 +226,9 @@ export default function IssuerPage() {
               </option>
             ))}
           </select>
-          <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
-            <span>Reg: <strong className="text-slate-200 font-mono">{selectedIssuer.regNumber}</strong></span>
-            <span className="text-seal-400 font-medium">✓ Licensed in NMC</span>
+          <div className="flex items-center justify-between text-[11px] text-zinc-400 pt-1 font-sans">
+            <span>Reg: <strong className="text-zinc-200 font-mono">{selectedIssuer.regNumber}</strong></span>
+            <span className="text-zinc-300 font-medium">✓ Licensed in NMC</span>
           </div>
         </div>
       </div>
@@ -246,13 +236,13 @@ export default function IssuerPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left Form: Attestation Issuer Studio */}
-        <div className="lg:col-span-7 bg-ink-900/90 rounded-2xl border border-ink-800 p-6 shadow-xl space-y-6">
-          <div className="flex items-center justify-between border-b border-ink-800 pb-4">
+        <div className="lg:col-span-7 bg-zinc-950 rounded-2xl border border-zinc-800 p-6 shadow-2xl space-y-6">
+          <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
             <div className="flex items-center gap-2">
-              <FileCheck className="w-5 h-5 text-seal-400" />
-              <h2 className="text-lg font-bold text-white">Create New Minimal Leave Attestation</h2>
+              <FileCheck className="w-5 h-5 text-white" />
+              <h2 className="text-lg font-bold text-white font-condensed uppercase tracking-wider">Create New Minimal Leave Attestation</h2>
             </div>
-            <span className="text-xs text-slate-400 font-mono">Zero Diagnosis Exposed</span>
+            <span className="text-xs text-zinc-400 font-mono">Zero Diagnosis Exposed</span>
           </div>
 
           <form onSubmit={handleSignAndIssue} className="space-y-5">
@@ -260,8 +250,8 @@ export default function IssuerPage() {
             {/* Patient Name & ID */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">
-                  Patient Full Name <span className="text-seal-400">*</span>
+                <label className="text-xs font-semibold text-zinc-300 font-condensed uppercase tracking-wider">
+                  Patient Full Name <span className="text-white">*</span>
                 </label>
                 <input
                   type="text"
@@ -269,12 +259,12 @@ export default function IssuerPage() {
                   value={employeeName}
                   onChange={(e) => setEmployeeName(e.target.value)}
                   placeholder="e.g. Sarah Jenkins"
-                  className="w-full px-3.5 py-2 rounded-xl bg-ink-950 border border-ink-800 text-slate-100 text-xs focus:outline-none focus:border-seal-500"
+                  className="w-full px-3.5 py-2 rounded-xl bg-black border border-zinc-800 text-zinc-100 text-xs focus:outline-none focus:border-white"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-zinc-300 font-condensed uppercase tracking-wider">
                   Employee ID / Reference (Optional)
                 </label>
                 <input
@@ -282,7 +272,7 @@ export default function IssuerPage() {
                   value={employeeId}
                   onChange={(e) => setEmployeeId(e.target.value)}
                   placeholder="e.g. EMP-9021"
-                  className="w-full px-3.5 py-2 rounded-xl bg-ink-950 border border-ink-800 text-slate-100 text-xs focus:outline-none focus:border-seal-500"
+                  className="w-full px-3.5 py-2 rounded-xl bg-black border border-zinc-800 text-zinc-100 text-xs focus:outline-none focus:border-white"
                 />
               </div>
             </div>
@@ -290,13 +280,13 @@ export default function IssuerPage() {
             {/* Fine Category & Automatic Coarse Category Mapping Display */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-zinc-300 font-condensed uppercase tracking-wider">
                   Clinical Fine Category (Doctor & Wallet only)
                 </label>
                 <select
                   value={fineCategory}
                   onChange={(e) => setFineCategory(e.target.value as FineCategory)}
-                  className="w-full px-3 py-2 rounded-xl bg-ink-950 border border-ink-800 text-slate-100 text-xs focus:outline-none focus:border-seal-500"
+                  className="w-full px-3 py-2 rounded-xl bg-black border border-zinc-800 text-zinc-100 text-xs focus:outline-none focus:border-white"
                 >
                   <option value="pregnancy">Pregnancy & Early Gestation</option>
                   <option value="surgery">Surgery & Post-Operative</option>
@@ -307,25 +297,25 @@ export default function IssuerPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-zinc-300 font-condensed uppercase tracking-wider">
                   Statutory Public Category (Policy F5 Auto-Derived)
                 </label>
-                <div className="px-3.5 py-2 rounded-xl bg-ink-950 border border-seal-800/80 text-seal-300 font-mono text-xs flex items-center justify-between">
+                <div className="px-3.5 py-2 rounded-xl bg-black border border-zinc-700 text-zinc-200 font-mono text-xs flex items-center justify-between">
                   <span>{coarseCategory}</span>
-                  <span className="text-[10px] text-slate-400 font-sans">Crosses to HR</span>
+                  <span className="text-[10px] text-zinc-500 font-sans">Crosses to HR</span>
                 </div>
               </div>
             </div>
 
             {/* Fit for duty */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">
+              <label className="text-xs font-semibold text-zinc-300 font-condensed uppercase tracking-wider">
                 Fit-for-Duty Directive
               </label>
               <select
                 value={fitForDuty}
                 onChange={(e) => setFitForDuty(e.target.value as FitForDutyStatus)}
-                className="w-full px-3 py-2 rounded-xl bg-ink-950 border border-ink-800 text-slate-100 text-xs focus:outline-none focus:border-seal-500"
+                className="w-full px-3 py-2 rounded-xl bg-black border border-zinc-800 text-zinc-100 text-xs focus:outline-none focus:border-white"
               >
                 <option value="full-rest">Unfit for Work (Total Rest Mandated)</option>
                 <option value="partial-remote">Fit for Modified / Remote Duty Only</option>
@@ -334,50 +324,50 @@ export default function IssuerPage() {
             </div>
 
             {/* Leave Duration Dates */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-ink-950 p-4 rounded-xl border border-ink-800">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-black p-4 rounded-xl border border-zinc-800">
               <div className="space-y-1.5">
-                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                  <Calendar className="w-3 h-3 text-seal-400" /> Start Date
+                <label className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1 font-condensed">
+                  <Calendar className="w-3 h-3 text-white" /> Start Date
                 </label>
                 <input
                   type="date"
                   required
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-lg bg-ink-900 border border-ink-700 text-slate-100 text-xs font-mono focus:outline-none focus:border-seal-500"
+                  className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-700 text-zinc-100 text-xs font-mono focus:outline-none focus:border-white"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                  <Calendar className="w-3 h-3 text-seal-400" /> End Date
+                <label className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1 font-condensed">
+                  <Calendar className="w-3 h-3 text-white" /> End Date
                 </label>
                 <input
                   type="date"
                   required
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-lg bg-ink-900 border border-ink-700 text-slate-100 text-xs font-mono focus:outline-none focus:border-seal-500"
+                  className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-700 text-zinc-100 text-xs font-mono focus:outline-none focus:border-white"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-seal-400" /> Return Date
+                <label className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1 font-condensed">
+                  <Clock className="w-3 h-3 text-white" /> Return Date
                 </label>
                 <input
                   type="date"
                   required
                   value={expectedReturnDate}
                   onChange={(e) => setExpectedReturnDate(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-lg bg-ink-900 border border-ink-700 text-slate-100 text-xs font-mono focus:outline-none focus:border-seal-500"
+                  className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-700 text-zinc-100 text-xs font-mono focus:outline-none focus:border-white"
                 />
               </div>
             </div>
 
             {/* Optional Accommodations Note */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">
+              <label className="text-xs font-semibold text-zinc-300 font-condensed uppercase tracking-wider">
                 Workplace Accommodation Directive (Zero diagnosis notes)
               </label>
               <textarea
@@ -385,19 +375,19 @@ export default function IssuerPage() {
                 onChange={(e) => setFitForDutyNotes(e.target.value)}
                 rows={2}
                 placeholder="e.g. Ergonomic seating required; no heavy lifting."
-                className="w-full px-3.5 py-2 rounded-xl bg-ink-950 border border-ink-800 text-slate-100 text-xs focus:outline-none focus:border-seal-500"
+                className="w-full px-3.5 py-2 rounded-xl bg-black border border-zinc-800 text-zinc-100 text-xs focus:outline-none focus:border-white"
               />
             </div>
 
             {/* Live Cryptographic Payload Preview */}
-            <div className="p-3.5 rounded-xl bg-ink-950 border border-ink-800/80 font-mono text-[11px] space-y-2">
-              <div className="flex items-center justify-between text-slate-400">
-                <span className="flex items-center gap-1.5 text-seal-400">
+            <div className="p-3.5 rounded-xl bg-black border border-zinc-800 font-mono text-[11px] space-y-2">
+              <div className="flex items-center justify-between text-zinc-400">
+                <span className="flex items-center gap-1.5 text-white font-semibold font-condensed uppercase tracking-wider">
                   <Key className="w-3.5 h-3.5" /> Web Crypto Hash (SHA-256)
                 </span>
-                <span className="text-[10px]">Deterministic Canonical Digest</span>
+                <span className="text-[10px] text-zinc-500">Deterministic Canonical Digest</span>
               </div>
-              <p className="text-slate-300 break-all bg-ink-900 p-2 rounded text-[10px] border border-ink-800">
+              <p className="text-zinc-300 break-all bg-zinc-900 p-2 rounded text-[10px] border border-zinc-800">
                 {payloadHash || 'computing sha-256 fingerprint...'}
               </p>
             </div>
@@ -406,7 +396,7 @@ export default function IssuerPage() {
             <button
               type="submit"
               disabled={isSigning}
-              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-seal-600 to-seal-700 hover:from-seal-500 hover:to-seal-600 text-white font-bold text-sm shadow-xl shadow-seal-600/30 transition-all hover:scale-[1.01] disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-sm shadow-sm transition-all disabled:opacity-40 font-condensed uppercase tracking-wider"
             >
               {isSigning ? (
                 <>
@@ -427,21 +417,21 @@ export default function IssuerPage() {
         <div className="lg:col-span-5 space-y-6">
           
           {issuedSuccess && (
-            <div className="p-6 rounded-2xl bg-gradient-to-b from-seal-950 to-ink-900 border border-seal-500/50 shadow-2xl text-slate-200 space-y-4 animate-in fade-in">
+            <div className="p-6 rounded-2xl bg-black border border-zinc-700 shadow-2xl text-zinc-200 space-y-4 animate-in fade-in">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-seal-500/20 border border-seal-400/40 flex items-center justify-center text-seal-400">
-                  <CheckCircle2 className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-700 flex items-center justify-center text-white">
+                  <CheckCircle2 className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-base">Attestation Issued & Signed!</h3>
-                  <p className="text-xs text-seal-300 font-mono">ID: {issuedSuccess.payload.attestationId}</p>
+                  <h3 className="font-bold text-white text-base font-condensed uppercase tracking-wider">Attestation Issued & Signed</h3>
+                  <p className="text-xs text-zinc-400 font-mono">ID: {issuedSuccess.payload.attestationId}</p>
                 </div>
               </div>
 
-              <div className="pt-2 flex flex-col sm:flex-row items-center gap-2.5">
+              <div className="pt-2 flex flex-col sm:flex-row items-center gap-2.5 font-condensed uppercase tracking-wider text-xs">
                 <Link
                   href="/employee"
-                  className="w-full sm:flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-seal-600 hover:bg-seal-500 text-white font-semibold text-xs transition-colors shadow-md shadow-seal-600/30"
+                  className="w-full sm:flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-semibold transition-colors shadow-sm"
                 >
                   <User className="w-4 h-4" />
                   <span>View in Employee Vault</span>
@@ -449,9 +439,9 @@ export default function IssuerPage() {
 
                 <button
                   onClick={() => setPaperQrAttestation(issuedSuccess)}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-ink-800 hover:bg-ink-700 text-slate-200 text-xs font-semibold border border-ink-700 transition-colors flex items-center justify-center gap-1.5"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 font-semibold border border-zinc-800 transition-colors flex items-center justify-center gap-1.5"
                 >
-                  <QrCode className="w-4 h-4 text-seal-400" />
+                  <QrCode className="w-4 h-4 text-white" />
                   <span>Print Paper QR</span>
                 </button>
               </div>
@@ -459,43 +449,43 @@ export default function IssuerPage() {
           )}
 
           {/* Clinic Issuance Ledger with Revocation action */}
-          <div className="bg-ink-900/90 rounded-2xl border border-ink-800 p-6 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-ink-800 pb-3">
-              <h3 className="font-bold text-white text-sm flex items-center gap-2">
-                <Award className="w-4 h-4 text-seal-400" />
+          <div className="bg-zinc-950 rounded-2xl border border-zinc-800 p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+              <h3 className="font-bold text-white text-sm flex items-center gap-2 font-condensed uppercase tracking-wider">
+                <Award className="w-4 h-4 text-white" />
                 Clinic Attestation Ledger & Revocation
               </h3>
-              <span className="text-xs text-slate-400 font-mono">{attestationsList.length} Active</span>
+              <span className="text-xs text-zinc-400 font-mono">{attestationsList.length} Active</span>
             </div>
 
             <div className="space-y-3 max-h-[420px] overflow-y-auto">
               {attestationsList.length === 0 ? (
-                <p className="text-xs text-slate-500 text-center py-6">No attestations issued yet.</p>
+                <p className="text-xs text-zinc-500 text-center py-6 font-sans">No attestations issued yet.</p>
               ) : (
                 attestationsList.map((att) => (
                   <div 
                     key={att.payload.attestationId}
-                    className="p-3.5 rounded-xl bg-ink-950 border border-ink-800/80 hover:border-seal-500/40 transition-colors space-y-2 text-xs"
+                    className="p-3.5 rounded-xl bg-black border border-zinc-800 hover:border-zinc-700 transition-colors space-y-2 text-xs"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-slate-200">{att.payload.employeeName}</span>
-                      <span className="font-mono text-[10px] text-seal-400 bg-seal-950 px-2 py-0.5 rounded border border-seal-900">
+                      <span className="font-semibold text-white font-sans">{att.payload.employeeName}</span>
+                      <span className="font-mono text-[10px] text-zinc-300 bg-zinc-900 px-2 py-0.5 rounded border border-zinc-700">
                         {att.payload.attestationId}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between text-slate-400 text-[11px]">
+                    <div className="flex items-center justify-between text-zinc-400 text-[11px] font-sans">
                       <span>{att.payload.startDate} → {att.payload.endDate}</span>
-                      <span className="text-slate-300 font-medium font-mono">{att.payload.coarseCategory}</span>
+                      <span className="text-white font-medium font-mono">{att.payload.coarseCategory}</span>
                     </div>
 
-                    <div className="flex items-center justify-between pt-1 border-t border-ink-800 text-[10px] text-slate-500">
+                    <div className="flex items-center justify-between pt-1 border-t border-zinc-900 text-[10px] text-zinc-500">
                       <span>Doctor: {att.payload.doctorName}</span>
                       
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 font-condensed uppercase tracking-wider">
                         <button
                           onClick={() => setPaperQrAttestation(att)}
-                          className="text-seal-400 hover:text-seal-300 underline font-sans"
+                          className="text-zinc-300 hover:text-white underline font-sans"
                         >
                           Print QR
                         </button>
@@ -503,13 +493,13 @@ export default function IssuerPage() {
                         {!att.isRevokedByIssuer ? (
                           <button
                             onClick={() => handleRevokeByIssuer(att.payload.attestationId)}
-                            className="text-red-400 hover:text-red-300 underline font-sans"
+                            className="text-zinc-400 hover:text-white underline font-sans"
                             title="Issuer Revocation"
                           >
                             Revoke
                           </button>
                         ) : (
-                          <span className="text-red-400 font-bold">REVOKED</span>
+                          <span className="text-zinc-500 font-bold">REVOKED</span>
                         )}
                       </div>
                     </div>

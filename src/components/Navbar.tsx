@@ -41,28 +41,26 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-ink-800/80 bg-ink-950/90 backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b border-zinc-800 bg-black/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             
             {/* Brand Logo */}
             <div className="flex items-center gap-3">
               <Link href="/" className="flex items-center gap-2.5 group">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-seal-500 to-ink-700 p-0.5 shadow-lg shadow-seal-500/20 group-hover:shadow-seal-500/40 transition-all">
-                  <div className="w-full h-full bg-ink-900 rounded-[10px] flex items-center justify-center">
-                    <ShieldCheck className="w-5 h-5 text-seal-400 group-hover:scale-110 transition-transform" />
-                  </div>
+                <div className="w-9 h-9 rounded-lg bg-white text-black flex items-center justify-center font-bold font-condensed transition-transform group-hover:scale-105">
+                  <ShieldCheck className="w-5 h-5 text-black stroke-[2.2]" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-lg tracking-tight text-white font-sans">
+                    <span className="font-bold text-lg tracking-tight text-white font-sans uppercase">
                       Vouch
                     </span>
-                    <span className="hidden sm:inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-medium bg-ink-800 text-seal-300 border border-seal-500/30">
-                      Policy VOUCH-2026.1
+                    <span className="hidden sm:inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-zinc-900 text-zinc-300 border border-zinc-700">
+                      VOUCH-2026.1
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-400 hidden sm:block -mt-0.5">
+                  <p className="text-[11px] text-zinc-400 hidden sm:block -mt-0.5 font-sans">
                     Zero-Knowledge Medical Leave Protocol
                   </p>
                 </div>
@@ -70,7 +68,7 @@ export default function Navbar() {
             </div>
 
             {/* Role Navigation Bar */}
-            <nav className="hidden lg:flex items-center gap-1 bg-ink-900/90 p-1.5 rounded-xl border border-ink-800">
+            <nav className="hidden lg:flex items-center gap-1 bg-zinc-950 p-1 rounded-xl border border-zinc-800">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
@@ -78,13 +76,13 @@ export default function Navbar() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all ${
                       isActive
-                        ? 'bg-seal-600 text-white shadow-md shadow-seal-600/30 font-semibold'
-                        : 'text-slate-300 hover:text-white hover:bg-ink-800'
+                        ? 'bg-white text-black font-semibold shadow-sm'
+                        : 'text-zinc-400 hover:text-white hover:bg-zinc-900 font-medium'
                     }`}
                   >
-                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-black' : 'text-zinc-400'}`} />
                     <span>{item.label}</span>
                   </Link>
                 );
@@ -95,27 +93,27 @@ export default function Navbar() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowGuide(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-ink-800/80 hover:bg-ink-700 text-slate-200 border border-ink-700 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 hover:border-zinc-700 transition-colors"
                 title="View Hackathon Demo Guide"
               >
-                <Info className="w-3.5 h-3.5 text-seal-400" />
-                <span className="hidden sm:inline">Research Gaps Guide</span>
+                <Info className="w-3.5 h-3.5 text-zinc-300" />
+                <span className="hidden sm:inline font-condensed tracking-wide uppercase text-[11px]">Research Guide</span>
               </button>
 
               <button
                 onClick={handleReset}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-seal-950/80 hover:bg-seal-900 text-seal-300 border border-seal-800/60 hover:border-seal-700 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 hover:border-zinc-700 transition-colors"
                 title="Reset/Seed Sample Data"
               >
-                <RefreshCw className="w-3.5 h-3.5 text-seal-400" />
-                <span className="hidden sm:inline">Reset Demo</span>
+                <RefreshCw className="w-3.5 h-3.5 text-zinc-300" />
+                <span className="hidden sm:inline font-condensed tracking-wide uppercase text-[11px]">Reset Demo</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* Mobile Navigation Sub-bar */}
-        <div className="lg:hidden flex items-center justify-between px-4 py-2 border-t border-ink-800/60 bg-ink-900/60 overflow-x-auto gap-2">
+        <div className="lg:hidden flex items-center justify-between px-4 py-2 border-t border-zinc-800 bg-zinc-950 overflow-x-auto gap-2">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -124,7 +122,7 @@ export default function Navbar() {
                 key={item.href}
                 href={item.href}
                 className={`whitespace-nowrap flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium ${
-                  isActive ? 'bg-seal-600 text-white' : 'text-slate-400 hover:text-white'
+                  isActive ? 'bg-white text-black font-semibold' : 'text-zinc-400 hover:text-white'
                 }`}
               >
                 <Icon className="w-3 h-3" />
@@ -137,75 +135,77 @@ export default function Navbar() {
 
       {/* Reset Toast Notification */}
       {resetToast && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl bg-seal-950 border border-seal-500/50 shadow-xl shadow-seal-950/80 text-seal-200 text-xs animate-bounce">
-          <CheckCircle2 className="w-4 h-4 text-seal-400" />
-          <span>Hackathon research demo data re-seeded! Test share code: <strong className="text-white font-mono">LG-7892</strong></span>
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-700 shadow-2xl text-zinc-200 text-xs font-mono">
+          <CheckCircle2 className="w-4 h-4 text-white" />
+          <span>Research demo data re-seeded. Test share code: <strong className="text-white font-bold">LG-7892</strong></span>
         </div>
       )}
 
       {/* Demo Walkthrough Modal */}
       {showGuide && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-950/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-2xl bg-ink-900 border border-ink-700 rounded-2xl p-6 shadow-2xl max-h-[85vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-4 border-b border-ink-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-2xl bg-zinc-950 border border-zinc-800 rounded-2xl p-6 shadow-2xl max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-seal-400" />
-                <h3 className="font-semibold text-lg text-white">Vouch Research Gap Defense Guide</h3>
+                <ShieldCheck className="w-5 h-5 text-white" />
+                <h3 className="font-bold text-base text-white uppercase font-condensed tracking-wider">
+                  Vouch Protocol Research Architecture
+                </h3>
               </div>
               <button 
                 onClick={() => setShowGuide(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-ink-800"
+                className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="mt-4 space-y-3.5 text-xs text-slate-300">
-              <div className="p-3 rounded-xl bg-ink-800/80 border border-ink-700/60">
-                <h4 className="font-bold text-white flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-seal-400"></span>
+            <div className="mt-4 space-y-3 text-xs text-zinc-300">
+              <div className="p-3.5 rounded-xl bg-zinc-900/80 border border-zinc-800">
+                <h4 className="font-bold text-white flex items-center gap-2 font-condensed uppercase tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
                   FIX 0 — Metadata Leakage Elimination
                 </h4>
-                <p className="text-slate-400 mt-1">
-                  Clinic names are completely masked from HR and replaced with <code className="text-seal-300">issuerIsLicensed: true</code> and <code className="text-seal-300">issuerRefHash</code>. Categories are collapsed to coarse statutory enums (<code className="text-seal-300">STATUTORY_MATERNITY</code>, <code className="text-seal-300">STATUTORY_MEDICAL</code>, <code className="text-seal-300">CAREGIVING</code>, <code className="text-seal-300">SELF_DECLARED</code>).
+                <p className="text-zinc-400 mt-1 leading-relaxed">
+                  Clinic names are completely masked from HR and replaced with <code className="text-white bg-zinc-800 px-1 py-0.5 rounded">issuerIsLicensed: true</code> and <code className="text-white bg-zinc-800 px-1 py-0.5 rounded">issuerRefHash</code>. Categories are collapsed to coarse statutory enums (<code className="text-white bg-zinc-800 px-1 py-0.5 rounded">STATUTORY_MATERNITY</code>, <code className="text-white bg-zinc-800 px-1 py-0.5 rounded">STATUTORY_MEDICAL</code>, <code className="text-white bg-zinc-800 px-1 py-0.5 rounded">CAREGIVING</code>, <code className="text-white bg-zinc-800 px-1 py-0.5 rounded">SELF_DECLARED</code>).
                 </p>
               </div>
 
-              <div className="p-3 rounded-xl bg-ink-800/80 border border-ink-700/60">
-                <h4 className="font-bold text-white flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+              <div className="p-3.5 rounded-xl bg-zinc-900/80 border border-zinc-800">
+                <h4 className="font-bold text-white flex items-center gap-2 font-condensed uppercase tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
                   F1 & F2 — Quota Predicates & Constrained Request Builder
                 </h4>
-                <p className="text-slate-400 mt-1">
+                <p className="text-zinc-400 mt-1 leading-relaxed">
                   HR cannot upload files or request arbitrary letters. On verification, HR receives 4 pass/fail predicate booleans and never learns remaining quota balances or historical leave frequency.
                 </p>
               </div>
 
-              <div className="p-3 rounded-xl bg-ink-800/80 border border-ink-700/60">
-                <h4 className="font-bold text-white flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-purple-400"></span>
+              <div className="p-3.5 rounded-xl bg-zinc-900/80 border border-zinc-800">
+                <h4 className="font-bold text-white flex items-center gap-2 font-condensed uppercase tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
                   F3 & F4 — Tamper-Evident Hash Chain & Honest Leakage Meter
                 </h4>
-                <p className="text-slate-400 mt-1">
+                <p className="text-zinc-400 mt-1 leading-relaxed">
                   Every verification appends an immutable block to the SHA-256 hash chain with jittered timestamps. The employee inspects residual inference side-channels before sharing.
                 </p>
               </div>
 
-              <div className="p-3 rounded-xl bg-ink-800/80 border border-ink-700/60">
-                <h4 className="font-bold text-white flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+              <div className="p-3.5 rounded-xl bg-zinc-900/80 border border-zinc-800">
+                <h4 className="font-bold text-white flex items-center gap-2 font-condensed uppercase tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
                   F5, F6, F7, F8 — Policy Compiler, Paper QR, Break-Glass & DB Inspector
                 </h4>
-                <p className="text-slate-400 mt-1">
+                <p className="text-zinc-400 mt-1 leading-relaxed">
                   Menstrual leave is pure self-declaration with no doctor notes. Dual-consent escape hatch for labour disputes. Real-time stage inspection on <strong className="text-white">/hr/inspector</strong> proving zero raw health data in memory.
                 </p>
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-ink-800 flex items-center justify-end">
+            <div className="mt-6 pt-4 border-t border-zinc-800 flex items-center justify-end">
               <button
                 onClick={() => setShowGuide(false)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-seal-600 hover:bg-seal-500 text-white"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-zinc-200 text-black transition-colors font-condensed uppercase tracking-wider"
               >
                 Close Guide
               </button>
