@@ -152,6 +152,44 @@ For enterprise and state deployment beyond the hackathon:
 
 ---
 
+## 🐘 Neon Serverless Postgres Backend Deployment
+
+Vouch supports native serverless database deployment backed by **Neon Lakebase Postgres** via the `@neondatabase/serverless` driver.
+
+### 1. Database Primitives & Architecture
+- **Serverless Compute (`@neondatabase/serverless`)**: Zero-cold-start HTTP/WebSocket connection pooling optimized for Next.js App Router and Edge API routes.
+- **Relational Tables**:
+  - `issuers`: Pre-seeded clinical registry storing opaque salted hashes (`issuer_ref_hash`), NMC/GMC numbers, and instant revocation timestamps.
+  - `share_codes`: Selective disclosure share tokens with coarse policy classification, uniform 1024-byte padding, and TTL expiry.
+  - `receipts`: Append-only cryptographic ledger storing `prev_hash`, block `hash`, proof hashes, and evaluation outcomes.
+  - `entitlements`: Pseudonymous employer quota ledgers (`hash(employeeId + salt)`).
+  - `break_glass_requests`: Time-boxed dual-consent arbitration unseal records.
+
+### 2. Connect Your Neon Project
+1. Obtain your **Pooled Connection String** from your [Neon Console](https://console.neon.tech):
+   ```env
+   # In .env.local
+   DATABASE_URL="postgres://[user]:[password]@[endpoint]-pooler.[region].aws.neon.tech/neondb?sslmode=require"
+   ```
+2. Run automated schema migrations & seed initial clinical anchors:
+   ```bash
+   npm run db:init
+   ```
+3. Or initialize schema via API endpoint:
+   ```bash
+   curl -X POST http://localhost:3000/api/db/init
+   ```
+
+### 3. Dedicated Backend API Endpoints
+- `GET /api/db/init` — Health check & configuration status of Neon connection.
+- `POST /api/db/init` — Executes DDL schema and seeds clinical issuers.
+- `POST /api/shares` — Saves and retrieves selective disclosure share tokens in Neon.
+- `GET /api/receipts` — Queries the tamper-evident receipt ledger and asserts chain continuity.
+- `POST /api/verify/credential` — Verifies ECDSA P-256 signatures, checks issuer status, and commits receipts to Neon.
+
+---
+
 ## 📄 License
 MIT License. Built for privacy-preserving labor standards and workplace dignity.
+
 

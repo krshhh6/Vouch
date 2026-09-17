@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyCredential } from '@/lib/verification/credentialVerify';
 import { validateAttestation } from '@/lib/verification/policyEngine';
 import { writeReceipt } from '@/lib/verification/receiptLog';
+import { dbGetShareCode, dbSaveReceipt } from '@/lib/db/service';
 
 // In-memory mock database store for API routes
 const MOCK_BACKEND_STORE = new Map<string, any>();
@@ -52,8 +53,27 @@ export async function POST(req: Request | NextRequest) {
       );
     }
 
-    // 1. Retrieve the share code payload from localStorage mock or explicit payload
-    const shareData = explicitShareData || getFromMockBackend(shareCode);
+    // 1. Retrieve the share code payload from Neon Postgres, or fallback to mock store
+    let shareData = explicitShareData;
+    if (!shareData && shareCode) {
+      const dbRecord = await dbGetShareCode(shareCode);
+      if (dbRecord) {
+        shareData = {
+          attestation: {
+            issuerRefHash: dbRecord.hrPayload.issuerRefHash,
+            coarseCategory: dbRecord.hrPayload.coarseCategory,
+            validFrom: dbRecord.hrPayload.validFrom,
+            validTo: dbRecord.hrPayload.validTo,
+            signature: dbRecord.signedAttestation?.signatureBase64 || '',
+            issuerIsLicensed: dbRecord.hrPayload.issuerIsLicensed,
+          },
+          issuerPublicKey: dbRecord.signedAttestation?.publicKeyHex || '',
+        };
+      } else {
+        shareData = getFromMockBackend(shareCode);
+      }
+    }
+
     if (!shareData || !shareData.attestation) {
       return NextResponse.json(
         { outcome: 'REJECTED', error: `Invalid share code: ${shareCode || 'unknown'}` },
@@ -85,6 +105,7 @@ export async function POST(req: Request | NextRequest) {
           outcome: 'REJECTED',
           reason: reason || 'Signature verification failed or issuer revoked',
         });
+        await dbSaveReceipt(receipt);
         return NextResponse.json(
           { outcome: 'REJECTED', reason, receipt },
           { status: 400 }
@@ -101,6 +122,7 @@ export async function POST(req: Request | NextRequest) {
         outcome: 'REJECTED',
         reason: violations.join('; '),
       });
+      await dbSaveReceipt(receipt);
       return NextResponse.json(
         { outcome: 'REJECTED', violations, receipt },
         { status: 400 }
@@ -112,6 +134,7 @@ export async function POST(req: Request | NextRequest) {
       shareCodeRef: shareCode || 'ANON_SHARE',
       outcome: 'APPROVED',
     });
+    await dbSaveReceipt(receipt);
 
     return NextResponse.json({ outcome: 'APPROVED', receipt }, { status: 200 });
   } catch (err: unknown) {

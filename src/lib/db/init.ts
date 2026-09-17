@@ -1,0 +1,124 @@
+import { getDb, isDatabaseConfigured } from './neon';
+
+export interface InitDatabaseResult {
+  success: boolean;
+  message: string;
+  tablesCreated?: string[];
+  error?: string;
+}
+
+/**
+ * Initializes Neon database schema and pre-seeds required data.
+ */
+export async function initializeDatabaseSchema(): Promise<InitDatabaseResult> {
+  if (!isDatabaseConfigured()) {
+    return {
+      success: false,
+      message: 'DATABASE_URL is not configured in environment',
+    };
+  }
+
+  const sql = getDb();
+  if (!sql) {
+    return {
+      success: false,
+      message: 'Unable to connect to Neon database client',
+    };
+  }
+
+  try {
+    // 1. Create Issuers table
+    await sql`
+      CREATE TABLE IF NOT EXISTS issuers (
+        issuer_ref_hash VARCHAR(128) PRIMARY KEY,
+        reg_no VARCHAR(64) NOT NULL,
+        clinic_name VARCHAR(256) NOT NULL,
+        status VARCHAR(32) NOT NULL DEFAULT 'ACTIVE',
+        added_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        revoked_at TIMESTAMP WITH TIME ZONE
+      )
+    `;
+
+    await sql`CREATE INDEX IF NOT EXISTS idx_issuers_status ON issuers(status)`;
+
+    // 2. Create Share Codes table
+    await sql`
+      CREATE TABLE IF NOT EXISTS share_codes (
+        code VARCHAR(64) PRIMARY KEY,
+        attestation_id VARCHAR(128) NOT NULL,
+        policy_version VARCHAR(64) NOT NULL,
+        policy_rule_id VARCHAR(64) NOT NULL,
+        hr_payload JSONB NOT NULL,
+        signed_attestation JSONB,
+        is_revoked BOOLEAN DEFAULT FALSE,
+        view_count INTEGER DEFAULT 0,
+        padded_byte_length INTEGER DEFAULT 1024,
+        intended_recipient VARCHAR(256),
+        expires_at TIMESTAMP WITH TIME ZONE,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      )
+    `;
+
+    // 3. Create Receipts table
+    await sql`
+      CREATE TABLE IF NOT EXISTS receipts (
+        id VARCHAR(128) PRIMARY KEY,
+        share_code_ref VARCHAR(64) NOT NULL,
+        policy_version VARCHAR(64),
+        verified_at TIMESTAMP WITH TIME ZONE NOT NULL,
+        outcome VARCHAR(32) NOT NULL,
+        proof_hash VARCHAR(128) NOT NULL,
+        predicate_result JSONB,
+        prev_hash VARCHAR(128) NOT NULL,
+        hash VARCHAR(128) NOT NULL,
+        reason TEXT,
+        actor_role VARCHAR(64) DEFAULT 'HR_BENEFITS_VERIFIER',
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      )
+    `;
+
+    await sql`CREATE INDEX IF NOT EXISTS idx_receipts_share_code ON receipts(share_code_ref)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_receipts_verified_at ON receipts(verified_at)`;
+
+    // 4. Create Entitlements table
+    await sql`
+      CREATE TABLE IF NOT EXISTS entitlements (
+        employer_pseudonym VARCHAR(128) NOT NULL,
+        coarse_category VARCHAR(64) NOT NULL,
+        days_entitled_annual INTEGER NOT NULL,
+        days_taken_ytd INTEGER NOT NULL DEFAULT 0,
+        approved_ranges JSONB DEFAULT '[]'::jsonb,
+        last_updated TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        PRIMARY KEY (employer_pseudonym, coarse_category)
+      )
+    `;
+
+    // 5. Seed default issuers
+    await sql`
+      INSERT INTO issuers (issuer_ref_hash, reg_no, clinic_name, status)
+      VALUES 
+        ('sha256_abc123', '12345NMC', 'Sunrise Medical & Reproductive Health', 'ACTIVE'),
+        ('sha256_xyz789', '54321NMC', 'Central Regional Hospital', 'REVOKED'),
+        ('hash_abc123', '12345NMC', 'Dr. A - Summit Health Clinic', 'ACTIVE'),
+        ('hash_xyz789', '99999NMC', 'Dr. B - Discredited Provider', 'REVOKED'),
+        ('35d799009dfd2dff6f9f592ad69ec4ef9081e6b81a2da382902ea9a0a14da956', 'GMC-8849201', 'Summit Women’s Health & Reproductive Medicine', 'ACTIVE'),
+        ('0d0322c349ddfb65147575dfa3d3c82e666a416b0dfd6a5da671f16503cba26b', 'GMC-9120448', 'St. Jude Regional Medical Center', 'ACTIVE'),
+        ('433be54a1be7534484b9015c9ff802f0672e0d37e735492d5c8e31fc5772390a', 'GMC-7731904', 'Metro Behavioral Health & Neuro-Wellness', 'ACTIVE')
+      ON CONFLICT (issuer_ref_hash) DO NOTHING
+    `;
+
+    return {
+      success: true,
+      message: 'Neon Lakebase Postgres database schema successfully initialized',
+      tablesCreated: ['issuers', 'share_codes', 'receipts', 'entitlements'],
+    };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    console.error('Neon schema initialization error:', errorMsg);
+    return {
+      success: false,
+      message: 'Failed to initialize schema',
+      error: errorMsg,
+    };
+  }
+}

@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node scripts/test-privacy-gaps.mjs && node scripts/test-verification-layer.mjs"
+    "test": "node scripts/test-privacy-gaps.mjs && node scripts/test-verification-layer.mjs",
+    "db:init": "node scripts/init-neon-db.mjs"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "lucide-react": "^0.475.0",
