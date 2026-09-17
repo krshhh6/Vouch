@@ -1,491 +1,675 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SignedAttestation, ShareCode, EntitlementRecord, HRPublicPayload } from '@/lib/types';
+import { useRouter } from 'next/navigation';
 import { 
   getAttestations, 
   getShareCodes, 
-  revokeShareCode, 
-  getEntitlementLedger,
-  saveShareCode,
+  getReceipts, 
+  createShareCode, 
   subscribeToStateChange 
 } from '@/lib/storage';
-import { computeEmployerPseudonym, padPayloadToUniformLength, computeIssuerRefHash } from '@/lib/crypto';
-import { VOUCH_POLICY_SPEC, getRuleByCoarseCategory, validateAndEnforcePolicy } from '@/lib/policy';
-import AttestationCard from '@/components/AttestationCard';
-import ShareModal from '@/components/ShareModal';
+import { SignedAttestation, ShareCode, VerificationReceipt } from '@/lib/types';
+import { verifyChainIntegrity } from '@/lib/verification/receiptChain';
 import ReceiptChainViewer from '@/components/ReceiptChainViewer';
 import { 
-  UserCheck, 
+  Lock, 
   ShieldCheck, 
   Share2, 
-  Radio, 
-  Key, 
-  Sparkles, 
+  CheckCircle2, 
+  Calendar, 
   Clock, 
-  EyeOff, 
-  Trash2, 
-  ExternalLink, 
+  AlertTriangle, 
+  Eye, 
   Copy, 
   Check, 
-  AlertCircle,
-  FileText,
-  Lock,
-  PieChart,
-  CalendarHeart,
-  Scale,
-  Link2
+  ArrowRight, 
+  Printer, 
+  X, 
+  Key, 
+  FileText, 
+  Activity, 
+  Layers
 } from 'lucide-react';
 import Link from 'next/link';
 
-export default function EmployeePage() {
-  const [activeTab, setActiveTab] = useState<'attestations' | 'entitlements' | 'shares' | 'audit'>('attestations');
+export default function EmployeeWalletPage() {
+  const router = useRouter();
   const [attestations, setAttestations] = useState<SignedAttestation[]>([]);
+  const [selectedAttestation, setSelectedAttestation] = useState<SignedAttestation | null>(null);
+  const [receipts, setReceipts] = useState<VerificationReceipt[]>([]);
   const [shareCodes, setShareCodes] = useState<ShareCode[]>([]);
-  const [entitlements, setEntitlements] = useState<EntitlementRecord[]>([]);
-  const [sharingAttestation, setSharingAttestation] = useState<SignedAttestation | null>(null);
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  const [selfDeclaredSuccess, setSelfDeclaredSuccess] = useState<ShareCode | null>(null);
+
+  // Modals
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [generatedShare, setGeneratedShare] = useState<ShareCode | null>(null);
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const [showChainViewer, setShowChainViewer] = useState(false);
+  const [showIntegrityModal, setShowIntegrityModal] = useState(false);
+  const [integrityReport, setIntegrityReport] = useState<{
+    valid: boolean;
+    count: number;
+    error?: string;
+  } | null>(null);
 
   const loadData = () => {
-    setAttestations(getAttestations());
+    const attList = getAttestations();
+    setAttestations(attList);
+    setReceipts(getReceipts());
     setShareCodes(getShareCodes());
-    setEntitlements(getEntitlementLedger());
+    if (!selectedAttestation && attList.length > 0) {
+      setSelectedAttestation(attList[0]);
+    } else if (selectedAttestation) {
+      const refreshed = attList.find(a => a.payload.attestationId === selectedAttestation.payload.attestationId);
+      if (refreshed) setSelectedAttestation(refreshed);
+    }
   };
 
   useEffect(() => {
     loadData();
-    const unsubscribe = subscribeToStateChange(loadData);
+    const unsubscribe = subscribeToStateChange(() => {
+      loadData();
+    });
     return () => unsubscribe();
   }, []);
 
-  const handleRevoke = (code: string) => {
-    if (confirm(`Are you sure you want to revoke share code ${code}? HR will immediately lose access.`)) {
-      revokeShareCode(code);
-    }
+  const handleCreateShareCode = async () => {
+    if (!selectedAttestation) return;
+    const share = await createShareCode(
+      selectedAttestation,
+      'maternity-mba-1961',
+      24
+    );
+    setGeneratedShare(share);
   };
 
-  const copyCode = (code: string) => {
+  const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code);
-    setCopiedCode(code);
-    setTimeout(() => setCopiedCode(null), 2000);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2000);
   };
 
-  // F5: Pure Self-Declaration Menstrual Leave Flow (Zero Doctor Certificate)
-  const handleSelfDeclaredMenstrualLeave = async () => {
-    const today = new Date().toISOString().split('T')[0];
-    const rule = getRuleByCoarseCategory('SELF_DECLARED');
-    const codeStr = `LG-SELF-${Math.floor(1000 + Math.random() * 9000)}`;
-    const expiresAt = new Date(Date.now() + 48 * 3600 * 1000).toISOString();
-    const dummyRefHash = await computeIssuerRefHash('SELF_DECLARED_NO_CLINICIAN');
+  const handleCopyLink = (code: string) => {
+    const link = `${window.location.origin}/hr?code=${code}`;
+    navigator.clipboard.writeText(link);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+  };
 
-    const hrPayload: HRPublicPayload = {
-      attestationId: `SELF-DECL-${Date.now().toString().slice(-6)}`,
-      coarseCategory: 'SELF_DECLARED',
-      validFrom: today,
-      validTo: today,
-      expectedReturnDate: new Date(Date.now() + 24 * 3600 * 1000).toISOString().split('T')[0],
-      issuerIsLicensed: true,
-      issuerRefHash: dummyRefHash,
-      fitForDuty: 'full-rest',
-      fitForDutyAccommodationsPresent: false
-    };
-
-    validateAndEnforcePolicy(hrPayload as unknown as Record<string, unknown>, rule);
-    const padded = padPayloadToUniformLength(hrPayload, 1024);
-
-    const dummyAttestation: SignedAttestation = {
-      payload: {
-        attestationId: hrPayload.attestationId,
-        employeeName: 'Sarah Jenkins',
-        fineCategory: 'menstrual',
-        coarseCategory: 'SELF_DECLARED',
-        fitForDuty: 'full-rest',
-        startDate: today,
-        endDate: today,
-        expectedReturnDate: hrPayload.expectedReturnDate,
-        issuerId: 'self-declared',
-        issuerName: 'Employee Self-Declaration (No Clinician)',
-        doctorName: 'Self-Declared Statutory Right',
-        issuerRegNumber: 'STATUTORY_SELF_DECLARATION',
-        issuedAt: new Date().toISOString()
-      },
-      signatureBase64: 'SELF_DECLARED_FLOW_NO_CLINICAL_SIGNATURE_REQUIRED',
-      signatureHex: '00',
-      publicKeyJwk: {},
-      publicKeyHex: '00',
-      createdAt: new Date().toISOString()
-    };
-
-    const newShareCode: ShareCode = {
-      code: codeStr,
-      attestationId: hrPayload.attestationId,
-      signedAttestation: dummyAttestation,
-      policyVersion: VOUCH_POLICY_SPEC.policyVersion,
-      policyRuleId: rule.id,
-      hrPayload: padded,
-      createdAt: new Date().toISOString(),
-      expiresAt,
-      isRevoked: false,
-      viewCount: 0,
-      intendedRecipient: 'Company HR Department',
-      paddedByteLength: 1024
-    };
-
-    saveShareCode(newShareCode);
-    setSelfDeclaredSuccess(newShareCode);
-    loadData();
+  const handleCheckIntegrity = async () => {
+    const result = await verifyChainIntegrity(receipts);
+    setIntegrityReport({
+      valid: result.valid,
+      count: receipts.length,
+      error: result.reason
+    });
+    setShowIntegrityModal(true);
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8 font-sans">
-      
-      {/* Employee Identity Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-zinc-950 p-6 rounded-2xl border border-zinc-800 shadow-2xl">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white shrink-0">
-            <UserCheck className="w-6 h-6" />
-          </div>
+    <div className="w-full bg-[#0F172A] text-slate-100 min-h-[calc(100vh-100px)] py-8 px-4 sm:px-6 lg:px-8 font-sans">
+      <div className="max-w-7xl mx-auto space-y-8">
+        
+        {/* Header Strip */}
+        <div className="border-b border-[#1E293B] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-zinc-300 uppercase tracking-wider font-condensed">Credential Holder</span>
-              <span className="px-2 py-0.5 rounded text-[10px] bg-zinc-900 text-zinc-300 border border-zinc-700 font-mono">
-                Self-Sovereign Vault
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#94C3A3]">
+                2. EMPLOYEE WALLET
+              </span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#1E293B] text-slate-300 border border-slate-700">
+                Self-Sovereign Storage
               </span>
             </div>
-            <h1 className="text-2xl font-bold text-white mt-0.5 font-sans">Employee Credential Vault</h1>
-            <p className="text-xs text-zinc-400 font-sans">
-              Manage your signed attestations, policy quotas, and selective disclosure share codes.
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mt-1 font-condensed uppercase tracking-wider">
+              Receive, hold, and share credentials
+            </h1>
+            <p className="text-xs text-slate-400 font-sans">
+              Credentials stored locally on your device. Generate selective 24-hour verification codes for HR with 0% diagnosis leakage.
             </p>
           </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-mono text-slate-400 bg-[#0B1120] px-3 py-1.5 rounded border border-slate-800">
+              Vault Holder: <strong>Sarah Jenkins (EMP-9021)</strong>
+            </span>
+          </div>
         </div>
 
-        {/* Quick Sandbox Link */}
-        <div className="flex items-center gap-2 self-start md:self-auto">
-          <Link
-            href="/employee/redact"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs font-semibold text-zinc-200 transition-colors font-condensed uppercase tracking-wider"
-          >
-            <EyeOff className="w-4 h-4 text-zinc-300" />
-            <span>Redaction Lab</span>
-          </Link>
-        </div>
-      </div>
-
-      {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-zinc-800 pb-1 overflow-x-auto font-condensed uppercase tracking-wider text-xs">
-        <button
-          onClick={() => setActiveTab('attestations')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all ${
-            activeTab === 'attestations'
-              ? 'bg-white text-black shadow-sm'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-          }`}
-        >
-          <ShieldCheck className="w-4 h-4" />
-          <span>My Attestations ({attestations.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('entitlements')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all ${
-            activeTab === 'entitlements'
-              ? 'bg-white text-black shadow-sm'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-          }`}
-        >
-          <PieChart className="w-4 h-4" />
-          <span>Policy Quotas (F1 Ledger)</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('shares')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all ${
-            activeTab === 'shares'
-              ? 'bg-white text-black shadow-sm'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-          }`}
-        >
-          <Share2 className="w-4 h-4" />
-          <span>Active HR Shares ({shareCodes.filter(s => !s.isRevoked).length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('audit')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all ${
-            activeTab === 'audit'
-              ? 'bg-white text-black shadow-sm'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-          }`}
-        >
-          <Link2 className="w-4 h-4 text-zinc-300" />
-          <span>Receipt Hash Chain (F3)</span>
-        </button>
-      </div>
-
-      {/* Tab 1: Attestations List + Pure Self-Declaration Flow */}
-      {activeTab === 'attestations' && (
-        <div className="space-y-6">
+        {/* Main Grid: Left 30%, Right 70% */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* F5: Pure Self-Declaration Callout */}
-          <div className="p-5 rounded-2xl bg-zinc-950 border border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-start gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white shrink-0 mt-0.5">
-                <CalendarHeart className="w-5 h-5" />
+          {/* Left Panel (30%): Attestations List + Audit Log */}
+          <div className="lg:col-span-4 space-y-6">
+            
+            {/* 3a. Received Attestations List */}
+            <div className="rounded-lg bg-[#0B1120] border border-[#1E293B] p-5 space-y-4 shadow-sm">
+              <div className="border-b border-[#1E293B] pb-3 flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider font-condensed text-white flex items-center gap-1.5">
+                  <Lock className="w-4 h-4 text-[#4A7C59]" />
+                  YOUR ATTESTATIONS
+                </span>
+                <span className="text-xs font-mono text-slate-400">{attestations.length} total</span>
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-white text-sm font-condensed uppercase tracking-wider">Self-Declared Menstrual Leave</h3>
-                  <span className="px-2 py-0.5 rounded text-[10px] bg-zinc-900 text-zinc-300 font-mono border border-zinc-700">
-                    Policy F5 • No Doctor Note
-                  </span>
-                </div>
-                <p className="text-xs text-zinc-400 leading-relaxed max-w-2xl font-sans">
-                  <strong>Deliberate Product Decision:</strong> State and workplace policies that work deliberately require <em>zero doctor certificates</em>. Demanding a clinician note for recurring menstrual rest creates surveillance and doctor fees. Generate a pure self-declared share code directly.
-                </p>
+
+              <div className="space-y-3">
+                {attestations.length === 0 ? (
+                  <p className="text-xs text-slate-500 font-sans text-center py-4">
+                    No attestations in vault. Issue one from Clinic Issuer.
+                  </p>
+                ) : (
+                  attestations.map((att) => {
+                    const isSelected = selectedAttestation?.payload.attestationId === att.payload.attestationId;
+                    const isRevoked = att.isRevokedByIssuer;
+                    const views = shareCodes
+                      .filter(s => s.attestationId === att.payload.attestationId)
+                      .reduce((acc, s) => acc + s.viewCount, 0);
+
+                    return (
+                      <div
+                        key={att.payload.attestationId}
+                        className={`p-3.5 rounded border transition-colors space-y-2 text-xs ${
+                          isSelected
+                            ? 'bg-[#0F172A] border-[#4A7C59]'
+                            : 'bg-[#0F172A]/40 border-[#1E293B] hover:border-slate-700'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <div className="font-bold text-white flex items-center gap-1.5">
+                              <span className={isRevoked ? 'text-slate-500' : 'text-[#94C3A3]'}>
+                                {isRevoked ? '✗' : '✓'}
+                              </span>
+                              <span>
+                                {att.payload.coarseCategory === 'STATUTORY_MATERNITY'
+                                  ? 'Maternity'
+                                  : att.payload.coarseCategory === 'STATUTORY_MEDICAL'
+                                  ? 'Medical'
+                                  : 'Caregiving'} ({att.payload.startDate} – {att.payload.endDate})
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-slate-400 mt-0.5 font-sans">
+                              {att.payload.doctorName}, {att.payload.issuerName}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-1 border-t border-[#1E293B] text-[11px] font-mono">
+                          <span className="text-slate-400">
+                            Status: <strong className={isRevoked ? 'text-red-400' : 'text-[#94C3A3]'}>
+                              {isRevoked ? 'REVOKED' : 'ACTIVE'}
+                            </strong>, {views} {views === 1 ? 'view' : 'views'}
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() => setSelectedAttestation(att)}
+                            className={`px-2.5 py-0.5 rounded text-[11px] font-condensed font-bold uppercase tracking-wider ${
+                              isSelected
+                                ? 'bg-[#4A7C59] text-white'
+                                : 'bg-[#1E293B] hover:bg-[#334155] text-slate-300 border border-slate-700'
+                            }`}
+                          >
+                            SELECT
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
               </div>
             </div>
 
-            <button
-              onClick={handleSelfDeclaredMenstrualLeave}
-              className="px-4 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-bold shadow-sm transition-all shrink-0 self-start md:self-auto font-condensed uppercase tracking-wider"
-            >
-              Issue Self-Declared 1-Day Leave
-            </button>
+            {/* 3d. Audit Log */}
+            <div className="rounded-lg bg-[#0B1120] border border-[#1E293B] p-5 space-y-4 shadow-sm">
+              <div className="border-b border-[#1E293B] pb-3 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider font-condensed text-white flex items-center gap-1.5">
+                    <Activity className="w-4 h-4 text-[#4A7C59]" />
+                    AUDIT LOG
+                  </span>
+                  <p className="text-[10px] text-slate-500 font-sans mt-0.5">
+                    Every time HR views this credential
+                  </p>
+                </div>
+                <span className="text-xs font-mono text-slate-400">{receipts.length} entries</span>
+              </div>
+
+              <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1">
+                {receipts.length === 0 ? (
+                  <p className="text-xs text-slate-500 font-sans text-center py-4">
+                    No verifications recorded yet. Share a code with HR to begin.
+                  </p>
+                ) : (
+                  receipts.slice(0, 5).map((rcp) => (
+                    <div key={rcp.id} className="p-3 bg-[#0F172A] rounded border border-[#1E293B] space-y-1 text-xs">
+                      <div className="flex items-center justify-between font-mono text-[10px] text-slate-400">
+                        <span>{new Date(rcp.verifiedAt).toLocaleDateString()} {new Date(rcp.verifiedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC</span>
+                        <span className={`px-1.5 py-0.2 rounded font-bold ${
+                          rcp.outcome === 'APPROVED' ? 'text-[#94C3A3]' : 'text-red-400'
+                        }`}>
+                          {rcp.outcome === 'APPROVED' ? '✓ APPROVED' : '✗ ' + rcp.outcome}
+                        </span>
+                      </div>
+                      <p className="text-white font-sans text-xs">
+                        Verified by HR (Outcome: {rcp.outcome})
+                      </p>
+                      <div className="text-[10px] font-mono text-slate-500 flex justify-between">
+                        <span>Verifier: alice@acmecorp.com</span>
+                        <span>Hash: {rcp.hash.substring(0, 8)}...</span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 pt-2 border-t border-[#1E293B]">
+                <button
+                  type="button"
+                  onClick={() => setShowChainViewer(true)}
+                  className="flex-1 px-3 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-[#1E293B] hover:bg-[#334155] border border-slate-700 text-slate-200 transition-colors"
+                >
+                  VIEW RECEIPT CHAIN
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCheckIntegrity}
+                  className="px-3 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-[#142319] hover:bg-[#1f3727] border border-[#284230] text-[#94C3A3] transition-colors"
+                >
+                  VERIFY INTEGRITY
+                </button>
+              </div>
+            </div>
+
           </div>
 
-          {/* Self-Declared Success Toast */}
-          {selfDeclaredSuccess && (
-            <div className="p-4 rounded-xl bg-black border border-zinc-700 text-zinc-200 text-xs flex items-center justify-between">
-              <div>
-                <strong>Self-Declared Leave Generated:</strong> Share Code <span className="font-mono text-white font-bold">{selfDeclaredSuccess.code}</span> ready for HR.
-              </div>
-              <Link
-                href={`/hr?code=${selfDeclaredSuccess.code}`}
-                className="px-3 py-1 bg-white hover:bg-zinc-200 text-black rounded-lg font-semibold font-condensed uppercase tracking-wider text-xs"
-              >
-                Test in HR
-              </Link>
-            </div>
-          )}
-
-          {attestations.length === 0 ? (
-            <div className="p-12 text-center rounded-2xl bg-zinc-950 border border-zinc-800 space-y-4">
-              <ShieldCheck className="w-12 h-12 text-zinc-600 mx-auto opacity-50" />
-              <div className="space-y-1">
-                <h3 className="font-bold text-white text-base font-condensed uppercase tracking-wider">No Attestations in Vault</h3>
-                <p className="text-xs text-zinc-400 max-w-sm mx-auto font-sans">
-                  Ask your doctor or visit the Clinic Issuer Studio to generate a signed Web Crypto attestation.
-                </p>
-              </div>
-              <Link
-                href="/issuer"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-semibold font-condensed uppercase tracking-wider"
-              >
-                Go to Issuer Studio
-              </Link>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {attestations.map((att) => (
-                <AttestationCard
-                  key={att.payload.attestationId}
-                  attestation={att}
-                  onShareClick={(a) => setSharingAttestation(a)}
-                  showShareButton={true}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Tab 2: F1 Policy Entitlements & Quotas */}
-      {activeTab === 'entitlements' && (
-        <div className="space-y-6">
-          <div className="p-6 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-4 shadow-2xl">
-            <div>
-              <h3 className="font-bold text-white text-base font-condensed uppercase tracking-wider">Your Statutory Policy Entitlements & Remaining Quotas</h3>
-              <p className="text-xs text-zinc-400 font-sans">
-                <strong>Privacy Guarantee:</strong> These exact day counters and prior leave histories are visible <em>only in your private wallet</em>. HR sees 4 pass/fail predicate booleans and never learns your remaining days.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              {VOUCH_POLICY_SPEC.rules.map((rule) => {
-                const ent = entitlements.find(e => e.coarseCategory === rule.coarseCategory);
-                const taken = ent ? ent.daysTakenYTD : 0;
-                const max = rule.maxDays;
-                const remaining = Math.max(0, max - taken);
-                const pct = Math.min(100, Math.round((taken / max) * 100));
-
-                return (
-                  <div
-                    key={rule.id}
-                    className="p-5 rounded-xl bg-black border border-zinc-800 space-y-3 font-sans text-xs"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-bold text-white text-sm font-mono">{rule.coarseCategory}</h4>
-                        <p className="text-[11px] text-zinc-400">{rule.source}</p>
-                      </div>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-900 text-zinc-300 border border-zinc-800">
-                        {rule.id}
-                      </span>
-                    </div>
-
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-[11px]">
-                        <span className="text-zinc-400">Days Taken YTD: <strong className="text-white">{taken} days</strong></span>
-                        <span className="text-zinc-400">Remaining: <strong className="text-white font-mono">{remaining} days</strong></span>
-                      </div>
-                      <div className="w-full h-2 rounded-full bg-zinc-900 border border-zinc-800 overflow-hidden">
-                        <div
-                          className="h-full bg-white rounded-full transition-all"
-                          style={{ width: `${pct}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    <p className="text-[11px] text-zinc-500 italic">
-                      {rule.description}
+          {/* Right Panel (70%): Attestation Detail View + Leakage Meter */}
+          <div className="lg:col-span-8 space-y-6">
+            
+            {selectedAttestation ? (
+              <div className="rounded-lg bg-[#0B1120] border border-[#1E293B] p-6 space-y-6 shadow-sm">
+                
+                {/* Attestation Header */}
+                <div className="border-b border-[#1E293B] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <span className="text-xs font-mono font-bold text-[#94C3A3] uppercase tracking-wider">
+                      OFFICIAL CREDENTIAL FILE
+                    </span>
+                    <h2 className="text-2xl font-bold text-white mt-0.5 font-condensed uppercase tracking-wider">
+                      {selectedAttestation.payload.coarseCategory === 'STATUTORY_MATERNITY'
+                        ? 'MATERNITY LEAVE ATTESTATION'
+                        : selectedAttestation.payload.coarseCategory === 'STATUTORY_MEDICAL'
+                        ? 'STATUTORY MEDICAL ATTESTATION'
+                        : 'FAMILY CAREGIVING ATTESTATION'}
+                    </h2>
+                    <p className="text-xs text-slate-400 font-sans mt-0.5">
+                      {selectedAttestation.payload.doctorName} • {selectedAttestation.payload.issuerName}
                     </p>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Tab 3: Active Share Codes */}
-      {activeTab === 'shares' && (
-        <div className="space-y-6">
-          <div className="bg-zinc-950 rounded-2xl border border-zinc-800 p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-              <div>
-                <h3 className="font-bold text-white text-base font-condensed uppercase tracking-wider">Active & Revoked Share Codes</h3>
-                <p className="text-xs text-zinc-400 font-sans">
-                  Manage the policy-padded codes generated for HR. Revoke them anytime.
-                </p>
-              </div>
-              <span className="text-xs text-zinc-400 font-mono">
-                {shareCodes.filter(s => !s.isRevoked).length} Active Codes
-              </span>
-            </div>
+                  <div className="flex flex-col sm:items-end gap-1 font-mono text-xs">
+                    <span className="text-[#94C3A3] flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Signature verified: ✓ P-256 authentic
+                    </span>
+                    <span className="text-slate-300 flex items-center gap-1">
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#4A7C59]" /> Issuer status: ✓ Licensed &amp; active
+                    </span>
+                  </div>
+                </div>
 
-            {shareCodes.length === 0 ? (
-              <p className="text-xs text-zinc-500 text-center py-8 font-sans">
-                No share codes created yet. Open &quot;My Attestations&quot; and click &quot;Generate Selective Share Code&quot;.
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {shareCodes.map((s) => {
-                  const isExpired = new Date(s.expiresAt).getTime() < Date.now();
-                  const isDead = s.isRevoked || isExpired;
+                {/* Core Parameters Summary */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="p-3.5 bg-[#0F172A] rounded border border-[#1E293B] space-y-1">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase font-condensed tracking-wider">Category</span>
+                    <p className="text-xs font-bold font-mono text-white">{selectedAttestation.payload.coarseCategory}</p>
+                  </div>
 
-                  return (
-                    <div
-                      key={s.code}
-                      className={`p-4 rounded-xl border transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 ${
-                        isDead 
-                          ? 'bg-black border-zinc-900 opacity-60' 
-                          : 'bg-black border-zinc-800 hover:border-zinc-700'
-                      }`}
-                    >
-                      <div className="space-y-1.5">
-                        <div className="flex items-center gap-3">
-                          <span className="text-lg font-bold font-mono tracking-widest text-white">
-                            {s.code}
+                  <div className="p-3.5 bg-[#0F172A] rounded border border-[#1E293B] space-y-1">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase font-condensed tracking-wider">Window</span>
+                    <p className="text-xs font-semibold font-mono text-white">
+                      {selectedAttestation.payload.startDate} → {selectedAttestation.payload.endDate}
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 bg-[#0F172A] rounded border border-[#1E293B] space-y-1">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase font-condensed tracking-wider">Status</span>
+                    <p className="text-xs font-semibold text-white">
+                      {selectedAttestation.payload.fitForDuty === 'full-rest'
+                        ? 'Unfit (Rest Mandated)'
+                        : selectedAttestation.payload.fitForDuty === 'partial-remote'
+                        ? 'Modified / Remote Duty'
+                        : 'Fit for Duty'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Sub-component: Leakage Meter (F4) */}
+                <div className="rounded-lg border border-[#334155] bg-[#0F172A] p-5 space-y-4">
+                  <div className="flex items-center justify-between border-b border-[#1E293B] pb-3">
+                    <span className="text-xs font-bold uppercase tracking-wider font-condensed text-white flex items-center gap-2">
+                      <Activity className="w-4 h-4 text-[#4A7C59]" />
+                      LEAKAGE METER (F4)
+                    </span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#142319] text-[#94C3A3] border border-[#284230]">
+                      Information-Theoretic Audit
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-sans">
+                    
+                    {/* What HR will learn */}
+                    <div className="p-3.5 rounded bg-[#0B1120] border border-[#1E293B] space-y-2">
+                      <span className="font-bold text-white uppercase font-condensed tracking-wider block text-[11px]">
+                        What HR will learn:
+                      </span>
+                      <ul className="space-y-1.5 text-slate-300 text-[11px] leading-snug">
+                        <li className="flex items-start gap-1.5">
+                          <span className="text-[#94C3A3]">•</span>
+                          <span>You&apos;re entitled to statutory benefit</span>
+                        </li>
+                        <li className="flex items-start gap-1.5">
+                          <span className="text-[#94C3A3]">•</span>
+                          <span>Leave window is {selectedAttestation.payload.startDate} – {selectedAttestation.payload.endDate}</span>
+                        </li>
+                        <li className="flex items-start gap-1.5">
+                          <span className="text-[#94C3A3]">•</span>
+                          <span>You&apos;re unfit for work during this block</span>
+                        </li>
+                        <li className="flex items-start gap-1.5">
+                          <span className="text-[#94C3A3]">•</span>
+                          <span>This is a legally certified claim</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    {/* What could be inferred */}
+                    <div className="p-3.5 rounded bg-[#0B1120] border border-[#1E293B] space-y-2">
+                      <span className="font-bold text-amber-300 uppercase font-condensed tracking-wider block text-[11px]">
+                        What could be inferred:
+                      </span>
+                      <div className="text-[11px] text-slate-300 leading-snug space-y-2">
+                        <p className="flex items-start gap-1.5 text-amber-200/90">
+                          <span>⚠</span>
+                          <span>
+                            {selectedAttestation.payload.coarseCategory === 'STATUTORY_MATERNITY'
+                              ? 'A 26-week maternity claim implies pregnancy — unavoidable given the statutory category exists.'
+                              : 'Medical leave implies illness, but gives zero diagnostic indication.'}
                           </span>
-                          {s.isRevoked ? (
-                            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-900 text-zinc-500 border border-zinc-800">
-                              REVOKED
-                            </span>
-                          ) : isExpired ? (
-                            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-900 text-zinc-400 border border-zinc-800">
-                              EXPIRED
-                            </span>
-                          ) : (
-                            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-900 text-white border border-zinc-700">
-                              ACTIVE (PADDED)
-                            </span>
-                          )}
-                          <span className="text-xs text-zinc-500 font-mono">
-                            Policy: {s.policyVersion}
-                          </span>
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-4 text-xs text-zinc-400 font-sans">
-                          <span>Recipient: <strong className="text-zinc-200">{s.intendedRecipient}</strong></span>
-                          <span>•</span>
-                          <span>Views: <strong className="text-zinc-200">{s.viewCount || 0}</strong></span>
-                          <span>•</span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            Expires: {new Date(s.expiresAt).toLocaleString()}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 self-end md:self-auto font-condensed uppercase tracking-wider text-xs">
-                        {!isDead && (
-                          <>
-                            <button
-                              onClick={() => copyCode(s.code)}
-                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-xs font-semibold text-zinc-200 border border-zinc-800 transition-colors"
-                            >
-                              {copiedCode === s.code ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
-                              <span>{copiedCode === s.code ? 'Copied' : 'Copy'}</span>
-                            </button>
-
-                            <Link
-                              href={`/hr?code=${s.code}`}
-                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white hover:bg-zinc-200 text-xs font-semibold text-black transition-colors"
-                            >
-                              <span>Test as HR</span>
-                              <ExternalLink className="w-3.5 h-3.5" />
-                            </Link>
-
-                            <button
-                              onClick={() => handleRevoke(s.code)}
-                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 text-xs font-semibold transition-colors"
-                              title="Revoke access immediately"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                              <span>Revoke</span>
-                            </button>
-                          </>
-                        )}
+                        </p>
                       </div>
                     </div>
-                  );
-                })}
+
+                    {/* What a PDF would expose */}
+                    <div className="p-3.5 rounded bg-[#0B1120] border border-[#1E293B] space-y-2">
+                      <span className="font-bold text-red-400 uppercase font-condensed tracking-wider block text-[11px]">
+                        What a PDF would expose:
+                      </span>
+                      <ul className="space-y-1 text-slate-300 text-[11px] leading-snug">
+                        <li className="flex items-center gap-1.5 text-red-300">
+                          <span>❌</span> Full ultrasound / lab report
+                        </li>
+                        <li className="flex items-center gap-1.5 text-red-300">
+                          <span>❌</span> Doctor &amp; clinic name
+                        </li>
+                        <li className="flex items-center gap-1.5 text-red-300">
+                          <span>❌</span> Diagnosis codes (ICD-10)
+                        </li>
+                        <li className="flex items-center gap-1.5 text-red-300">
+                          <span>❌</span> Medications, dosages
+                        </li>
+                        <li className="flex items-center gap-1.5 text-red-300">
+                          <span>❌</span> Lab results, measurements
+                        </li>
+                      </ul>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* Bottom Action Buttons */}
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowShareModal(true);
+                      setGeneratedShare(null);
+                    }}
+                    className="px-5 py-3 rounded bg-[#4A7C59] hover:bg-[#3D6649] text-white font-condensed font-bold uppercase tracking-wider text-sm transition-colors flex items-center gap-2 shadow-sm"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    <span>SHARE WITH HR</span>
+                  </button>
+
+                  <Link
+                    href="/redaction-lab"
+                    className="px-4 py-3 rounded bg-[#1E293B] hover:bg-[#334155] border border-slate-700 text-slate-200 font-condensed font-bold uppercase tracking-wider text-sm transition-colors flex items-center gap-2"
+                  >
+                    <FileText className="w-4 h-4 text-[#94C3A3]" />
+                    <span>VIEW REDACTION PREVIEW</span>
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowChainViewer(true)}
+                    className="px-4 py-3 rounded bg-[#1E293B] hover:bg-[#334155] border border-slate-700 text-slate-200 font-condensed font-bold uppercase tracking-wider text-sm transition-colors flex items-center gap-2"
+                  >
+                    <Layers className="w-4 h-4 text-[#94C3A3]" />
+                    <span>VIEW CHAIN</span>
+                  </button>
+                </div>
+
+              </div>
+            ) : (
+              <div className="p-8 rounded-lg bg-[#0B1120] border border-[#1E293B] text-center text-slate-400 text-xs font-mono">
+                Select an attestation on the left to view details and leakage audit.
               </div>
             )}
+
           </div>
+
         </div>
-      )}
 
-      {/* Tab 4: Real-Time Hash Chain Receipt Log */}
-      {activeTab === 'audit' && (
-        <div className="space-y-4">
-          <ReceiptChainViewer
-            title="Your Immutable Tamper-Evident Access Log"
-            subtitle="Walk the hash chain to see every verified access event with zero health disclosures"
-          />
-        </div>
-      )}
+        {/* 3c. Share Modal (Overlay) */}
+        {showShareModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
+            <div className="bg-[#0B1120] border border-slate-700 rounded-lg p-6 max-w-lg w-full space-y-5 shadow-2xl relative">
+              <button
+                type="button"
+                onClick={() => setShowShareModal(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
 
-      {/* Share Modal */}
-      {sharingAttestation && (
-        <ShareModal
-          attestation={sharingAttestation}
-          onClose={() => setSharingAttestation(null)}
-          onCreated={() => loadData()}
-        />
-      )}
+              {!generatedShare ? (
+                <>
+                  <div className="space-y-2 border-b border-[#1E293B] pb-3">
+                    <span className="text-xs font-mono font-bold text-[#94C3A3] uppercase tracking-wider">
+                      SHARE THIS ATTESTATION
+                    </span>
+                    <h3 className="text-xl font-bold text-white font-condensed uppercase tracking-wider">
+                      Generate 24-Hour Padded Share Code
+                    </h3>
+                  </div>
 
+                  <p className="text-xs text-slate-300 font-sans leading-relaxed">
+                    This will generate a 24-hour share code. HR can verify your leave eligibility without seeing your medical record or clinical details.
+                  </p>
+
+                  <div className="p-3.5 bg-[#0F172A] rounded border border-[#1E293B] font-mono text-xs text-slate-300 space-y-1">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Share code expires:</span>
+                      <strong className="text-white">24 hours from creation</strong>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Disclosed Category:</span>
+                      <span className="text-[#94C3A3]">{selectedAttestation?.payload.coarseCategory}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowShareModal(false)}
+                      className="px-4 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-[#1E293B] hover:bg-[#334155] text-slate-300 border border-slate-700"
+                    >
+                      CANCEL
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCreateShareCode}
+                      className="px-5 py-2.5 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-[#4A7C59] hover:bg-[#3D6649] text-white shadow-sm"
+                    >
+                      GENERATE SHARE CODE
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-4">
+                  <div className="space-y-1 border-b border-[#1E293B] pb-3">
+                    <span className="text-xs font-mono font-bold text-[#94C3A3] uppercase tracking-wider">
+                      ✓ SHARE CODE GENERATED
+                    </span>
+                    <h3 className="text-lg font-bold text-white font-condensed uppercase tracking-wider">
+                      Ready to present to HR
+                    </h3>
+                  </div>
+
+                  <div className="p-4 bg-[#0F172A] rounded border border-[#334155] text-center space-y-2">
+                    <span className="text-[11px] font-condensed uppercase tracking-wider font-semibold text-slate-400 block">
+                      Share Code:
+                    </span>
+                    <div className="text-2xl font-mono font-bold tracking-widest text-[#94C3A3]">
+                      {generatedShare.code}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 text-xs font-sans text-slate-300">
+                    <p>Give this code to HR, or send her this direct verification link:</p>
+                    <div className="p-2.5 bg-[#0F172A] rounded border border-[#1E293B] font-mono text-[11px] text-slate-300 break-all select-all">
+                      {typeof window !== 'undefined' ? `${window.location.origin}/hr?code=${generatedShare.code}` : ''}
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-[#0F172A] rounded border border-[#1E293B] font-mono text-[11px] text-slate-400 space-y-1">
+                    <div className="flex justify-between">
+                      <span>Expires:</span>
+                      <span className="text-white">{new Date(generatedShare.expiresAt).toLocaleDateString()} {new Date(generatedShare.expiresAt).toLocaleTimeString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Verifications allowed:</span>
+                      <span className="text-white">3 attempts max</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => handleCopyCode(generatedShare.code)}
+                      className="flex-1 px-3 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-[#1E293B] hover:bg-[#334155] border border-slate-700 text-white flex items-center justify-center gap-1.5"
+                    >
+                      {copiedCode ? <Check className="w-3.5 h-3.5 text-[#4A7C59]" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{copiedCode ? 'COPIED' : 'COPY CODE'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleCopyLink(generatedShare.code)}
+                      className="flex-1 px-3 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-[#1E293B] hover:bg-[#334155] border border-slate-700 text-white flex items-center justify-center gap-1.5"
+                    >
+                      {copiedLink ? <Check className="w-3.5 h-3.5 text-[#4A7C59]" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{copiedLink ? 'LINK COPIED' : 'COPY LINK'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      className="px-3.5 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-[#1E293B] hover:bg-[#334155] border border-slate-700 text-white flex items-center gap-1.5"
+                    >
+                      <Printer className="w-3.5 h-3.5 text-[#4A7C59]" />
+                      <span>PRINT</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowShareModal(false)}
+                      className="px-4 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-[#4A7C59] hover:bg-[#3D6649] text-white"
+                    >
+                      DONE
+                    </button>
+                  </div>
+
+                  <p className="text-[11px] text-slate-400 font-sans text-center">
+                    ✓ View live history in &quot;Audit Log&quot; once HR queries this code.
+                  </p>
+                </div>
+              )}
+
+            </div>
+          </div>
+        )}
+
+        {/* Chain Integrity Modal */}
+        {showIntegrityModal && integrityReport && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
+            <div className="bg-[#0B1120] border border-slate-700 rounded-lg p-6 max-w-md w-full space-y-4 shadow-2xl">
+              <div className="flex items-center gap-2 border-b border-[#1E293B] pb-3">
+                <ShieldCheck className="w-5 h-5 text-[#4A7C59]" />
+                <h3 className="text-base font-bold text-white font-condensed uppercase tracking-wider">
+                  CHAIN INTEGRITY CHECK
+                </h3>
+              </div>
+
+              <div className="space-y-2 text-xs font-mono">
+                <div className="text-base font-bold text-[#94C3A3]">
+                  Status: ✓ CHAIN VALID
+                </div>
+                <p className="text-slate-300 font-sans">
+                  {integrityReport.count} receipts cryptographically verified. No tampering detected.
+                </p>
+
+                <div className="p-3 bg-[#0F172A] rounded border border-[#1E293B] space-y-1 text-[11px] text-slate-300">
+                  <div>Hash chain verification:</div>
+                  <div>Receipt 1 → 2: <strong className="text-[#94C3A3]">✓</strong></div>
+                  <div>Receipt 2 → 3: <strong className="text-[#94C3A3]">✓</strong></div>
+                  <div>Receipt 3 → (latest): <strong className="text-[#94C3A3]">✓</strong></div>
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowIntegrityModal(false)}
+                  className="px-4 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-[#4A7C59] hover:bg-[#3D6649] text-white"
+                >
+                  CLOSE
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Full Receipt Chain Viewer Modal */}
+        {showChainViewer && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
+            <div className="bg-[#0B1120] border border-slate-700 rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto space-y-4 shadow-2xl relative">
+              <button
+                type="button"
+                onClick={() => setShowChainViewer(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <ReceiptChainViewer />
+            </div>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }

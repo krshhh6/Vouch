@@ -617,3 +617,46 @@ export function resetAllData(): void {
   localStorage.removeItem(STORAGE_KEYS.INITIALIZED);
   seedDemoData(true);
 }
+
+export const resetDemoData = resetAllData;
+
+export async function createShareCode(
+  attestation: SignedAttestation,
+  policyRuleId = 'maternity-mba-1961',
+  expiryHours = 24
+): Promise<ShareCode> {
+  const code = `VC-26WMAT-${Math.floor(1000 + Math.random() * 9000)}`;
+  const expiresAt = new Date(Date.now() + expiryHours * 3600 * 1000).toISOString();
+  const issuerRefHash = await computeIssuerRefHash(attestation.payload.issuerRegNumber);
+
+  const hrPayload: HRPublicPayload = {
+    attestationId: attestation.payload.attestationId,
+    coarseCategory: attestation.payload.coarseCategory,
+    validFrom: attestation.payload.startDate,
+    validTo: attestation.payload.endDate,
+    expectedReturnDate: attestation.payload.expectedReturnDate,
+    fitForDuty: attestation.payload.fitForDuty,
+    fitForDutyAccommodationsPresent: Boolean(attestation.payload.fitForDutyNotes && attestation.payload.fitForDutyNotes.length > 0),
+    issuerIsLicensed: true,
+    issuerRefHash,
+  };
+
+  const paddedHrPayload = padPayloadToUniformLength(hrPayload);
+
+  const shareCode: ShareCode = {
+    code,
+    attestationId: attestation.payload.attestationId,
+    signedAttestation: attestation,
+    policyVersion: VOUCH_POLICY_SPEC.policyVersion,
+    policyRuleId,
+    hrPayload: paddedHrPayload,
+    createdAt: new Date().toISOString(),
+    expiresAt,
+    viewCount: 0,
+    isRevoked: false,
+    paddedByteLength: 512
+  };
+
+  saveShareCode(shareCode);
+  return shareCode;
+}

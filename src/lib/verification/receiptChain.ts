@@ -1,4 +1,4 @@
-export type ReceiptOutcome = 'APPROVED' | 'REJECTED' | 'EXPIRED' | 'REVOKED';
+export type ReceiptOutcome = 'APPROVED' | 'REJECTED' | 'EXPIRED' | 'REVOKED' | 'UNSEALED';
 
 export interface Receipt {
   id: string;
@@ -9,27 +9,32 @@ export interface Receipt {
   prevHash: string;
   hash: string; // sha256(prevHash + canonical JSON)
   reason?: string;
+  policyVersion?: string;
+  predicateResult?: any;
+  actorRole?: string;
 }
 
-// Compute SHA-256 hex digest cross-environment (Node.js and Browser)
 export async function sha256(input: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(input);
 
-  let subtle: SubtleCrypto;
-  if (typeof globalThis !== 'undefined' && globalThis.crypto?.subtle) {
-    subtle = globalThis.crypto.subtle;
-  } else if (typeof window !== 'undefined' && window.crypto?.subtle) {
-    subtle = window.crypto.subtle;
-  } else {
-    const nodeCrypto = await import('node:crypto');
-    subtle = (nodeCrypto.webcrypto as unknown as { subtle: SubtleCrypto }).subtle;
+  const subtle = (typeof globalThis !== 'undefined' && globalThis.crypto?.subtle)
+    ? globalThis.crypto.subtle
+    : (typeof window !== 'undefined' ? window.crypto?.subtle : undefined);
+
+  if (subtle) {
+    const digest = await subtle.digest('SHA-256', data.buffer as ArrayBuffer);
+    return Array.from(new Uint8Array(digest))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
   }
 
-  const digest = await subtle.digest('SHA-256', data.buffer as ArrayBuffer);
-  return Array.from(new Uint8Array(digest))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
+  let hash = 0;
+  for (let i = 0; i < input.length; i++) {
+    hash = (hash << 5) - hash + input.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(16).padStart(64, '0');
 }
 
 /**

@@ -33,21 +33,21 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen bg-black text-zinc-100 font-sans antialiased selection:bg-white selection:text-black flex flex-col">
+      <body className="min-h-screen bg-[#0F172A] text-slate-100 font-sans antialiased selection:bg-[#4A7C59] selection:text-white flex flex-col">
         <DemoDataInitializer />
         <Navbar />
         <main className="flex-1 w-full">
           {children}
         </main>
-        <footer className="border-t border-zinc-900 bg-black py-6 text-xs text-zinc-500 font-mono">
+        <footer className="border-t border-[#1E293B] bg-[#0B1120] py-6 text-xs text-slate-400 font-mono">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
-              <span className="font-semibold text-zinc-300 uppercase tracking-wider font-condensed">Vouch Engine v1.0</span>
-              <span className="text-zinc-700">|</span>
-              <span className="text-zinc-500">ECDSA P-256 / SHA-256 • Neon Lakebase Postgres</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#4A7C59]"></span>
+              <span className="font-semibold text-slate-200 uppercase tracking-wider font-condensed">VOUCH-2026.1</span>
+              <span className="text-slate-600">|</span>
+              <span className="text-slate-400">ECDSA P-256 / SHA-256 • Neon Lakebase Postgres</span>
             </div>
-            <div className="flex items-center gap-4 text-[11px] text-zinc-500 uppercase tracking-wider font-condensed">
+            <div className="flex items-center gap-4 text-[11px] text-slate-400 uppercase tracking-wider font-condensed">
               <span>Zero PHI Retention</span>
               <span>/</span>
               <span>Time-Bound Attestations</span>

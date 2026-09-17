@@ -10,42 +10,48 @@ const config: Config = {
     extend: {
       colors: {
         ink: {
-          950: '#000000',
-          900: '#09090b',
-          850: '#121214',
-          800: '#18181b',
-          700: '#27272a',
-          600: '#3f3f46',
-          500: '#71717a',
-          400: '#a1a1aa',
-        },
-        parchment: {
-          50: '#ffffff',
-          100: '#fafafa',
-          200: '#f4f4f5',
-          300: '#e4e4e7',
-          400: '#d4d4d8',
-          500: '#a1a1aa',
-          600: '#71717a',
+          950: '#020617', // deepest midnight
+          900: '#0B1120', // deep dark background
+          850: '#0F172A', // primary clinical ink-navy
+          800: '#1E293B', // card background / container
+          700: '#334155', // structural borders
+          600: '#475569', // muted borders
+          500: '#64748B', // secondary label
+          400: '#94A3B8', // readable muted text
+          300: '#CBD5E1',
+          200: '#E2E8F0',
+          100: '#F1F5F9',
         },
         seal: {
-          50: '#ffffff',
-          100: '#fafafa',
-          200: '#f4f4f5',
-          300: '#e4e4e7',
-          400: '#ffffff',
-          500: '#ffffff',
-          600: '#27272a',
-          700: '#18181b',
-          800: '#27272a',
-          900: '#121214',
-          950: '#09090b',
+          50: '#F0F7F2',
+          100: '#DCEEE1',
+          200: '#BDDCC6',
+          300: '#94C3A3',
+          400: '#6BA67E',
+          500: '#4A7C59', // primary muted seal-green
+          600: '#3D6649',
+          700: '#31523B',
+          800: '#284230',
+          900: '#213728',
+          950: '#142319',
         },
-        redact: {
-          black: '#000000',
-          charcoal: '#09090b',
-          muted: '#18181b',
-        }
+        parchment: {
+          50: '#FFFDF9',
+          100: '#FAF7F0',
+          200: '#F5F1E8', // primary document parchment
+          300: '#EDE6D6', // parchment borders
+          400: '#E0D5BE',
+          500: '#C7B696',
+          600: '#A99775',
+          700: '#8A7A5B',
+          800: '#5C513C',
+          900: '#3D3627',
+        },
+        charcoal: {
+          DEFAULT: '#1E293B',
+          muted: '#475569',
+          light: '#64748B',
+        },
       },
       fontFamily: {
         sans: ['Geist', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
@@ -53,14 +59,10 @@ const config: Config = {
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
         serif: ['Georgia', 'Cambria', '"Times New Roman"', 'serif'],
       },
-      backgroundImage: {
-        'ink-gradient': "none",
-        'parchment-pattern': "none",
-      },
       boxShadow: {
-        'parchment': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
-        'seal': 'none',
-        'elevated': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+        'parchment': '0 2px 4px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.08)',
+        'seal': '0 2px 6px 0 rgba(74, 124, 89, 0.25)',
+        'elevated': '0 4px 12px -2px rgba(15, 23, 42, 0.35)',
       },
     },
   },

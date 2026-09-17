@@ -134,6 +134,8 @@ export interface Receipt {
   actorRole: string; // e.g. "HR_BENEFITS_VERIFIER" or "GRIEVANCE_OFFICER"
 }
 
+export type VerificationReceipt = Receipt;
+
 // F5: Policy Compiler Rule Spec
 export interface PolicyRule {
   id: string;
