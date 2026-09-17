@@ -80,5 +80,78 @@ Asserts 100% absence of prohibited clinical and clinic tokens across all HR payl
 
 ---
 
+## 📜 Document Verification Layer Architecture
+
+Vouch incorporates a dedicated, zero-external-dependency verification layer built with TypeScript, the Next.js App Router, and the native **Web Crypto API** (`crypto.subtle`):
+
+### 1. Three Verification Flows
+
+```
+                          ┌─────────────────────────────┐
+                          │    Verification Engine      │
+                          └──────────────┬──────────────┘
+                                         │
+        ┌────────────────────────────────┼────────────────────────────────┐
+        ▼                                ▼                                ▼
+1. Credential Verify            2. Document Parsing & Integrity   3. Trusted Issuer Check
+   • ECDSA P-256 Web Crypto        • In-browser PDF extraction       • NMC Registry Hash check
+   • SPKI Public Key import          via Mozilla `pdfjs-dist`        • Instant revocation query
+   • Canonical JSON signature      • Automated ICD-10 & Rx scrub     • Dispute reference hash
+   • Zero PHI payload verified     • 100% on-device (zero cloud)     • Boolean status only
+```
+
+- **Credential verification (`src/lib/verification/credentialVerify.ts`)**: Verifies genuine clinician ECDSA P-256 signatures over canonical minimal payloads. Rejects tampered dates, altered categories, or unauthorized claims.
+- **Document parsing & integrity (`src/lib/verification/pdfExtract.ts` & `documentRedact.ts`)**: Enables employees to drop raw medical PDFs or discharge summaries directly in the browser; extracts text via `pdfjs-dist`, analyzes clinical entities (ICD-10, medications, dosages), and generates a verifiable, 100% scrubbed attestation locally.
+- **Trusted issuer validation (`src/lib/data/issuers.ts`)**: Checks whether the signing clinician's registration hash is active or revoked without revealing their identity or clinic specialty to HR.
+
+### 2. Next.js Verification Endpoint
+
+`POST /api/verify/credential`
+- **Request Body**:
+  ```json
+  {
+    "shareCode": "LG-7892",
+    "policyId": "maternity-mba-1961"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "outcome": "APPROVED",
+    "receipt": {
+      "id": "rcpt_1726618400000_abc",
+      "shareCodeRef": "LG-7892",
+      "outcome": "APPROVED",
+      "verifiedAt": "2026-10-01T00:00:00.000Z",
+      "proofHash": "3f8b...",
+      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "hash": "a1c2..."
+    }
+  }
+  ```
+
+### 3. Open Source Strategy vs. Time Sinks
+
+| Component | Choice | Rationale |
+| :--- | :--- | :--- |
+| **Cryptography** | `crypto.subtle` (Native Web Crypto) | Built-in to browsers and Node.js; zero extra npm packages, supports P-256 + SHA-256 natively. |
+| **PDF Extraction** | `pdfjs-dist` (Mozilla) | Industry standard, robust text extraction running 100% in local memory. |
+| **OCR** | Physical cert QR / Typed Text | Avoided heavyweight 30s in-browser WASM OCR (Tesseract.js) or privacy-leaking cloud OCR APIs. |
+| **Blockchain / Distributed Ledger** | ❌ Skipped | Overkill for corporate compliance; replaced with deterministic, cryptographic hash-chained receipt ledger. |
+| **ML / NLP Models** | ❌ Skipped | Replaced slow spaCy / transformers dependencies with deterministic clinical regex dictionary. |
+
+### 4. Production Upgrade Path
+
+For enterprise and state deployment beyond the hackathon:
+- **Credential Library**: Upgrade to standard W3C Verifiable Credentials + JSON-LD with DID resolution.
+- **Selective Disclosure**: Upgrade to BBS+ signatures (`@mattrglobal/bbs-signatures`) or SD-JWT (IETF standard) for selective attribute disclosure without re-signing.
+- **Issuer Registry**: Direct live REST integration with National Medical Commission (NMC) doctor registration portal and state medical boards.
+- **Physical Documents**: Clinic printing systems print deterministic verification QRs directly on certified paper letters.
+- **Receipt Chain**: Append-only log with Merkle tree proofs and transparency service (Sigstore-style RFC 6962).
+- **Storage**: Enterprise PostgreSQL with role-based access control (RBAC) and hardware security module (HSM) key management.
+
+---
+
 ## 📄 License
 MIT License. Built for privacy-preserving labor standards and workplace dignity.
+

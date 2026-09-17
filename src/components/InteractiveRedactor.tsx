@@ -17,7 +17,10 @@ import {
   Activity, 
   CheckCircle2, 
   Flame,
-  HelpCircle
+  HelpCircle,
+  UploadCloud,
+  FileUp,
+  Loader2
 } from 'lucide-react';
 
 export default function InteractiveRedactor() {
@@ -25,10 +28,46 @@ export default function InteractiveRedactor() {
   const [customText, setCustomText] = useState<string>(SAMPLE_DOCUMENTS[0].rawText);
   const [viewMode, setViewMode] = useState<'blackout' | 'highlight' | 'compare'>('compare');
   const [hoveredEntity, setHoveredEntity] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleSelectDoc = (doc: SampleMedicalDocument) => {
     setSelectedDocId(doc.id);
     setCustomText(doc.rawText);
+    setUploadedFileName(null);
+    setUploadError(null);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setUploadError(null);
+    setUploadedFileName(file.name);
+
+    try {
+      if (file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf') {
+        const { extractTextFromPDF } = await import('@/lib/verification/pdfExtract');
+        const text = await extractTextFromPDF(file);
+        if (!text || text.trim().length === 0) {
+          setUploadError('PDF parsed but contained no text layer. For scanned physical papers, please enter text manually or use digital PDF.');
+        } else {
+          setCustomText(text);
+          setSelectedDocId('uploaded-pdf');
+        }
+      } else {
+        const text = await file.text();
+        setCustomText(text);
+        setSelectedDocId('uploaded-file');
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setUploadError(`Failed to extract text from document: ${msg}`);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const { entities, redactedText, stats } = useMemo(() => {
@@ -119,6 +158,22 @@ export default function InteractiveRedactor() {
                 {doc.title}
               </button>
             ))}
+
+            <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border cursor-pointer transition-all bg-seal-950/60 border-seal-700/80 text-seal-300 hover:bg-seal-900 hover:text-white">
+              {isUploading ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-seal-400" />
+              ) : (
+                <FileUp className="w-3.5 h-3.5 text-seal-400" />
+              )}
+              <span>{isUploading ? 'Extracting Text...' : 'Upload PDF / Report'}</span>
+              <input
+                type="file"
+                accept=".pdf,application/pdf,text/plain"
+                onChange={handleFileUpload}
+                className="hidden"
+                disabled={isUploading}
+              />
+            </label>
           </div>
         </div>
 
@@ -150,6 +205,28 @@ export default function InteractiveRedactor() {
           </button>
         </div>
       </div>
+
+      {/* Upload Feedback / Banner */}
+      {uploadedFileName && (
+        <div className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-seal-950/80 border border-seal-800 text-xs text-seal-300">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-seal-400 shrink-0" />
+            <span>
+              Loaded document: <strong>{uploadedFileName}</strong> — Clinical entities parsed & verified locally via <code>pdfjs-dist</code>.
+            </span>
+          </div>
+          <span className="text-[10px] font-mono bg-seal-900 px-2 py-0.5 rounded text-seal-200 shrink-0">
+            0% Network Upload (Device-Local)
+          </span>
+        </div>
+      )}
+
+      {uploadError && (
+        <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-950/80 border border-red-800 text-xs text-red-300">
+          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+          <span>{uploadError}</span>
+        </div>
+      )}
 
       {/* Analytics & Exposure Metric Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">

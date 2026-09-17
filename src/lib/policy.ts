@@ -46,6 +46,9 @@ export const VOUCH_POLICY_SPEC: PolicySpec = {
   ]
 };
 
+// Backwards-compatibility alias
+export const LEAVEGUARD_POLICY_SPEC = VOUCH_POLICY_SPEC;
+
 // Map fine category (doctor/wallet level) to statutory coarse category (HR level)
 export function mapFineToCoarseCategory(fine: FineCategory): CoarseCategory {
   switch (fine) {
