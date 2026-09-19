@@ -258,3 +258,34 @@ export interface ClinicProfile {
   setupAt?: string;
 }
 
+// User Session & Role Definition for Login System
+export interface UserSession {
+  email: string;
+  name: string;
+  role: 'EMPLOYEE' | 'HR';
+  employeeId?: string;
+  department?: string;
+}
+
+// Employee Leave Application Record
+export interface LeaveApplication {
+  id: string; // e.g. "LV-2026-0041"
+  employeeId: string;
+  employeeName: string;
+  department?: string;
+  category: CoarseCategory;
+  categoryLabel: string;
+  startDate: string;
+  endDate: string;
+  durationDays: number;
+  reason?: string;
+  shareCode?: string;
+  proofAttached?: boolean;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  appliedAt: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+  reviewComment?: string;
+}
+
+

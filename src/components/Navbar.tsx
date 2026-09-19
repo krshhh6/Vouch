@@ -1,47 +1,88 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { ShieldCheck, RotateCcw } from 'lucide-react';
-import { resetDemoData } from '@/lib/storage';
+import { 
+  ShieldCheck, 
+  RotateCcw, 
+  UserCheck, 
+  Building2, 
+  ArrowLeftRight, 
+  LogOut 
+} from 'lucide-react';
+import { 
+  resetDemoData, 
+  getCurrentUser, 
+  setCurrentUser, 
+  TEST_USERS, 
+  subscribeToStateChange 
+} from '@/lib/storage';
+import { UserSession } from '@/lib/types';
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [currentUser, setSessionUser] = useState<UserSession>(TEST_USERS.EMPLOYEE);
+
+  useEffect(() => {
+    setSessionUser(getCurrentUser());
+    const unsub = subscribeToStateChange(() => {
+      setSessionUser(getCurrentUser());
+    });
+    return () => unsub();
+  }, []);
+
+  // Update session based on pathname
+  useEffect(() => {
+    if (pathname.startsWith('/employee')) {
+      const user = { ...TEST_USERS.EMPLOYEE };
+      setCurrentUser(user);
+      setSessionUser(user);
+    } else if (pathname.startsWith('/hr')) {
+      const user = { ...TEST_USERS.HR };
+      setCurrentUser(user);
+      setSessionUser(user);
+    }
+  }, [pathname]);
 
   const navLinks = [
-    { label: 'Portal Home', href: '/' },
-    { label: '1. Clinic Portal', href: '/clinic' },
-    { label: '2. Employee Portal', href: '/employee' },
-    { label: '3. HR Portal', href: '/hr' },
+    { label: 'Employee Portal', href: '/employee', icon: UserCheck, color: 'text-emerald-400' },
+    { label: 'HR Portal', href: '/hr', icon: Building2, color: 'text-blue-400' },
   ];
 
   const isActive = (href: string) => {
-    if (href === '/') {
-      return pathname === '/' || pathname === '/overview';
+    if (href === '/employee') return pathname.startsWith('/employee');
+    if (href === '/hr') return pathname.startsWith('/hr');
+    return pathname === href;
+  };
+
+  const handleToggleRole = () => {
+    if (pathname.startsWith('/employee')) {
+      setCurrentUser(TEST_USERS.HR);
+      router.push('/hr');
+    } else {
+      setCurrentUser(TEST_USERS.EMPLOYEE);
+      router.push('/employee');
     }
-    if (href === '/clinic') {
-      return pathname.startsWith('/clinic') || pathname.startsWith('/issuer');
-    }
-    if (href === '/employee') {
-      return pathname.startsWith('/employee');
-    }
-    if (href === '/hr') {
-      return pathname.startsWith('/hr');
-    }
-    return pathname.startsWith(href);
+  };
+
+  const handleLogout = () => {
+    router.push('/login');
   };
 
   const handleResetDemo = () => {
     if (typeof window !== 'undefined') {
       localStorage.clear();
       resetDemoData();
-      router.push('/');
+      router.push('/login');
       setTimeout(() => {
         window.location.reload();
       }, 50);
     }
   };
+
+  const isLoginPage = pathname === '/' || pathname === '/login';
 
   return (
     <header className="w-full bg-[#0B1120] border-b border-[#1E293B] sticky top-0 z-50 select-none">
@@ -49,66 +90,102 @@ export default function Navbar() {
         
         {/* Brand Header Line */}
         <div className="py-3 flex items-center justify-between border-b border-[#1E293B]/60">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 rounded bg-[#4A7C59] flex items-center justify-center text-white">
+          <Link href="/login" className="flex items-center gap-3 group">
+            <div className="w-8 h-8 rounded-lg bg-[#4A7C59] flex items-center justify-center text-white shadow-sm">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-condensed font-bold text-lg tracking-wider text-white">VOUCH</span>
                 <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-[#1E293B] text-slate-300 border border-slate-700">
-                  VOUCH-2026.1
+                  DUAL-PORTAL
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 font-sans leading-tight">
-                Zero-Knowledge Medical Leave Protocol
+                Statutory Medical Leave Verification System
               </p>
             </div>
           </Link>
 
-          <div className="hidden md:flex items-center gap-3 text-xs font-mono text-slate-400">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#4A7C59]"></span>
-              ECDSA P-256 Web Crypto
-            </span>
-            <span className="text-slate-600">|</span>
-            <span>Zero-PHI Retention</span>
+          {/* Current User Session & Actions */}
+          <div className="flex items-center gap-3">
+            {!isLoginPage && (
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0F172A] border border-slate-800 text-xs font-mono">
+                <span className={`w-2 h-2 rounded-full ${pathname.startsWith('/hr') ? 'bg-blue-400' : 'bg-emerald-400'}`}></span>
+                <span className="text-slate-200 font-medium">
+                  {currentUser.name}
+                </span>
+                <span className="text-slate-500">({currentUser.role === 'HR' ? 'HR Admin' : 'Employee'})</span>
+              </div>
+            )}
+
+            {!isLoginPage && (
+              <button
+                type="button"
+                onClick={handleToggleRole}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E293B] hover:bg-slate-700 text-slate-200 text-xs font-mono transition border border-slate-700 shadow-sm"
+                title="Switch between Employee and HR portal"
+              >
+                <ArrowLeftRight className="w-3.5 h-3.5 text-slate-400" />
+                <span className="hidden sm:inline">Switch to</span>
+                <span>{pathname.startsWith('/employee') ? 'HR Portal' : 'Employee'}</span>
+              </button>
+            )}
+
+            {!isLoginPage && (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+                title="Logout / Change User"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            )}
+
+            {/* Reset Demo Button */}
+            <button
+              onClick={handleResetDemo}
+              title="Reset data and restore initial baseline"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded text-[11px] font-condensed uppercase tracking-wider font-bold text-slate-300 hover:text-white bg-[#1E293B] hover:bg-[#334155] border border-slate-700 transition-colors shrink-0"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-[#4A7C59]" />
+              <span className="hidden sm:inline">RESET</span>
+            </button>
           </div>
         </div>
 
-        {/* Tab Navigation Line */}
-        <div className="flex items-center justify-between overflow-x-auto py-1">
-          <nav className="flex items-center gap-1 sm:gap-2">
+        {/* 2 Portals Navigation Tab Line */}
+        <div className="flex items-center justify-between py-1">
+          <nav className="flex items-center gap-2 sm:gap-4">
             {navLinks.map((link) => {
               const active = isActive(link.href);
+              const Icon = link.icon;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`relative px-3 py-2.5 text-xs font-condensed uppercase tracking-wider font-semibold whitespace-nowrap transition-colors ${
+                  className={`relative flex items-center gap-2 px-4 py-2.5 text-xs font-condensed uppercase tracking-wider font-bold whitespace-nowrap transition-colors ${
                     active
                       ? 'text-white'
                       : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
+                  <Icon className={`w-3.5 h-3.5 ${link.color}`} />
                   <span>{link.label}</span>
                   {active && (
-                    <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-[#4A7C59]"></span>
+                    <span className={`absolute bottom-0 left-2 right-2 h-0.5 ${link.href === '/hr' ? 'bg-blue-500' : 'bg-emerald-500'}`}></span>
                   )}
                 </Link>
               );
             })}
           </nav>
-
-          {/* Persistent Reset Demo Button */}
-          <button
-            onClick={handleResetDemo}
-            title="Clear localStorage and restore initial demo state"
-            className="flex items-center gap-1.5 px-3 py-1.5 ml-2 rounded text-[11px] font-condensed uppercase tracking-wider font-bold text-slate-300 hover:text-white bg-[#1E293B] hover:bg-[#334155] border border-slate-700 transition-colors shrink-0"
-          >
-            <RotateCcw className="w-3.5 h-3.5 text-[#4A7C59]" />
-            <span>RESET DEMO</span>
-          </button>
+          
+          <div className="hidden md:flex items-center gap-2 text-[11px] font-mono text-slate-500">
+            <span>Employee Self-Service</span>
+            <span>•</span>
+            <span>HR Leave Confirmation</span>
+          </div>
         </div>
 
       </div>

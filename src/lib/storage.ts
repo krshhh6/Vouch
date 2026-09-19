@@ -14,7 +14,9 @@ import {
   AuditLogEntry,
   QueueItem,
   MedicalDocument,
-  ClinicProfile
+  ClinicProfile,
+  LeaveApplication,
+  UserSession
 } from './types';
 import { TRUSTED_ISSUERS } from './registry';
 import { 
@@ -43,6 +45,8 @@ const STORAGE_KEYS = {
   PENDING_QUEUE: 'vouch_pending_queue_v2',
   CLINIC_PROFILE: 'vouch_clinic_profile_v2',
   CLINIC_DOCUMENTS: 'vouch_clinic_documents_v2',
+  LEAVE_APPLICATIONS: 'vouch_leave_applications_v2',
+  CURRENT_USER: 'vouch_current_user_v2',
 };
 
 const STATE_EVENT = 'vouch_state_updated';
@@ -888,6 +892,78 @@ export async function seedDemoData(force = false): Promise<void> {
   localStorage.setItem(STORAGE_KEYS.CLINIC_DOCUMENTS, JSON.stringify({ [sampleAttestation1.payload.attestationId]: sampleClinicDoc }));
   localStorage.setItem(`medical_doc_for_attestation_${sampleAttestation1.payload.attestationId}`, JSON.stringify(sampleClinicDoc));
 
+  // Seed sample enterprise leave applications roster
+  const sampleApplications: LeaveApplication[] = [
+    {
+      id: 'LV-2026-0091',
+      employeeId: 'EMP-9021',
+      employeeName: 'Sarah Jenkins',
+      department: 'Product Engineering',
+      category: 'STATUTORY_MATERNITY',
+      categoryLabel: 'Maternity Leave',
+      startDate: '2026-09-16',
+      endDate: '2026-10-07',
+      durationDays: 22,
+      reason: 'Statutory 26-week maternity benefit under Maternity Benefit Act 1961.',
+      shareCode: 'VC-26WMAT-8K2X9',
+      proofAttached: true,
+      status: 'APPROVED',
+      appliedAt: new Date(Date.now() - 3600 * 1000 * 48).toISOString(),
+      reviewedBy: 'alice.hr@acmecorp.com',
+      reviewedAt: new Date(Date.now() - 3600 * 1000 * 24).toISOString(),
+      reviewComment: 'Verified via cryptographic registry proof. Approved full entitlement.'
+    },
+    {
+      id: 'LV-2026-0092',
+      employeeId: 'EMP-9022',
+      employeeName: 'Maria Patel',
+      department: 'Finance & Operations',
+      category: 'STATUTORY_MEDICAL',
+      categoryLabel: 'Medical Leave',
+      startDate: '2026-09-22',
+      endDate: '2026-09-29',
+      durationDays: 8,
+      reason: 'Post-operative recovery rest prescribed by clinician.',
+      shareCode: 'VC-26SMED-4J1A8',
+      proofAttached: true,
+      status: 'PENDING',
+      appliedAt: new Date(Date.now() - 3600 * 1000 * 3).toISOString()
+    },
+    {
+      id: 'LV-2026-0093',
+      employeeId: 'EMP-9023',
+      employeeName: 'Alex Wong',
+      department: 'Security & Compliance',
+      category: 'CAREGIVING',
+      categoryLabel: 'Caregiving Leave',
+      startDate: '2026-10-01',
+      endDate: '2026-10-05',
+      durationDays: 5,
+      reason: 'Family medical care emergency assistance.',
+      proofAttached: false,
+      status: 'PENDING',
+      appliedAt: new Date(Date.now() - 3600 * 1000 * 6).toISOString()
+    },
+    {
+      id: 'LV-2026-0094',
+      employeeId: 'EMP-9024',
+      employeeName: 'David Kim',
+      department: 'Marketing & Brand',
+      category: 'STATUTORY_MEDICAL',
+      categoryLabel: 'Surgical Recovery',
+      startDate: '2026-08-10',
+      endDate: '2026-08-24',
+      durationDays: 15,
+      reason: 'Outpatient orthopedic surgery and rehabilitation.',
+      status: 'APPROVED',
+      appliedAt: new Date(Date.now() - 3600 * 1000 * 24 * 35).toISOString(),
+      reviewedBy: 'alice.hr@acmecorp.com',
+      reviewedAt: new Date(Date.now() - 3600 * 1000 * 24 * 34).toISOString(),
+      reviewComment: 'Statutory medical leave verified and logged.'
+    }
+  ];
+  localStorage.setItem(STORAGE_KEYS.LEAVE_APPLICATIONS, JSON.stringify(sampleApplications));
+
   localStorage.setItem(STORAGE_KEYS.INITIALIZED, 'true');
   notifyStateChange();
 }
@@ -905,6 +981,8 @@ export function resetAllData(): void {
   localStorage.removeItem(STORAGE_KEYS.AUDIT_LOGS);
   localStorage.removeItem(STORAGE_KEYS.CLINIC_DOCUMENTS);
   localStorage.removeItem(STORAGE_KEYS.CLINIC_PROFILE);
+  localStorage.removeItem(STORAGE_KEYS.LEAVE_APPLICATIONS);
+  localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
   localStorage.removeItem(STORAGE_KEYS.INITIALIZED);
   seedDemoData(true);
 }
@@ -1163,4 +1241,174 @@ export function deleteClinicDocument(attestationId: string): boolean {
   notifyStateChange();
   return false;
 }
+
+// ===================== USER SESSIONS & DUAL PORTAL AUTH =====================
+
+export const TEST_USERS = {
+  EMPLOYEE: {
+    email: 'sarah@company.com',
+    name: 'Sarah Jenkins',
+    role: 'EMPLOYEE' as const,
+    employeeId: 'EMP-9021',
+    department: 'Product Engineering'
+  },
+  HR: {
+    email: 'alice.hr@acmecorp.com',
+    name: 'Alice Vance',
+    role: 'HR' as const,
+    department: 'People Operations & Benefits'
+  }
+};
+
+export function getCurrentUser(): UserSession {
+  if (typeof window === 'undefined') return TEST_USERS.EMPLOYEE;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+    if (!raw) return TEST_USERS.EMPLOYEE;
+    return JSON.parse(raw);
+  } catch {
+    return TEST_USERS.EMPLOYEE;
+  }
+}
+
+export function setCurrentUser(user: UserSession): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+  notifyStateChange();
+}
+
+export function clearCurrentUser(): void {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+  notifyStateChange();
+}
+
+// ===================== LEAVE APPLICATIONS & HR CONFIRMATION ROSTER =====================
+
+export function getLeaveApplications(employeeId?: string): LeaveApplication[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.LEAVE_APPLICATIONS);
+    const list: LeaveApplication[] = raw ? JSON.parse(raw) : [];
+    if (employeeId) {
+      return list.filter(a => a.employeeId.toLowerCase() === employeeId.toLowerCase());
+    }
+    return list;
+  } catch {
+    return [];
+  }
+}
+
+export function submitLeaveApplication(
+  app: Omit<LeaveApplication, 'id' | 'status' | 'appliedAt'>
+): LeaveApplication {
+  const id = `LV-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+  const appliedAt = new Date().toISOString();
+  const newApplication: LeaveApplication = {
+    ...app,
+    id,
+    status: 'PENDING',
+    appliedAt
+  };
+
+  if (typeof window !== 'undefined') {
+    const list = getLeaveApplications();
+    localStorage.setItem(STORAGE_KEYS.LEAVE_APPLICATIONS, JSON.stringify([newApplication, ...list]));
+
+    // Also automatically register in HR pending queue
+    saveQueueItem({
+      id: `q_${Date.now()}`,
+      employeeName: newApplication.employeeName,
+      employeeId: newApplication.employeeId,
+      category: newApplication.category,
+      shareCode: newApplication.shareCode || `VC-AUTO-${Math.floor(1000 + Math.random() * 9000)}`,
+      submissionTime: 'Just now',
+      status: 'WAITING',
+      statusNote: `${newApplication.categoryLabel} (${newApplication.startDate} to ${newApplication.endDate})`
+    });
+
+    // Notify HR
+    const hrNotif: NotificationItem = {
+      id: `notif_hr_${Date.now()}`,
+      type: 'LEAVE_APPROVED',
+      employeeId: newApplication.employeeId,
+      category: newApplication.category,
+      validFrom: newApplication.startDate,
+      validTo: newApplication.endDate,
+      createdAt: appliedAt,
+      read: false,
+      title: 'New Leave Request Received',
+      message: `${newApplication.employeeName} submitted a ${newApplication.categoryLabel} request for ${newApplication.durationDays} days.`
+    };
+    saveNotification(hrNotif);
+
+    notifyStateChange();
+  }
+
+  return newApplication;
+}
+
+export function reviewLeaveApplication(
+  applicationId: string,
+  decision: 'APPROVED' | 'REJECTED',
+  reviewerEmail: string,
+  comment?: string
+): LeaveApplication | null {
+  if (typeof window === 'undefined') return null;
+  const list = getLeaveApplications();
+  const index = list.findIndex(a => a.id === applicationId);
+  if (index === -1) return null;
+
+  const app = list[index];
+  const reviewedAt = new Date().toISOString();
+  const updated: LeaveApplication = {
+    ...app,
+    status: decision,
+    reviewedBy: reviewerEmail,
+    reviewedAt,
+    reviewComment: comment || (decision === 'APPROVED' ? 'Approved by HR Benefits' : 'Declined by HR')
+  };
+
+  list[index] = updated;
+  localStorage.setItem(STORAGE_KEYS.LEAVE_APPLICATIONS, JSON.stringify(list));
+
+  // Also update approval record and employee notification
+  if (decision === 'APPROVED') {
+    saveApproval({
+      approvalId: `APR-${Date.now().toString().slice(-6)}`,
+      shareCode: app.shareCode || 'VC-SYSTEM',
+      employeeId: app.employeeId,
+      employeeName: app.employeeName,
+      approvalDecision: 'APPROVED',
+      approvedBy: reviewerEmail,
+      approvedAt: reviewedAt,
+      category: app.category,
+      validFrom: app.startDate,
+      validTo: app.endDate,
+      status: 'ACTIVE',
+      comment
+    });
+  }
+
+  // Create real-time notification for employee
+  saveNotification({
+    id: `notif_emp_${Date.now()}`,
+    type: decision === 'APPROVED' ? 'LEAVE_APPROVED' : 'LEAVE_REJECTED',
+    employeeId: app.employeeId,
+    category: app.category,
+    validFrom: app.startDate,
+    validTo: app.endDate,
+    approvedBy: reviewerEmail,
+    createdAt: reviewedAt,
+    read: false,
+    title: decision === 'APPROVED' ? '✓ Leave request approved!' : '✗ Leave request declined',
+    message: decision === 'APPROVED'
+      ? `Your ${app.categoryLabel} (${app.startDate} – ${app.endDate}) has been confirmed by HR.`
+      : `Your ${app.categoryLabel} was declined. Note: ${comment || 'Contact HR for questions.'}`
+  });
+
+  notifyStateChange();
+  return updated;
+}
+
 

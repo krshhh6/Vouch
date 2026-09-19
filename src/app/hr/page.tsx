@@ -7,7 +7,10 @@ import {
   getShareCodes,
   getReceipts, 
   getPendingQueue,
+  getLeaveApplications,
+  reviewLeaveApplication,
   approveLeaveRequest,
+  getCurrentUser,
   subscribeToStateChange,
   seedDemoData,
   logAuditView,
@@ -18,374 +21,388 @@ import {
   QueueItem, 
   CoarseCategory, 
   VerificationReceipt, 
-  ApprovalRecord 
+  ApprovalRecord,
+  LeaveApplication,
+  UserSession
 } from '@/lib/types';
 import PendingQueue from '@/components/hr/PendingQueue';
 import PolicySelector from '@/components/hr/PolicySelector';
 import ShareCodeEntry from '@/components/hr/ShareCodeEntry';
 import VerificationResult from '@/components/hr/VerificationResult';
 import ReceiptLog from '@/components/hr/ReceiptLog';
+import AllEmployeesLeaveTable from '@/components/hr/AllEmployeesLeaveTable';
+import LeaveConfirmationModal from '@/components/hr/LeaveConfirmationModal';
 import { VOUCH_POLICY_SPEC } from '@/lib/policy';
 import { verifySignedAttestation, computeEmployerPseudonym } from '@/lib/crypto';
 import { evaluatePredicates } from '@/lib/storage';
-import { Database, Building2 } from 'lucide-react';
-import Link from 'next/link';
+import { 
+  Building2, 
+  Users, 
+  CheckCircle2, 
+  Clock, 
+  ShieldCheck, 
+  FileCheck, 
+  Lock, 
+  SlidersHorizontal 
+} from 'lucide-react';
 
 function HRVerifierContent() {
   const searchParams = useSearchParams();
   const initialCode = searchParams.get('code') || '';
 
-  // State
-  const [selectedCategory, setSelectedCategory] = useState<CoarseCategory>('STATUTORY_MATERNITY');
+  const [currentUser, setCurrentUser] = useState<UserSession>(getCurrentUser());
+  const [activeTab, setActiveTab] = useState<'roster' | 'desk' | 'receipts'>('roster');
+
+  // Roster & Queue state
+  const [applications, setApplications] = useState<LeaveApplication[]>([]);
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [receipts, setReceipts] = useState<VerificationReceipt[]>([]);
-  
-  // Verification flow
+
+  // Confirmation Modal
+  const [modalApp, setModalApp] = useState<LeaveApplication | null>(null);
+  const [modalMode, setModalMode] = useState<'APPROVE' | 'REJECT'>('APPROVE');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  // Single code verification flow
+  const [selectedCategory, setSelectedCategory] = useState<CoarseCategory>('STATUTORY_MATERNITY');
   const [inputCode, setInputCode] = useState(initialCode);
   const [isVerifying, setIsVerifying] = useState(false);
   const [codeStatus, setCodeStatus] = useState<'IDLE' | 'VERIFYING' | 'VALID' | 'INVALID'>('IDLE');
   const [verificationError, setVerificationError] = useState<string | null>(null);
-  
   const [verifiedShareCode, setVerifiedShareCode] = useState<ShareCode | null>(null);
   const [currentReceipt, setCurrentReceipt] = useState<VerificationReceipt | null>(null);
+  const [isApproving, setIsApproving] = useState(false);
+  const [latestApproval, setLatestApproval] = useState<ApprovalRecord | null>(null);
 
-  // Approval flow
-  const [isProcessingApproval, setIsProcessingApproval] = useState(false);
-  const [approvalCompleted, setApprovalCompleted] = useState<ApprovalRecord | null>(null);
-
-  const loadData = () => {
+  const loadAll = () => {
+    const user = getCurrentUser();
+    setCurrentUser(user);
+    setApplications(getLeaveApplications());
     setQueue(getPendingQueue());
     setReceipts(getReceipts());
   };
 
   useEffect(() => {
     seedDemoData();
-    loadData();
+    loadAll();
 
     const unsubscribe = subscribeToStateChange(() => {
-      loadData();
+      loadAll();
     });
 
-    return () => unsubscribe();
+    const interval = setInterval(() => {
+      loadAll();
+    }, 4000);
+
+    return () => {
+      unsubscribe();
+      clearInterval(interval);
+    };
   }, []);
 
-  useEffect(() => {
-    if (initialCode) {
-      setInputCode(initialCode);
-      executeVerification(initialCode);
-    }
-  }, [initialCode]);
+  const handleOpenApproveModal = (app: LeaveApplication) => {
+    setModalApp(app);
+    setModalMode('APPROVE');
+    setShowConfirmModal(true);
+  };
 
-  const executeVerification = async (codeToVerify: string) => {
-    const trimmed = codeToVerify.trim().toUpperCase();
-    if (!trimmed) {
-      setVerificationError('Please enter a valid Vouch share code.');
-      setCodeStatus('INVALID');
-      return;
-    }
+  const handleOpenRejectModal = (app: LeaveApplication) => {
+    setModalApp(app);
+    setModalMode('REJECT');
+    setShowConfirmModal(true);
+  };
 
+  const handleExecuteDecision = (
+    appId: string,
+    decision: 'APPROVED' | 'REJECTED',
+    comment?: string
+  ) => {
+    reviewLeaveApplication(appId, decision, currentUser.email || 'alice.hr@acmecorp.com', comment);
+    loadAll();
+  };
+
+  // Verification flow for share code
+  const handleVerifyCode = async (codeToVerify: string) => {
+    if (!codeToVerify) return;
     setIsVerifying(true);
     setCodeStatus('VERIFYING');
     setVerificationError(null);
     setVerifiedShareCode(null);
-    setApprovalCompleted(null);
+    setCurrentReceipt(null);
+    setLatestApproval(null);
 
-    // Call API /api/verify/credential first, with client fallback
     try {
-      const response = await fetch('/api/verify/credential', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          shareCode: trimmed,
-          policyId: selectedCategory === 'STATUTORY_MATERNITY' ? 'maternity-mba-1961' : 'medical-statutory-1972'
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        // Look up full share or build mock
-        let share = getShareCodeByCode(trimmed);
-        if (!share) {
-          // Use client store
-          const shares = getShareCodes();
-          share = shares.find(s => s.code.toUpperCase() === trimmed);
-        }
-
-        if (share) {
-          incrementShareCodeViews(trimmed);
-          logAuditView({
-            id: `audit_${Date.now()}`,
-            attestationId: share.attestationId,
-            shareCode: trimmed,
-            viewerEmail: 'alice@acmecorp.com',
-            viewedAt: new Date().toISOString(),
-            outcome: 'VERIFIED'
-          });
-          setVerifiedShareCode(share);
-          setCurrentReceipt(data.receipt || null);
-          setCodeStatus('VALID');
-          setIsVerifying(false);
-          loadData();
-          return;
-        }
+      const share = getShareCodeByCode(codeToVerify);
+      if (!share) {
+        setCodeStatus('INVALID');
+        setVerificationError('Share code not found or expired.');
+        return;
       }
-    } catch {
-      // Fallback to client-side verification
-    }
 
-    // Client-side verification fallback
-    await new Promise(r => setTimeout(r, 350));
-    const share = getShareCodeByCode(trimmed);
+      if (share.isRevoked) {
+        setCodeStatus('INVALID');
+        setVerificationError('Attestation revoked by issuer clinic or employee.');
+        return;
+      }
 
-    if (!share) {
-      setIsVerifying(false);
-      setCodeStatus('INVALID');
-      setVerificationError(`Share code "${trimmed}" was not found or has expired.`);
-      return;
-    }
+      const isValidSignature = await verifySignedAttestation(share.signedAttestation);
+      if (!isValidSignature) {
+        setCodeStatus('INVALID');
+        setVerificationError('Cryptographic ECDSA P-256 signature invalid.');
+        return;
+      }
 
-    if (share.isRevoked || share.signedAttestation.isRevokedByIssuer) {
-      setIsVerifying(false);
-      setCodeStatus('INVALID');
-      setVerificationError(`Share code "${trimmed}" was REVOKED by the clinic or holder.`);
-      return;
-    }
-
-    const isExpired = new Date(share.expiresAt).getTime() < Date.now();
-    if (isExpired) {
-      setIsVerifying(false);
-      setCodeStatus('INVALID');
-      setVerificationError(`Share code "${trimmed}" has EXPIRED.`);
-      return;
-    }
-
-    // Verify ECDSA signature
-    const cryptoCheck = await verifySignedAttestation(share.signedAttestation);
-    const pseudonym = await computeEmployerPseudonym(share.signedAttestation.payload.employeeId || 'ANON_HOLDER');
-    const { predicates } = evaluatePredicates(
-      pseudonym,
-      share.hrPayload.coarseCategory,
-      share.hrPayload.validFrom,
-      share.hrPayload.validTo,
-      share.signedAttestation
-    );
-
-    const allPass = Object.values(predicates).every(Boolean);
-
-    if (cryptoCheck.isValid && allPass) {
-      incrementShareCodeViews(trimmed);
+      incrementShareCodeViews(share.code);
+      setVerifiedShareCode(share);
+      setCodeStatus('VALID');
       logAuditView({
-        id: `audit_${Date.now()}`,
+        id: `aud_${Date.now()}`,
         attestationId: share.attestationId,
-        shareCode: trimmed,
-        viewerEmail: 'alice@acmecorp.com',
+        shareCode: share.code,
+        viewerEmail: currentUser.email,
         viewedAt: new Date().toISOString(),
         outcome: 'VERIFIED'
       });
-      setCodeStatus('VALID');
-      setVerifiedShareCode(share);
-    } else {
+    } catch (err: any) {
       setCodeStatus('INVALID');
-      setVerificationError('Verification checks failed or policy predicates breached.');
-    }
-
-    setIsVerifying(false);
-    loadData();
-  };
-
-  const handleSelectRequestFromQueue = (item: QueueItem) => {
-    setInputCode(item.shareCode);
-    setSelectedCategory(item.category);
-    executeVerification(item.shareCode);
-  };
-
-  const handleApprove = async (comment: string): Promise<ApprovalRecord | null> => {
-    if (!verifiedShareCode) return null;
-    setIsProcessingApproval(true);
-
-    try {
-      // 1. Call /api/approve route
-      try {
-        await fetch('/api/approve', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            shareCode: verifiedShareCode.code,
-            approvalDecision: 'APPROVED',
-            comment,
-            employeeId: verifiedShareCode.employeeId || 'EMP-9021',
-            category: verifiedShareCode.hrPayload.coarseCategory,
-            validFrom: verifiedShareCode.hrPayload.validFrom,
-            validTo: verifiedShareCode.hrPayload.validTo,
-            approvedBy: 'alice@acmecorp.com'
-          })
-        });
-      } catch {
-        // Fallback
-      }
-
-      // 2. Commit to storage layer with real-time notification
-      const { approval } = await approveLeaveRequest({
-        shareCode: verifiedShareCode.code,
-        employeeId: verifiedShareCode.employeeId || 'EMP-9021',
-        employeeName: verifiedShareCode.signedAttestation?.payload.employeeName || 'Sarah Jenkins',
-        category: verifiedShareCode.hrPayload.coarseCategory,
-        validFrom: verifiedShareCode.hrPayload.validFrom,
-        validTo: verifiedShareCode.hrPayload.validTo,
-        approvalDecision: 'APPROVED',
-        approvedBy: 'alice@acmecorp.com',
-        comment
-      });
-
-      setApprovalCompleted(approval);
-      loadData();
-      return approval;
+      setVerificationError(err?.message || 'Verification failed.');
     } finally {
-      setIsProcessingApproval(false);
+      setIsVerifying(false);
     }
   };
 
-  const handleReject = async (comment: string): Promise<void> => {
-    if (!verifiedShareCode) return;
-    setIsProcessingApproval(true);
-
-    try {
-      try {
-        await fetch('/api/approve', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            shareCode: verifiedShareCode.code,
-            approvalDecision: 'REJECTED',
-            comment,
-            employeeId: verifiedShareCode.employeeId || 'EMP-9021',
-            category: verifiedShareCode.hrPayload.coarseCategory,
-            validFrom: verifiedShareCode.hrPayload.validFrom,
-            validTo: verifiedShareCode.hrPayload.validTo,
-            approvedBy: 'alice@acmecorp.com'
-          })
-        });
-      } catch {
-        // Fallback
-      }
-
-      await approveLeaveRequest({
-        shareCode: verifiedShareCode.code,
-        employeeId: verifiedShareCode.employeeId || 'EMP-9021',
-        employeeName: verifiedShareCode.signedAttestation?.payload.employeeName || 'Sarah Jenkins',
-        category: verifiedShareCode.hrPayload.coarseCategory,
-        validFrom: verifiedShareCode.hrPayload.validFrom,
-        validTo: verifiedShareCode.hrPayload.validTo,
-        approvalDecision: 'REJECTED',
-        approvedBy: 'alice@acmecorp.com',
-        comment
-      });
-
-      setVerificationError(`Leave claim for ${verifiedShareCode.code} was officially REJECTED.`);
-      setVerifiedShareCode(null);
-      loadData();
-    } finally {
-      setIsProcessingApproval(false);
-    }
-  };
-
-  const handleNextRequest = () => {
-    setApprovalCompleted(null);
-    setVerifiedShareCode(null);
-    setInputCode('');
-    setCodeStatus('IDLE');
-
-    // Pick next waiting request from queue if any
-    const nextWaiting = queue.find(q => q.status === 'WAITING' || q.status === 'VERIFIED');
-    if (nextWaiting) {
-      handleSelectRequestFromQueue(nextWaiting);
-    }
-  };
+  const pendingCount = applications.filter((a) => a.status === 'PENDING').length;
+  const approvedCount = applications.filter((a) => a.status === 'APPROVED').length;
 
   return (
-    <div className="w-full bg-[#0F172A] text-slate-100 min-h-[calc(100vh-100px)] py-8 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="w-full bg-[#0A101D] text-slate-100 min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Header Strip */}
-        <div className="border-b border-[#1E293B] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#94C3A3]">
-                HR VERIFIER PORTAL (/hr)
-              </span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#1E293B] text-slate-300 border border-slate-700">
-                Policy: {VOUCH_POLICY_SPEC.policyVersion}
-              </span>
+        <div className="bg-[#111C2E] border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-400">
+                  PORTAL 2 • HR ENTERPRISE BENEFITS
+                </span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">
+                  Zero-PHI Verifier
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white mt-1 font-condensed uppercase tracking-wider">
+                HR VERIFIER PORTAL
+              </h1>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-300 mt-2 font-mono">
+                <span>
+                  Logged in as: <strong className="text-white">{currentUser.name}</strong>
+                </span>
+                <span className="text-slate-600">•</span>
+                <span className="text-blue-400">{currentUser.department || 'People Operations & Benefits'}</span>
+                <span className="text-slate-600">•</span>
+                <span className="text-emerald-400 flex items-center gap-1 font-medium">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Statutory Rule: {VOUCH_POLICY_SPEC.policyVersion}
+                </span>
+              </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white mt-1 font-condensed uppercase tracking-wider">
-              Verify &amp; Approve Leave Requests
-            </h1>
-            <p className="text-xs text-slate-400 font-sans">
-              Statutory verification portal. Validates eligibility without possessing or storing raw clinical notes or diagnoses.
-            </p>
+          </div>
+
+          {/* KPI Metrics Bar */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-slate-800/80 text-xs font-mono">
+            <div className="p-3 bg-[#0A101D] border border-slate-800 rounded-xl">
+              <span className="text-slate-500 block text-[10px]">ALL LEAVE REQUESTS</span>
+              <span className="text-white font-bold text-base">{applications.length} Roster</span>
+            </div>
+            <div className="p-3 bg-[#0A101D] border border-slate-800 rounded-xl">
+              <span className="text-amber-400 block text-[10px]">PENDING CONFIRMATIONS</span>
+              <span className="text-amber-400 font-bold text-base">{pendingCount} Action Required</span>
+            </div>
+            <div className="p-3 bg-[#0A101D] border border-slate-800 rounded-xl">
+              <span className="text-emerald-400 block text-[10px]">CONFIRMED &amp; APPROVED</span>
+              <span className="text-emerald-400 font-bold text-base">{approvedCount} Active</span>
+            </div>
+            <div className="p-3 bg-[#0A101D] border border-slate-800 rounded-xl">
+              <span className="text-blue-400 block text-[10px]">ZERO-PHI COMPLIANCE</span>
+              <span className="text-blue-300 font-bold text-base">100% Guaranteed</span>
+            </div>
           </div>
         </div>
 
-        {/* 3-Column Layout: Left (25%), Center (50%), Right (25%) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          
-          {/* Left Panel (25% / 3 cols): H1 Queue & H2 Policy Builder */}
-          <div className="lg:col-span-3 space-y-6">
-            <PendingQueue
-              queue={queue}
-              onSelectRequest={handleSelectRequestFromQueue}
-              activeShareCode={inputCode}
-              onRefreshQueue={loadData}
-            />
-
-            <PolicySelector
-              selectedCategory={selectedCategory}
-              onSelectCategory={(cat) => setSelectedCategory(cat)}
-            />
-          </div>
-
-          {/* Center Panel (50% / 6 cols): H3 Share Code Entry + H4/H5 Verification & Approval Flow */}
-          <div className="lg:col-span-6 space-y-6">
-            <ShareCodeEntry
-              inputCode={inputCode}
-              onCodeChange={(code) => setInputCode(code)}
-              onVerify={executeVerification}
-              isVerifying={isVerifying}
-              codeStatus={codeStatus}
-              errorMessage={verificationError}
-            />
-
-            {verifiedShareCode && (
-              <VerificationResult
-                shareCode={verifiedShareCode}
-                receipt={currentReceipt}
-                onApprove={handleApprove}
-                onReject={handleReject}
-                isProcessing={isProcessingApproval}
-                approvalCompleted={approvalCompleted}
-                onNextRequest={handleNextRequest}
-              />
+        {/* Tab Switcher */}
+        <div className="flex border-b border-slate-800 gap-2 overflow-x-auto">
+          <button
+            type="button"
+            onClick={() => setActiveTab('roster')}
+            className={`px-5 py-3 text-xs font-condensed uppercase tracking-wider font-bold border-b-2 transition flex items-center gap-2 shrink-0 ${
+              activeTab === 'roster'
+                ? 'border-blue-500 text-white'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Users className="w-4 h-4 text-blue-400" />
+            <span>All Employees Leave Status Roster</span>
+            {pendingCount > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                {pendingCount}
+              </span>
             )}
-          </div>
+          </button>
 
-          {/* Right Panel (25% / 3 cols): H7 Receipts Log + H8 Export + H9 Dashboard */}
-          <div className="lg:col-span-3">
-            <ReceiptLog
-              receipts={receipts}
-              pendingCount={queue.filter(q => q.status === 'WAITING').length}
+          <button
+            type="button"
+            onClick={() => setActiveTab('desk')}
+            className={`px-5 py-3 text-xs font-condensed uppercase tracking-wider font-bold border-b-2 transition flex items-center gap-2 shrink-0 ${
+              activeTab === 'desk'
+                ? 'border-blue-500 text-white'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4 text-blue-400" />
+            <span>Single Code Verification Desk</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('receipts')}
+            className={`px-5 py-3 text-xs font-condensed uppercase tracking-wider font-bold border-b-2 transition flex items-center gap-2 shrink-0 ${
+              activeTab === 'receipts'
+                ? 'border-blue-500 text-white'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <FileCheck className="w-4 h-4 text-blue-400" />
+            <span>Tamper-Evident Receipt Chain Log</span>
+          </button>
+        </div>
+
+        {/* Tab 1: All Employees Leave Status Roster */}
+        {activeTab === 'roster' && (
+          <div className="space-y-6">
+            <AllEmployeesLeaveTable
+              applications={applications}
+              onApprove={handleOpenApproveModal}
+              onReject={handleOpenRejectModal}
             />
           </div>
+        )}
 
-        </div>
+        {/* Tab 2: Single Code Verification Desk */}
+        {activeTab === 'desk' && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="lg:col-span-4 space-y-6">
+              <PendingQueue
+                queue={queue}
+                onSelectRequest={(item) => {
+                  setInputCode(item.shareCode);
+                  handleVerifyCode(item.shareCode);
+                }}
+                activeShareCode={inputCode}
+              />
+              <PolicySelector
+                selectedCategory={selectedCategory}
+                onSelectCategory={setSelectedCategory}
+              />
+            </div>
+
+            <div className="lg:col-span-8 space-y-6">
+              <ShareCodeEntry
+                inputCode={inputCode}
+                onCodeChange={setInputCode}
+                onVerify={(code) => handleVerifyCode(code || inputCode)}
+                isVerifying={isVerifying}
+                codeStatus={codeStatus}
+                errorMessage={verificationError}
+              />
+
+              {verifiedShareCode && (
+                <VerificationResult
+                  shareCode={verifiedShareCode}
+                  receipt={currentReceipt}
+                  onApprove={async (comment: string) => {
+                    if (!verifiedShareCode) return null;
+                    setIsApproving(true);
+                    try {
+                      const res = await approveLeaveRequest({
+                        shareCode: verifiedShareCode.code,
+                        employeeId: verifiedShareCode.employeeId || 'EMP-9021',
+                        employeeName: 'Sarah Jenkins',
+                        category: verifiedShareCode.hrPayload.coarseCategory,
+                        validFrom: verifiedShareCode.hrPayload.validFrom,
+                        validTo: verifiedShareCode.hrPayload.validTo,
+                        approvalDecision: 'APPROVED',
+                        approvedBy: currentUser.email,
+                        comment,
+                      });
+                      setLatestApproval(res.approval);
+                      setCurrentReceipt(res.receipt as any);
+                      loadAll();
+                      return res.approval;
+                    } finally {
+                      setIsApproving(false);
+                    }
+                  }}
+                  onReject={async (comment: string) => {
+                    if (!verifiedShareCode) return;
+                    setIsApproving(true);
+                    try {
+                      const res = await approveLeaveRequest({
+                        shareCode: verifiedShareCode.code,
+                        employeeId: verifiedShareCode.employeeId || 'EMP-9021',
+                        employeeName: 'Sarah Jenkins',
+                        category: verifiedShareCode.hrPayload.coarseCategory,
+                        validFrom: verifiedShareCode.hrPayload.validFrom,
+                        validTo: verifiedShareCode.hrPayload.validTo,
+                        approvalDecision: 'REJECTED',
+                        approvedBy: currentUser.email,
+                        comment,
+                      });
+                      setLatestApproval(res.approval);
+                      setCurrentReceipt(res.receipt as any);
+                      loadAll();
+                    } finally {
+                      setIsApproving(false);
+                    }
+                  }}
+                  isProcessing={isApproving}
+                  approvalCompleted={latestApproval}
+                  onNextRequest={() => {
+                    setVerifiedShareCode(null);
+                    setInputCode('');
+                    setCurrentReceipt(null);
+                    setLatestApproval(null);
+                    setCodeStatus('IDLE');
+                  }}
+                />
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Tab 3: Tamper-Evident Receipts */}
+        {activeTab === 'receipts' && (
+          <div className="space-y-6">
+            <ReceiptLog receipts={receipts} pendingCount={pendingCount} />
+          </div>
+        )}
 
       </div>
+
+      {/* Confirmation Modal */}
+      <LeaveConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        application={modalApp}
+        mode={modalMode}
+        onConfirm={handleExecuteDecision}
+      />
     </div>
   );
 }
 
-export default function HRVerifierPage() {
+export default function HRPortalPage() {
   return (
-    <Suspense fallback={<div className="p-12 text-center text-slate-400 font-mono">Loading HR Verifier...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-slate-400 font-mono text-xs">Loading HR Portal...</div>}>
       <HRVerifierContent />
     </Suspense>
   );

@@ -1,0 +1,39 @@
+name: Continuous Integration & Delivery
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-and-build:
+    name: Test & Build Protocol
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Portal Division & Sanitization Tests
+        run: node scripts/test-portal-division.mjs
+
+      - name: Run Clinic Document Isolation Tests
+        run: node scripts/test-clinic-document-flow.mjs
+
+      - name: Run Dual-Portal Leave Workflow Tests
+        run: node scripts/test-leave-workflow.mjs
+
+      - name: Build Next.js Production Bundle
+        run: npm run build
+        env:
+          NODE_ENV: production
