@@ -19,7 +19,7 @@ export default function ClinicHelpModal({ isOpen, onClose }: ClinicHelpModalProp
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-emerald-400" />
             <h3 className="text-base font-bold text-white font-condensed uppercase tracking-wider">
-              Clinic Issuer Guide & Privacy Architecture
+              Clinic Issuer Guide & Privacy Overview
             </h3>
           </div>
           <button

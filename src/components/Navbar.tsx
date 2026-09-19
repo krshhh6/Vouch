@@ -10,11 +10,10 @@ export default function Navbar() {
   const router = useRouter();
 
   const navLinks = [
-    { label: 'Overview', href: '/' },
-    { label: '1. Clinic', href: '/clinic' },
-    { label: '2. Employee', href: '/employee' },
-    { label: 'Redaction Lab', href: '/redaction-lab' },
-    { label: '3. HR', href: '/hr' },
+    { label: 'Portal Home', href: '/' },
+    { label: '1. Clinic Portal', href: '/clinic' },
+    { label: '2. Employee Portal', href: '/employee' },
+    { label: '3. HR Portal', href: '/hr' },
   ];
 
   const isActive = (href: string) => {
@@ -25,13 +24,10 @@ export default function Navbar() {
       return pathname.startsWith('/clinic') || pathname.startsWith('/issuer');
     }
     if (href === '/employee') {
-      return pathname === '/employee';
-    }
-    if (href === '/redaction-lab') {
-      return pathname.startsWith('/redaction-lab') || pathname.startsWith('/employee/redact');
+      return pathname.startsWith('/employee');
     }
     if (href === '/hr') {
-      return pathname === '/hr';
+      return pathname.startsWith('/hr');
     }
     return pathname.startsWith(href);
   };

@@ -172,7 +172,7 @@ export default function ClinicPortalPage() {
                 type="button"
                 onClick={() => setShowHelpModal(true)}
                 className="px-3 py-1.5 bg-[#1E293B] hover:bg-slate-700 text-slate-200 hover:text-white rounded-md text-xs font-mono transition flex items-center gap-1.5 border border-slate-700 shadow-sm"
-                title="Clinic guide & privacy architecture"
+                title="Clinic guide & privacy overview"
               >
                 <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
                 <span>[Help]</span>

@@ -5,82 +5,80 @@ import {
   ArrowRight, 
   CheckCircle2, 
   ShieldCheck, 
-  FileText, 
   Lock, 
-  EyeOff, 
-  Clock, 
-  Database,
+  Stethoscope, 
+  UserCheck, 
   Building2,
   Calendar,
-  AlertCircle
+  Sparkles
 } from 'lucide-react';
 
-export default function OverviewPage() {
+export default function PortalHomePage() {
   return (
-    <div className="w-full bg-[#0F172A] text-slate-100 min-h-[calc(100vh-100px)] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#0A101D] text-slate-100 min-h-[calc(100vh-80px)] py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-7xl mx-auto space-y-16">
         
-        {/* Main 50 / 50 Hero Section */}
+        {/* Main Hero Section */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          {/* Left Column (50%): Pitch, CTA & Stat Blocks */}
+          {/* Left Column: Pitch & Portal CTAs */}
           <div className="lg:col-span-6 space-y-8">
             <div className="space-y-4">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded text-xs font-mono font-bold uppercase tracking-wider text-[#94C3A3] bg-[#1E293B] border border-slate-700">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#4A7C59]" />
-                Zero-Knowledge Medical Leave Protocol
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded text-xs font-mono font-bold uppercase tracking-wider text-emerald-400 bg-[#111C2E] border border-slate-800">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                Statutory Medical Leave Verification
               </span>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-[64px] font-bold text-white tracking-tight leading-[1.05]">
+              <h1 className="text-4xl sm:text-5xl lg:text-[60px] font-bold text-white tracking-tight leading-[1.08] font-condensed uppercase">
                 Prove your leave.<br />
                 Protect your diagnosis.
               </h1>
 
               <p className="text-base text-slate-300 leading-relaxed font-sans max-w-xl">
-                Vouch lets employees certify medical, pregnancy, surgery, or mental-health leave eligibility to HR using Web Crypto ECDSA P-256 signatures — eliminating raw medical records, diagnosis exposure, and workplace bias.
+                Vouch lets employees verify statutory medical, maternity, surgery, or caregiving leave eligibility to HR using digital signatures — completely eliminating raw medical records, diagnostic exposure, and workplace discrimination.
               </p>
             </div>
 
-            {/* Two Stacked Buttons */}
+            {/* Portal Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Link
                 href="/clinic"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-[4px] bg-[#4A7C59] hover:bg-[#3D6649] text-white font-condensed font-bold uppercase tracking-wider text-base transition-colors shadow-sm"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold uppercase tracking-wider text-xs transition-colors shadow-lg"
               >
-                <span>LAUNCH INTERACTIVE DEMO →</span>
+                <span>ENTER CLINIC PORTAL →</span>
               </Link>
               
               <Link
-                href="/redaction-lab"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-[4px] bg-transparent hover:bg-[#1E293B] text-[#94C3A3] border-2 border-[#4A7C59] font-condensed font-bold uppercase tracking-wider text-base transition-colors"
+                href="/employee"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-[#111C2E] hover:bg-[#1E293B] text-slate-200 border border-slate-700 font-mono font-bold uppercase tracking-wider text-xs transition-colors"
               >
-                <span>EXPLORE REDACTION LAB</span>
+                <span>OPEN EMPLOYEE PORTAL →</span>
               </Link>
             </div>
 
-            {/* Three Stat Blocks (Flex Row) */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 border-t border-[#1E293B]">
-              <div className="p-4 rounded bg-[#0B1120] border border-[#1E293B] space-y-1">
-                <div className="text-xs font-mono font-bold text-white uppercase tracking-wider">ECDSA P-256</div>
-                <div className="text-[11px] text-slate-400 font-sans">Native Web Crypto</div>
+            {/* Three Value Stat Blocks */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 border-t border-slate-800">
+              <div className="p-4 rounded-lg bg-[#111C2E] border border-slate-800/80 space-y-1">
+                <div className="text-xs font-mono font-bold text-white uppercase tracking-wider">Digital Signatures</div>
+                <div className="text-[11px] text-slate-400">P-256 Authenticated</div>
               </div>
 
-              <div className="p-4 rounded bg-[#0B1120] border border-[#1E293B] space-y-1">
-                <div className="text-xs font-mono font-bold text-[#94C3A3] uppercase tracking-wider">0% DIAGNOSIS LEAK</div>
-                <div className="text-[11px] text-slate-400 font-sans">Minimal Attestation</div>
+              <div className="p-4 rounded-lg bg-[#111C2E] border border-slate-800/80 space-y-1">
+                <div className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">0% Diagnosis Leak</div>
+                <div className="text-[11px] text-slate-400">Privacy Guaranteed</div>
               </div>
 
-              <div className="p-4 rounded bg-[#0B1120] border border-[#1E293B] space-y-1">
-                <div className="text-xs font-mono font-bold text-white uppercase tracking-wider">TIME-BOUND &amp; REVOCABLE</div>
-                <div className="text-[11px] text-slate-400 font-sans">Padded Share Codes</div>
+              <div className="p-4 rounded-lg bg-[#111C2E] border border-slate-800/80 space-y-1">
+                <div className="text-xs font-mono font-bold text-white uppercase tracking-wider">24h Share Codes</div>
+                <div className="text-[11px] text-slate-400">Time-Bound &amp; Secure</div>
               </div>
             </div>
 
           </div>
 
-          {/* Right Column (50%): Certificate Preview Card */}
+          {/* Right Column: Certificate Preview Card */}
           <div className="lg:col-span-6">
-            <div className="parchment-sheet rounded-lg p-7 text-[#0F172A] font-sans relative border border-[#EDE6D6] shadow-2xl space-y-6">
+            <div className="parchment-sheet rounded-xl p-7 text-[#0F172A] font-sans relative border border-[#EDE6D6] shadow-2xl space-y-6">
               
               {/* Card Header */}
               <div className="flex items-start justify-between border-b border-[#EDE6D6] pb-4">
@@ -89,22 +87,22 @@ export default function OverviewPage() {
                     MEDICAL ATTESTATION CERTIFICATE
                   </span>
                   <h3 className="text-xl font-bold text-[#0F172A] mt-1">
-                    Summit Women&apos;s Health &amp; Reproductive Care
+                    Summit Women&apos;s Health Center
                   </h3>
                   <p className="text-xs text-slate-600 font-mono mt-0.5">
-                    Dr. Elena Rostova, MD • Medical Reg: GMC-6849201
+                    Dr. Elena Rostova, MD • License: GMC-6849201
                   </p>
                 </div>
 
                 <div className="official-stamp text-xs font-bold text-[#4A7C59] border-[#4A7C59] flex items-center gap-1.5 shrink-0">
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#4A7C59]" />
-                  <span>P-256 AUTHENTICATED</span>
+                  <span>AUTHENTICATED</span>
                 </div>
               </div>
 
               {/* Minimal Claims Disclosed to HR */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div className="bg-white/80 p-3 rounded border border-[#EDE6D6] space-y-1">
+                <div className="bg-white/80 p-3 rounded-md border border-[#EDE6D6] space-y-1">
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-condensed">
                     Certified Holder
                   </span>
@@ -113,7 +111,7 @@ export default function OverviewPage() {
                   </p>
                 </div>
 
-                <div className="bg-white/80 p-3 rounded border border-[#EDE6D6] space-y-1">
+                <div className="bg-white/80 p-3 rounded-md border border-[#EDE6D6] space-y-1">
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-condensed">
                     Leave Category
                   </span>
@@ -122,7 +120,7 @@ export default function OverviewPage() {
                   </p>
                 </div>
 
-                <div className="bg-white/80 p-3 rounded border border-[#EDE6D6] space-y-1">
+                <div className="bg-white/80 p-3 rounded-md border border-[#EDE6D6] space-y-1">
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-condensed">
                     Authorized Window
                   </span>
@@ -131,18 +129,18 @@ export default function OverviewPage() {
                   </p>
                 </div>
 
-                <div className="bg-white/80 p-3 rounded border border-[#EDE6D6] space-y-1">
+                <div className="bg-white/80 p-3 rounded-md border border-[#EDE6D6] space-y-1">
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-condensed">
                     Occupational Status
                   </span>
                   <p className="font-semibold text-xs text-[#0F172A]">
-                    Unfit (Rest Mandated)
+                    Unfit (Rest Advised)
                   </p>
                 </div>
               </div>
 
               {/* Underlying Clinical Record Box */}
-              <div className="rounded border border-[#D5CDBC] bg-[#FAF7F0] p-4 space-y-3">
+              <div className="rounded-lg border border-[#D5CDBC] bg-[#FAF7F0] p-4 space-y-3">
                 <div className="flex items-center justify-between border-b border-[#EDE6D6] pb-2">
                   <span className="text-xs font-bold uppercase tracking-wider font-condensed text-slate-700 flex items-center gap-1.5">
                     <Lock className="w-3.5 h-3.5 text-[#4A7C59]" />
@@ -160,20 +158,20 @@ export default function OverviewPage() {
                     <span>[—]</span>
                   </div>
                   <div className="flex items-center gap-1 flex-wrap">
-                    <span>Ultrasound confirms</span>
+                    <span>Pelvic scan confirms</span>
                     <span className="redacted-bar">viable intrauterine pregnancy at 11w4d</span>
                     <span>[following]</span>
                   </div>
                   <div className="flex items-center gap-1 flex-wrap">
                     <span>Prescribed</span>
-                    <span className="redacted-bar">Ondansetron 8mg PO BID</span>
-                    <span>and IV hydration.</span>
+                    <span className="redacted-bar">pelvic rest and hydration regimen</span>
+                    <span>as ordered.</span>
                   </div>
                 </div>
 
                 <div className="pt-2 border-t border-[#EDE6D6] flex items-center justify-between text-[10px] font-mono text-slate-500">
-                  <span>Hash: <strong className="text-slate-800">8fda...29c1</strong> (SHA-256)</span>
-                  <span className="font-bold text-[#31523B]">100% Tamper Proof</span>
+                  <span>Record Security: <strong className="text-slate-800">Stored on Doctor's Device Only</strong></span>
+                  <span className="font-bold text-[#31523B]">100% Private</span>
                 </div>
               </div>
 
@@ -182,86 +180,89 @@ export default function OverviewPage() {
 
         </div>
 
-        {/* 3-Step Interactive Workflow Explanation */}
-        <div className="pt-12 border-t border-[#1E293B] space-y-8">
+        {/* 3 Dedicated Portal Workspaces */}
+        <div className="pt-12 border-t border-slate-800 space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#94C3A3]">
-              Cryptographic Workflow
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
+              Role-Based Workspaces
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold text-white font-condensed uppercase tracking-wider">
-              Three Distinct Trust Boundaries
+              Choose Your Portal
             </h2>
             <p className="text-xs text-slate-400 font-sans">
-              Clinical knowledge stays with the doctor. Entitlement verification executes in employee-held client code. HR receives only policy compliance verdicts.
+              Select your role to issue certificates, manage your personal leave wallet, or verify statutory eligibility.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
+            {/* 1. Clinic Portal Card */}
             <Link 
               href="/clinic" 
-              className="p-6 rounded-lg bg-[#0B1120] border border-[#1E293B] hover:border-[#4A7C59] transition-all space-y-3 group"
+              className="p-6 rounded-xl bg-[#111C2E] border border-slate-800 hover:border-emerald-500 transition-all space-y-4 group shadow-lg"
             >
-              <div className="w-10 h-10 rounded bg-[#1E293B] border border-slate-700 flex items-center justify-center text-[#94C3A3] group-hover:bg-[#4A7C59] group-hover:text-white transition-colors">
-                <Building2 className="w-5 h-5" />
+              <div className="w-12 h-12 rounded-lg bg-[#0A101D] border border-slate-700 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                <Stethoscope className="w-6 h-6" />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono font-bold text-slate-400">STAGE 1</span>
-                <span className="text-[10px] text-[#94C3A3] font-mono">ECDSA P-256</span>
+                <span className="text-xs font-mono font-bold text-slate-400">WORKSPACE 1</span>
+                <span className="text-[10px] text-emerald-400 font-mono">Doctors &amp; Clinics</span>
               </div>
-              <h3 className="text-base font-bold text-white font-condensed uppercase tracking-wider">
-                1. Clinic Issuer
+              <h3 className="text-lg font-bold text-white font-condensed uppercase tracking-wider">
+                1. Clinic Portal
               </h3>
               <p className="text-xs text-slate-400 leading-relaxed font-sans">
-                Doctor signs minimal leave parameters. Diagnostic notes and clinic identities are stripped into SHA-256 registry hashes.
+                Sign statutory leave proofs in 30 seconds. Attach medical documents for your records that stay strictly on your device and are never sent to HR.
               </p>
-              <div className="text-xs font-condensed uppercase tracking-wider text-[#94C3A3] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              <div className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform pt-2">
                 <span>Enter Clinic Portal</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>
             </Link>
 
+            {/* 2. Employee Portal Card */}
             <Link 
               href="/employee" 
-              className="p-6 rounded-lg bg-[#0B1120] border border-[#1E293B] hover:border-[#4A7C59] transition-all space-y-3 group"
+              className="p-6 rounded-xl bg-[#111C2E] border border-slate-800 hover:border-emerald-500 transition-all space-y-4 group shadow-lg"
             >
-              <div className="w-10 h-10 rounded bg-[#1E293B] border border-slate-700 flex items-center justify-center text-[#94C3A3] group-hover:bg-[#4A7C59] group-hover:text-white transition-colors">
-                <Lock className="w-5 h-5" />
+              <div className="w-12 h-12 rounded-lg bg-[#0A101D] border border-slate-700 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                <UserCheck className="w-6 h-6" />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono font-bold text-slate-400">STAGE 2</span>
-                <span className="text-[10px] text-[#94C3A3] font-mono">Client-Side Vault</span>
+                <span className="text-xs font-mono font-bold text-slate-400">WORKSPACE 2</span>
+                <span className="text-[10px] text-emerald-400 font-mono">Workers &amp; Applicants</span>
               </div>
-              <h3 className="text-base font-bold text-white font-condensed uppercase tracking-wider">
-                2. Employee Wallet
+              <h3 className="text-lg font-bold text-white font-condensed uppercase tracking-wider">
+                2. Employee Portal
               </h3>
               <p className="text-xs text-slate-400 leading-relaxed font-sans">
-                Employee holds credentials in private storage. Evaluates information leakage and generates time-bound 24h verification codes.
+                Access your personal credential wallet. Generate 24-hour QR codes and share links for HR, and receive live approval notifications.
               </p>
-              <div className="text-xs font-condensed uppercase tracking-wider text-[#94C3A3] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                <span>Access Employee Vault</span>
+              <div className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform pt-2">
+                <span>Access Employee Wallet</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>
             </Link>
 
+            {/* 3. HR Verifier Portal Card */}
             <Link 
               href="/hr" 
-              className="p-6 rounded-lg bg-[#0B1120] border border-[#1E293B] hover:border-[#4A7C59] transition-all space-y-3 group"
+              className="p-6 rounded-xl bg-[#111C2E] border border-slate-800 hover:border-emerald-500 transition-all space-y-4 group shadow-lg"
             >
-              <div className="w-10 h-10 rounded bg-[#1E293B] border border-slate-700 flex items-center justify-center text-[#94C3A3] group-hover:bg-[#4A7C59] group-hover:text-white transition-colors">
-                <ShieldCheck className="w-5 h-5" />
+              <div className="w-12 h-12 rounded-lg bg-[#0A101D] border border-slate-700 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                <Building2 className="w-6 h-6" />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono font-bold text-slate-400">STAGE 3</span>
-                <span className="text-[10px] text-[#94C3A3] font-mono">F1–F3 Predicates</span>
+                <span className="text-xs font-mono font-bold text-slate-400">WORKSPACE 3</span>
+                <span className="text-[10px] text-emerald-400 font-mono">HR &amp; Benefits</span>
               </div>
-              <h3 className="text-base font-bold text-white font-condensed uppercase tracking-wider">
-                3. HR Verifier
+              <h3 className="text-lg font-bold text-white font-condensed uppercase tracking-wider">
+                3. HR Verifier Portal
               </h3>
               <p className="text-xs text-slate-400 leading-relaxed font-sans">
-                HR inputs share code. Validates policy predicates without learning remaining balances or raw clinical files, logging immutable hash receipts.
+                Verify employee share codes against statutory policies in one click. Review the pending queue and issue decisions without holding raw medical records.
               </p>
-              <div className="text-xs font-condensed uppercase tracking-wider text-[#94C3A3] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              <div className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform pt-2">
                 <span>Open HR Verifier</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>

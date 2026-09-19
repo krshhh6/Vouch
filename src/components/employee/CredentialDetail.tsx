@@ -249,7 +249,7 @@ export default function CredentialDetail({
         </div>
       </div>
 
-      {/* Bottom Three Action Buttons (E2) */}
+      {/* Bottom Action Buttons */}
       <div className="flex flex-wrap items-center gap-3 pt-2">
         <button
           type="button"
@@ -259,14 +259,6 @@ export default function CredentialDetail({
           <Share2 className="w-4 h-4" />
           <span>[GENERATE SHARE CODE]</span>
         </button>
-
-        <Link
-          href="/redaction-lab"
-          className="px-4 py-3 rounded-lg bg-[#1E293B] hover:bg-[#334155] border border-slate-700 text-slate-200 font-condensed font-bold uppercase tracking-wider text-xs transition-colors flex items-center gap-2"
-        >
-          <FileText className="w-4 h-4 text-[#94C3A3]" />
-          <span>[UPLOAD MEDICAL PDF]</span>
-        </Link>
 
         <button
           type="button"
