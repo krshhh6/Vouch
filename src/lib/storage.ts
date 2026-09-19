@@ -8,7 +8,11 @@ import {
   PredicateResult, 
   EntitlementRecord, 
   BreakGlassRequest,
-  HRPublicPayload
+  HRPublicPayload,
+  ApprovalRecord,
+  NotificationItem,
+  AuditLogEntry,
+  QueueItem
 } from './types';
 import { TRUSTED_ISSUERS } from './registry';
 import { 
@@ -31,6 +35,10 @@ const STORAGE_KEYS = {
   BREAK_GLASS: 'vouch_break_glass_v2',
   ACTIVE_ISSUER_ID: 'vouch_active_issuer_id_v2',
   INITIALIZED: 'vouch_initialized_v2',
+  APPROVALS: 'vouch_approvals_v2',
+  NOTIFICATIONS: 'vouch_notifications_v2',
+  AUDIT_LOGS: 'vouch_audit_logs_v2',
+  PENDING_QUEUE: 'vouch_pending_queue_v2',
 };
 
 const STATE_EVENT = 'vouch_state_updated';
@@ -445,6 +453,142 @@ export async function signBreakGlassByEmployee(requestId: string): Promise<Break
   return req;
 }
 
+// ===================== APPROVALS (HR Decision Records) =====================
+
+export function getApprovals(employeeId?: string): ApprovalRecord[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.APPROVALS);
+    const list: ApprovalRecord[] = raw ? JSON.parse(raw) : [];
+    if (employeeId) {
+      return list.filter(a => !a.employeeId || a.employeeId === employeeId);
+    }
+    return list;
+  } catch {
+    return [];
+  }
+}
+
+export function saveApproval(record: ApprovalRecord): void {
+  if (typeof window === 'undefined') return;
+  const list = getApprovals();
+  const updated = [record, ...list.filter(a => a.approvalId !== record.approvalId)];
+  localStorage.setItem(STORAGE_KEYS.APPROVALS, JSON.stringify(updated));
+  notifyStateChange();
+}
+
+export function getApprovalById(id: string): ApprovalRecord | undefined {
+  return getApprovals().find(a => a.approvalId === id);
+}
+
+// ===================== NOTIFICATIONS (Real-Time Notification Flow) =====================
+
+export function getNotifications(employeeId?: string): NotificationItem[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS);
+    const list: NotificationItem[] = raw ? JSON.parse(raw) : [];
+    if (employeeId) {
+      return list.filter(n => !n.employeeId || n.employeeId === employeeId);
+    }
+    return list;
+  } catch {
+    return [];
+  }
+}
+
+export function saveNotification(notif: NotificationItem): void {
+  if (typeof window === 'undefined') return;
+  const list = getNotifications();
+  const updated = [notif, ...list.filter(n => n.id !== notif.id)];
+  localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(updated));
+  notifyStateChange();
+}
+
+export function markNotificationRead(id: string): void {
+  if (typeof window === 'undefined') return;
+  const list = getNotifications();
+  const item = list.find(n => n.id === id);
+  if (item) {
+    item.read = true;
+    localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(list));
+    notifyStateChange();
+  }
+}
+
+export function markAllNotificationsRead(employeeId?: string): void {
+  if (typeof window === 'undefined') return;
+  const list = getNotifications();
+  list.forEach(n => {
+    if (!employeeId || n.employeeId === employeeId) {
+      n.read = true;
+    }
+  });
+  localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(list));
+  notifyStateChange();
+}
+
+// ===================== PERSONAL AUDIT LOG =====================
+
+export function getAuditLogs(attestationId?: string): AuditLogEntry[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.AUDIT_LOGS);
+    const list: AuditLogEntry[] = raw ? JSON.parse(raw) : [];
+    if (attestationId) {
+      return list.filter(a => a.attestationId === attestationId);
+    }
+    return list;
+  } catch {
+    return [];
+  }
+}
+
+export function logAuditView(entry: AuditLogEntry): void {
+  if (typeof window === 'undefined') return;
+  const list = getAuditLogs();
+  const updated = [entry, ...list];
+  localStorage.setItem(STORAGE_KEYS.AUDIT_LOGS, JSON.stringify(updated));
+  notifyStateChange();
+}
+
+// ===================== PENDING HR QUEUE =====================
+
+export function getPendingQueue(): QueueItem[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.PENDING_QUEUE);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveQueueItem(item: QueueItem): void {
+  if (typeof window === 'undefined') return;
+  const list = getPendingQueue();
+  const updated = [item, ...list.filter(q => q.shareCode !== item.shareCode)];
+  localStorage.setItem(STORAGE_KEYS.PENDING_QUEUE, JSON.stringify(updated));
+  notifyStateChange();
+}
+
+export function updateQueueItemStatus(
+  shareCode: string,
+  status: QueueItem['status'],
+  statusNote?: string
+): void {
+  if (typeof window === 'undefined') return;
+  const list = getPendingQueue();
+  const normalized = shareCode.trim().toUpperCase();
+  const item = list.find(q => q.shareCode.toUpperCase() === normalized);
+  if (item) {
+    item.status = status;
+    if (statusNote) item.statusNote = statusNote;
+    localStorage.setItem(STORAGE_KEYS.PENDING_QUEUE, JSON.stringify(list));
+    notifyStateChange();
+  }
+}
+
 // ===================== ISSUER STORAGE =====================
 
 export function getActiveIssuer(): IssuerIdentity {
@@ -598,11 +742,133 @@ export async function seedDemoData(force = false): Promise<void> {
   const receiptHash1 = await computeReceiptHash(GENESIS_BLOCK_HASH, receiptData1);
   const sampleReceipt1: Receipt = { ...receiptData1, hash: receiptHash1 };
 
+  // Sample Approvals
+  const sampleApproval1: ApprovalRecord = {
+    approvalId: 'APR-2026-004521',
+    shareCode: 'LG-7892',
+    employeeId: 'EMP-9021',
+    employeeName: 'Sarah Jenkins',
+    approvalDecision: 'APPROVED',
+    approvedBy: 'alice@acmecorp.com',
+    approvedAt: '2026-09-16T10:30:00.000Z',
+    category: 'STATUTORY_MATERNITY',
+    validFrom: '2026-09-16',
+    validTo: '2026-10-07',
+    status: 'ACTIVE',
+    receiptId: 'rcpt_seed_1',
+    comment: 'Statutory 3-week block verified against MBA-1961'
+  };
+
+  const sampleApproval2: ApprovalRecord = {
+    approvalId: 'APR-2026-004110',
+    shareCode: 'VC-26MED-3341',
+    employeeId: 'EMP-9021',
+    employeeName: 'Sarah Jenkins',
+    approvalDecision: 'APPROVED',
+    approvedBy: 'alice@acmecorp.com',
+    approvedAt: '2026-08-02T09:15:00.000Z',
+    category: 'STATUTORY_MEDICAL',
+    validFrom: '2026-08-02',
+    validTo: '2026-08-09',
+    status: 'ACTIVE',
+    receiptId: 'rcpt_seed_2',
+    comment: 'Post-viral recovery leave certified by licensed practitioner'
+  };
+
+  // Sample Notifications
+  const sampleNotif1: NotificationItem = {
+    id: 'notif_seed_001',
+    type: 'LEAVE_APPROVED',
+    employeeId: 'EMP-9021',
+    approvalId: 'APR-2026-004521',
+    category: 'STATUTORY_MATERNITY',
+    validFrom: '2026-09-16',
+    validTo: '2026-10-07',
+    approvedBy: 'alice@acmecorp.com',
+    createdAt: '2026-09-16T10:30:00.000Z',
+    read: false,
+    title: '✓ Leave approved!',
+    message: 'Your maternity leave request (Sep 16 – Oct 07) has been approved by HR.'
+  };
+
+  const sampleNotif2: NotificationItem = {
+    id: 'notif_seed_002',
+    type: 'LEAVE_APPROVED',
+    employeeId: 'EMP-9021',
+    approvalId: 'APR-2026-004110',
+    category: 'STATUTORY_MEDICAL',
+    validFrom: '2026-08-02',
+    validTo: '2026-08-09',
+    approvedBy: 'alice@acmecorp.com',
+    createdAt: '2026-08-02T09:15:00.000Z',
+    read: true,
+    title: '✓ Leave approved!',
+    message: 'Your medical leave request (Aug 02 – Aug 09) has been approved by HR.'
+  };
+
+  // Sample Pending HR Queue
+  const sampleQueue: QueueItem[] = [
+    {
+      id: 'q_001',
+      employeeName: 'S. Jenkins',
+      employeeId: 'EMP-9021',
+      category: 'STATUTORY_MATERNITY',
+      shareCode: 'LG-7892',
+      submissionTime: 'Sep 16, 10:00 UTC',
+      status: 'VERIFIED',
+      statusNote: '✓ Ready to approve'
+    },
+    {
+      id: 'q_002',
+      employeeName: 'M. Patel',
+      employeeId: 'EMP-8834',
+      category: 'STATUTORY_MEDICAL',
+      shareCode: 'LG-3341',
+      submissionTime: 'Sep 15, 14:22 UTC',
+      status: 'WAITING',
+      statusNote: 'Awaiting HR verification'
+    },
+    {
+      id: 'q_003',
+      employeeName: 'R. Kumar',
+      employeeId: 'EMP-7712',
+      category: 'CAREGIVING',
+      shareCode: 'LG-5520',
+      submissionTime: 'Sep 14, 09:00 UTC',
+      status: 'APPROVED',
+      statusNote: '✓ Complete'
+    }
+  ];
+
+  // Sample Audit Logs
+  const sampleAuditLogs: AuditLogEntry[] = [
+    {
+      id: 'audit_001',
+      attestationId: 'LG-ATT-7729',
+      shareCode: 'LG-7892',
+      viewerEmail: 'alice@acmecorp.com',
+      viewedAt: '2026-09-16T10:30:00.000Z',
+      outcome: 'APPROVED'
+    },
+    {
+      id: 'audit_002',
+      attestationId: 'LG-ATT-7729',
+      shareCode: 'LG-7892',
+      viewerEmail: 'alice@acmecorp.com',
+      viewedAt: '2026-09-16T10:00:15.000Z',
+      outcome: 'VERIFIED'
+    }
+  ];
+
   localStorage.setItem(STORAGE_KEYS.ATTESTATIONS, JSON.stringify([sampleAttestation1, sampleAttestation2]));
   localStorage.setItem(STORAGE_KEYS.SHARE_CODES, JSON.stringify([sampleShareCode1]));
   localStorage.setItem(STORAGE_KEYS.ENTITLEMENT_LEDGER, JSON.stringify([sampleEntitlement1, sampleEntitlement2]));
   localStorage.setItem(STORAGE_KEYS.RECEIPTS_CHAIN, JSON.stringify([sampleReceipt1]));
   localStorage.setItem(STORAGE_KEYS.BREAK_GLASS, JSON.stringify([]));
+  localStorage.setItem(STORAGE_KEYS.APPROVALS, JSON.stringify([sampleApproval1, sampleApproval2]));
+  localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify([sampleNotif1, sampleNotif2]));
+  localStorage.setItem(STORAGE_KEYS.PENDING_QUEUE, JSON.stringify(sampleQueue));
+  localStorage.setItem(STORAGE_KEYS.AUDIT_LOGS, JSON.stringify(sampleAuditLogs));
   localStorage.setItem(STORAGE_KEYS.INITIALIZED, 'true');
   notifyStateChange();
 }
@@ -614,6 +880,10 @@ export function resetAllData(): void {
   localStorage.removeItem(STORAGE_KEYS.ENTITLEMENT_LEDGER);
   localStorage.removeItem(STORAGE_KEYS.RECEIPTS_CHAIN);
   localStorage.removeItem(STORAGE_KEYS.BREAK_GLASS);
+  localStorage.removeItem(STORAGE_KEYS.APPROVALS);
+  localStorage.removeItem(STORAGE_KEYS.NOTIFICATIONS);
+  localStorage.removeItem(STORAGE_KEYS.PENDING_QUEUE);
+  localStorage.removeItem(STORAGE_KEYS.AUDIT_LOGS);
   localStorage.removeItem(STORAGE_KEYS.INITIALIZED);
   seedDemoData(true);
 }
@@ -654,9 +924,135 @@ export async function createShareCode(
     expiresAt,
     viewCount: 0,
     isRevoked: false,
-    paddedByteLength: 512
+    paddedByteLength: 512,
+    employeeId: attestation.payload.employeeId || 'EMP-9021',
+    approvalStatus: 'WAITING'
   };
 
   saveShareCode(shareCode);
+
+  // Automatically enqueue in HR pending queue for seamless live demo
+  saveQueueItem({
+    id: `q_${Date.now()}`,
+    employeeName: attestation.payload.employeeName || 'Sarah Jenkins',
+    employeeId: attestation.payload.employeeId || 'EMP-9021',
+    category: attestation.payload.coarseCategory,
+    shareCode: code,
+    submissionTime: 'Just now',
+    status: 'WAITING',
+    statusNote: 'Awaiting HR verification'
+  });
+
   return shareCode;
+}
+
+export async function approveLeaveRequest(params: {
+  shareCode: string;
+  employeeId: string;
+  employeeName?: string;
+  category: CoarseCategory;
+  validFrom: string;
+  validTo: string;
+  approvalDecision: 'APPROVED' | 'REJECTED';
+  approvedBy?: string;
+  comment?: string;
+}): Promise<{ approval: ApprovalRecord; notification: NotificationItem; receipt: Receipt }> {
+  const approvalId = `APR-2026-${Math.floor(100000 + Math.random() * 900000)}`;
+  const approvedAt = new Date().toISOString();
+  const approvedBy = params.approvedBy || 'alice@acmecorp.com';
+
+  // 1. Append Receipt (Tamper-evident append-only chain)
+  const receipt = await appendReceipt({
+    shareCodeRef: params.shareCode,
+    policyVersion: VOUCH_POLICY_SPEC.policyVersion,
+    outcome: params.approvalDecision === 'APPROVED' ? 'APPROVED' : 'REJECTED',
+    proofPayload: {
+      action: params.approvalDecision === 'APPROVED' ? 'LEAVE_APPROVAL' : 'LEAVE_REJECTION',
+      approvalId,
+      shareCode: params.shareCode,
+      category: params.category,
+      validFrom: params.validFrom,
+      validTo: params.validTo,
+      comment: params.comment || ''
+    },
+    predicateResult: {
+      withinPolicyMaxDuration: true,
+      withinRemainingEntitlement: true,
+      withinCredentialValidity: true,
+      noOverlapWithApproved: true
+    },
+    actorRole: 'HR_BENEFITS_VERIFIER'
+  });
+
+  // 2. Save Approval Record
+  const approval: ApprovalRecord = {
+    approvalId,
+    shareCode: params.shareCode,
+    employeeId: params.employeeId,
+    employeeName: params.employeeName || 'Sarah Jenkins',
+    approvalDecision: params.approvalDecision,
+    approvedBy,
+    approvedAt,
+    category: params.category,
+    validFrom: params.validFrom,
+    validTo: params.validTo,
+    status: 'ACTIVE',
+    receiptId: receipt.id,
+    comment: params.comment
+  };
+  saveApproval(approval);
+
+  // 3. Update Share Code Status
+  const shares = getShareCodes();
+  const share = shares.find(s => s.code.toUpperCase() === params.shareCode.toUpperCase());
+  if (share) {
+    share.approvalStatus = params.approvalDecision;
+    saveShareCode(share);
+  }
+
+  // 4. Update Queue Item
+  updateQueueItemStatus(
+    params.shareCode,
+    params.approvalDecision === 'APPROVED' ? 'APPROVED' : 'REJECTED',
+    params.approvalDecision === 'APPROVED' ? '✓ Complete' : '✗ Request Denied'
+  );
+
+  // 5. Create Real-Time Notification for Employee
+  const categoryTitle = params.category === 'STATUTORY_MATERNITY' 
+    ? 'maternity leave' 
+    : params.category === 'STATUTORY_MEDICAL' 
+    ? 'medical leave' 
+    : 'caregiving leave';
+
+  const notification: NotificationItem = {
+    id: `notif_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    type: params.approvalDecision === 'APPROVED' ? 'LEAVE_APPROVED' : 'LEAVE_REJECTED',
+    employeeId: params.employeeId,
+    approvalId,
+    category: params.category,
+    validFrom: params.validFrom,
+    validTo: params.validTo,
+    approvedBy,
+    createdAt: approvedAt,
+    read: false,
+    title: params.approvalDecision === 'APPROVED' ? '✓ Leave approved!' : '✗ Leave request rejected',
+    message: params.approvalDecision === 'APPROVED'
+      ? `Your ${categoryTitle} request (${params.validFrom} – ${params.validTo}) has been approved by HR.`
+      : `Your ${categoryTitle} request (${params.validFrom} – ${params.validTo}) was not approved.`
+  };
+  saveNotification(notification);
+
+  // 6. Log Personal Audit View
+  if (share) {
+    logAuditView({
+      id: `audit_${Date.now()}`,
+      attestationId: share.attestationId,
+      shareCode: params.shareCode,
+      viewerEmail: approvedBy,
+      viewedAt: approvedAt,
+      outcome: params.approvalDecision === 'APPROVED' ? 'APPROVED' : 'REJECTED'
+    });
+  }
+
+  return { approval, notification, receipt };
 }

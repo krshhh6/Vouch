@@ -116,6 +116,8 @@ export interface ShareCode {
   isRevoked: boolean;
   viewCount: number;
   intendedRecipient?: string;
+  employeeId?: string;
+  approvalStatus?: 'WAITING' | 'VERIFIED' | 'APPROVED' | 'REJECTED';
   // F4: Uniform padded length metadata
   paddedByteLength: number;
 }
@@ -177,4 +179,59 @@ export interface RedactionEntity {
   reason: string;
   startIndex: number;
   endIndex: number;
+}
+
+// HR Approval Record (Zero medical columns)
+export interface ApprovalRecord {
+  approvalId: string; // e.g. "APR-2026-004521"
+  shareCode: string;
+  employeeId: string; // e.g. "EMP-9021"
+  employeeName?: string;
+  approvalDecision: 'APPROVED' | 'REJECTED';
+  approvedBy: string; // e.g. "alice@acmecorp.com"
+  approvedAt: string; // ISO timestamp
+  category: CoarseCategory;
+  validFrom: string; // YYYY-MM-DD
+  validTo: string; // YYYY-MM-DD
+  status: 'ACTIVE' | 'EXPIRED';
+  receiptId?: string;
+  comment?: string;
+}
+
+// Real-Time Employee Notification Flow
+export interface NotificationItem {
+  id: string;
+  type: 'LEAVE_APPROVED' | 'LEAVE_REJECTED' | 'VERIFICATION_FAILED' | 'SHARE_CODE_EXPIRING';
+  employeeId: string;
+  approvalId?: string;
+  category: string;
+  validFrom: string;
+  validTo: string;
+  approvedBy?: string;
+  createdAt: string;
+  read: boolean;
+  title?: string;
+  message?: string;
+}
+
+// Personal Audit Log (View counts & timestamps only; zero health details)
+export interface AuditLogEntry {
+  id: string;
+  attestationId: string;
+  shareCode: string;
+  viewerEmail: string;
+  viewedAt: string;
+  outcome: 'VERIFIED' | 'APPROVED' | 'REJECTED' | 'EXPIRED';
+}
+
+// HR Verification Queue Item
+export interface QueueItem {
+  id: string;
+  employeeName: string;
+  employeeId: string;
+  category: CoarseCategory;
+  shareCode: string;
+  submissionTime: string;
+  status: 'WAITING' | 'VERIFIED' | 'APPROVED' | 'REJECTED';
+  statusNote?: string;
 }
