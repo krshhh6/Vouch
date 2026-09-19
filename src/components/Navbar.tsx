@@ -15,8 +15,6 @@ export default function Navbar() {
     { label: '2. Employee', href: '/employee' },
     { label: 'Redaction Lab', href: '/redaction-lab' },
     { label: '3. HR', href: '/hr' },
-    { label: 'DB Inspector', href: '/db-inspector' },
-    { label: 'RESEARCH GUIDE', href: '/research-guide' },
   ];
 
   const isActive = (href: string) => {
@@ -34,9 +32,6 @@ export default function Navbar() {
     }
     if (href === '/hr') {
       return pathname === '/hr';
-    }
-    if (href === '/db-inspector') {
-      return pathname.startsWith('/db-inspector') || pathname.startsWith('/hr/inspector');
     }
     return pathname.startsWith(href);
   };

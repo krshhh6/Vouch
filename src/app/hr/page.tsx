@@ -324,14 +324,6 @@ function HRVerifierContent() {
               Statutory verification portal. Validates eligibility without possessing or storing raw clinical notes or diagnoses.
             </p>
           </div>
-
-          <Link
-            href="/db-inspector"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E293B] hover:bg-[#334155] border border-slate-700 text-xs font-condensed uppercase tracking-wider font-bold text-slate-200 transition-colors self-start sm:self-auto"
-          >
-            <Database className="w-3.5 h-3.5 text-[#4A7C59]" />
-            <span>DB Inspector (F8)</span>
-          </Link>
         </div>
 
         {/* 3-Column Layout: Left (25%), Center (50%), Right (25%) */}
