@@ -235,3 +235,26 @@ export interface QueueItem {
   status: 'WAITING' | 'VERIFIED' | 'APPROVED' | 'REJECTED';
   statusNote?: string;
 }
+
+// F9: Clinic Local Medical Document (Local device storage only; zero exposure to HR)
+export interface MedicalDocument {
+  id: string;
+  attestationId: string; // Link to attestation
+  fileName: string;
+  fileType: 'image/jpeg' | 'image/png' | 'application/pdf' | string;
+  fileSize: number;
+  base64Data: string; // Stored locally on clinic device only
+  uploadedAt: string;
+  notes?: string;
+}
+
+// Simplified Clinic Setup Profile
+export interface ClinicProfile {
+  doctorName: string;
+  clinicName: string;
+  regNumber: string;
+  email: string;
+  isSetup: boolean;
+  setupAt?: string;
+}
+

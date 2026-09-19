@@ -1,736 +1,296 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { 
-  IssuerIdentity, 
-  CoarseCategory, 
-  FitForDutyStatus, 
-  AttestationPayload, 
-  SignedAttestation 
-} from '@/lib/types';
-import { TRUSTED_ISSUERS } from '@/lib/registry';
-import { 
-  getActiveIssuer, 
-  saveAttestation, 
-  getAttestations, 
-  revokeAttestationByIssuer,
-  subscribeToStateChange 
-} from '@/lib/storage';
-import { 
-  generateECDSAKeyPair, 
-  signAttestationPayload, 
-  computeSHA256,
-  canonicalizeJson
-} from '@/lib/crypto';
+import React, { useState, useEffect } from 'react';
 import { 
   Building2, 
-  ShieldCheck, 
-  Key, 
-  Calendar, 
+  Settings, 
+  HelpCircle, 
+  RotateCcw, 
   CheckCircle2, 
-  Printer, 
-  Copy, 
-  Check, 
-  AlertTriangle, 
-  QrCode, 
-  RefreshCw,
-  Clock,
-  User,
-  ShieldAlert,
-  Info
+  ShieldCheck, 
+  AlertTriangle 
 } from 'lucide-react';
+import { 
+  SignedAttestation, 
+  ShareCode, 
+  MedicalDocument, 
+  ClinicProfile 
+} from '@/lib/types';
+import { 
+  getAttestations, 
+  getShareCodes, 
+  getClinicProfile, 
+  saveClinicProfile, 
+  resetAllData, 
+  seedDemoData, 
+  subscribeToStateChange,
+  getClinicDocument,
+  createShareCode
+} from '@/lib/storage';
+
+import ClinicSetup from '@/components/clinic/ClinicSetup';
+import QuickCreateForm from '@/components/clinic/QuickCreateForm';
+import RecentlyIssuedList from '@/components/clinic/RecentlyIssuedList';
+import ShareCodeModal from '@/components/clinic/ShareCodeModal';
+import ClinicHelpModal from '@/components/clinic/ClinicHelpModal';
 
 export default function ClinicPortalPage() {
-  const [activeIssuer, setActiveIssuer] = useState<IssuerIdentity>(TRUSTED_ISSUERS[0]);
-  const [clinicName, setClinicName] = useState("Sunrise Women's Health Center");
-  const [regNumber, setRegNumber] = useState('GMC-1234567');
-  const [issuerDid, setIssuerDid] = useState('did:web:sunrise-clinic.local');
-  const [publicKeyHash, setPublicKeyHash] = useState('8a9f4e2b...3c2a');
-  const [isIssuerRevoked, setIsIssuerRevoked] = useState(false);
-  const [copiedDid, setCopiedDid] = useState(false);
+  const [clinicProfile, setClinicProfile] = useState<ClinicProfile>({
+    doctorName: 'Dr. Elena Rostova',
+    clinicName: "Summit Women's Health Center",
+    regNumber: 'GMC-6849201',
+    email: 'dr.elena@summit-health.com',
+    isSetup: true,
+  });
 
-  // Attestation Builder State
-  const [employeeEmail, setEmployeeEmail] = useState('sarah@company.com');
-  const [employeeName, setEmployeeName] = useState('Sarah Jenkins');
-  const [leaveCategory, setLeaveCategory] = useState<CoarseCategory>('STATUTORY_MATERNITY');
-  const [startDate, setStartDate] = useState('2026-09-16');
-  const [endDate, setEndDate] = useState('2026-10-07');
-  const [occupationalStatus, setOccupationalStatus] = useState<FitForDutyStatus>('full-rest');
-  const [isSigning, setIsSigning] = useState(false);
+  const [attestations, setAttestations] = useState<SignedAttestation[]>([]);
+  const [shareCodes, setShareCodes] = useState<ShareCode[]>([]);
 
-  // Right Panel: Attestation Issued Output & Ledger
-  const [latestIssued, setLatestIssued] = useState<SignedAttestation | null>(null);
-  const [copiedLink, setCopiedLink] = useState(false);
-  const [attestationsList, setAttestationsList] = useState<SignedAttestation[]>([]);
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
-  const [showRevokeModal, setShowRevokeModal] = useState(false);
-  const [attestationToRevoke, setAttestationToRevoke] = useState<string | null>(null);
+  // Modals & Active Selections
+  const [showSetupModal, setShowSetupModal] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+  // Success / Share Code Modal
+  const [activeAttestation, setActiveAttestation] = useState<SignedAttestation | null>(null);
+  const [activeShareCode, setActiveShareCode] = useState<ShareCode | null>(null);
+  const [activeMedicalDoc, setActiveMedicalDoc] = useState<MedicalDocument | null>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
+
+  // Form Reset Trigger
+  const [formKey, setFormKey] = useState(0);
+
+  const loadAllData = () => {
+    const profile = getClinicProfile();
+    setClinicProfile(profile);
+    const attList = getAttestations();
+    setAttestations(attList);
+    const shares = getShareCodes();
+    setShareCodes(shares);
+  };
 
   useEffect(() => {
-    const current = getActiveIssuer();
-    setActiveIssuer(current);
-    setClinicName(current.name || "Sunrise Women's Health Center");
-    setRegNumber(current.regNumber || 'GMC-1234567');
-    computeSHA256(current.publicKeyHex || 'p256-default').then(h => {
-      setPublicKeyHash(`${h.substring(0, 8)}...${h.substring(h.length - 6)}`);
-    });
-    loadList();
+    seedDemoData();
+    loadAllData();
 
     const unsubscribe = subscribeToStateChange(() => {
-      loadList();
+      loadAllData();
     });
+
     return () => unsubscribe();
   }, []);
 
-  const loadList = () => {
-    const list = getAttestations();
-    setAttestationsList(list);
-    if (!latestIssued && list.length > 0) {
-      setLatestIssued(list[0]);
+  const handleCreated = (
+    attestation: SignedAttestation,
+    shareCode: ShareCode,
+    doc: MedicalDocument | null
+  ) => {
+    setActiveAttestation(attestation);
+    setActiveShareCode(shareCode);
+    setActiveMedicalDoc(doc);
+    setShowShareModal(true);
+    loadAllData();
+  };
+
+  const handleViewShareCode = async (attestation: SignedAttestation) => {
+    const attId = attestation.payload.attestationId;
+    let share = shareCodes.find((s) => s.attestationId === attId);
+    
+    // If not existing, create a share code on the fly
+    if (!share) {
+      share = await createShareCode(attestation, 'maternity-mba-1961', 24);
     }
+
+    const doc = getClinicDocument(attId);
+    setActiveAttestation(attestation);
+    setActiveShareCode(share);
+    setActiveMedicalDoc(doc);
+    setShowShareModal(true);
   };
 
-  const handleCopyDid = () => {
-    navigator.clipboard.writeText(issuerDid);
-    setCopiedDid(true);
-    setTimeout(() => setCopiedDid(false), 2000);
+  const handleCreateAnother = () => {
+    setShowShareModal(false);
+    setActiveAttestation(null);
+    setActiveShareCode(null);
+    setActiveMedicalDoc(null);
+    setFormKey((prev) => prev + 1);
   };
 
-  const handleGenerateNewKeyPair = async () => {
-    const freshKeys = await generateECDSAKeyPair();
-    const newHash = await computeSHA256(freshKeys.publicKeyHex);
-    setPublicKeyHash(`${newHash.substring(0, 8)}...${newHash.substring(newHash.length - 6)}`);
-    alert('Generated new native Web Crypto ECDSA P-256 key pair in browser memory.');
-  };
-
-  const handleToggleClinicRevocation = () => {
-    setIsIssuerRevoked(!isIssuerRevoked);
-  };
-
-  const handleSignAndIssue = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSigning(true);
-
-    try {
-      const attestationId = `ATT-2026-${Math.floor(100000 + Math.random() * 900000)}`;
-      const issuedAt = new Date().toISOString();
-
-      // Compute hash of issuer registration + salt (FIX 0: never leaks clinic name or raw reg to HR)
-      const issuerRefHash = await computeSHA256(`${regNumber}:salt-vouch-2026`);
-
-      let fineCategory: import('@/lib/types').FineCategory = 'general-medical';
-      if (leaveCategory === 'STATUTORY_MATERNITY') fineCategory = 'pregnancy';
-      else if (leaveCategory === 'CAREGIVING') fineCategory = 'bereavement';
-
-      const payload: AttestationPayload = {
-        attestationId,
-        employeeName: employeeName.trim() || 'Sarah Jenkins',
-        employeeId: employeeEmail.trim(),
-        fineCategory,
-        coarseCategory: leaveCategory,
-        categoryLabel: leaveCategory === 'STATUTORY_MATERNITY' ? 'Maternity Benefit Act Entitlement' : 'Statutory Medical Leave',
-        fitForDuty: occupationalStatus,
-        startDate,
-        endDate,
-        expectedReturnDate: endDate,
-        issuerId: activeIssuer.id,
-        issuerName: clinicName,
-        doctorName: activeIssuer.doctorName || 'Dr. Elena Rostova',
-        issuerRegNumber: regNumber,
-        issuedAt
-      };
-
-      const freshKeys = await generateECDSAKeyPair();
-      const { signatureBase64, signatureHex } = await signAttestationPayload(
-        payload,
-        freshKeys.privateKeyJwk
-      );
-
-      const newAttestation: SignedAttestation = {
-        payload,
-        signatureBase64,
-        signatureHex,
-        publicKeyJwk: freshKeys.publicKeyJwk,
-        publicKeyHex: freshKeys.publicKeyHex,
-        createdAt: issuedAt
-      };
-
-      saveAttestation(newAttestation);
-      setLatestIssued(newAttestation);
-      setSelectedRowId(attestationId);
-    } catch (err) {
-      console.error(err);
-      alert('Error generating ECDSA P-256 signature.');
-    } finally {
-      setIsSigning(false);
-    }
-  };
-
-  const handleOpenRevokeModal = (id: string) => {
-    setAttestationToRevoke(id);
-    setShowRevokeModal(true);
-  };
-
-  const confirmRevocation = () => {
-    if (attestationToRevoke) {
-      revokeAttestationByIssuer(attestationToRevoke);
-      setShowRevokeModal(false);
-      setAttestationToRevoke(null);
-      loadList();
-    }
-  };
-
-  const handleCopySecureLink = () => {
-    if (latestIssued) {
-      const link = `${window.location.origin}/employee`;
-      navigator.clipboard.writeText(link);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2000);
-    }
-  };
-
-  // Deterministic SVG QR pattern generator
-  const renderQrSvg = (dataString: string) => {
-    const size = 21;
-    let hash = 0;
-    for (let i = 0; i < dataString.length; i++) {
-      hash = (hash << 5) - hash + dataString.charCodeAt(i);
-      hash |= 0;
-    }
-    const cells = [];
-    for (let r = 0; r < size; r++) {
-      for (let c = 0; c < size; c++) {
-        const isPosMarker = (r < 7 && c < 7) || (r < 7 && c >= size - 7) || (r >= size - 7 && c < 7);
-        let fill = false;
-        if (isPosMarker) {
-          fill = (r === 0 || r === 6 || c === 0 || c === 6) ||
-                 (r >= 2 && r <= 4 && c >= 2 && c <= 4) ||
-                 (r === 0 || r === 6 || c === size - 7 || c === size - 1) ||
-                 (r >= 2 && r <= 4 && c >= size - 5 && c <= size - 3) ||
-                 (r === size - 7 || r === size - 1 || c === 0 || c === 6) ||
-                 (r >= size - 5 && r >= size - 3 && c >= 2 && c <= 4);
-        } else {
-          fill = ((hash ^ (r * 31 + c * 17)) % 2 === 0);
-        }
-        if (fill) {
-          cells.push(
-            <rect key={`${r}-${c}`} x={c * 9} y={r * 9} width={9} height={9} fill="#0F172A" />
-          );
-        }
-      }
-    }
-    return (
-      <svg viewBox="0 0 189 189" className="w-44 h-44 bg-white p-2 border border-slate-300 rounded shadow-sm">
-        {cells}
-      </svg>
-    );
+  const handleConfirmReset = () => {
+    resetAllData();
+    setShowResetConfirm(false);
+    loadAllData();
   };
 
   return (
-    <div className="w-full bg-[#0F172A] text-slate-100 min-h-[calc(100vh-100px)] py-8 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-7xl mx-auto space-y-8">
-        
-        {/* Header Strip */}
-        <div className="border-b border-[#1E293B] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#94C3A3]">
-                1. CLINIC ISSUER
-              </span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#1E293B] text-slate-300 border border-slate-700">
-                P-256 Web Crypto
-              </span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white mt-1 font-condensed uppercase tracking-wider">
-              Sign medical attestations
-            </h1>
-            <p className="text-xs text-slate-400 font-sans">
-              Authoritative clinical issuance portal. Signs minimal statutory claims without exposing diagnosis or clinic registry to HR.
-            </p>
-          </div>
+    <div className="w-full bg-[#0A101D] text-slate-100 min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 font-sans">
+      <div className="max-w-7xl mx-auto space-y-6">
 
-          <div className="flex items-center gap-3">
-            <span className="px-3 py-1 rounded text-xs font-mono border border-slate-700 bg-[#0B1120] text-slate-300">
-              Active: <strong>{clinicName}</strong>
-            </span>
+        {/* Header Strip matching: VOUCH — CLINIC PORTAL [Setup] [Help] [Reset] */}
+        <div className="bg-[#111C2E] border border-slate-800 rounded-xl p-6 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
+                  1. CLINIC PORTAL
+                </span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">
+                  P-256 Web Crypto
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white mt-1 font-condensed uppercase tracking-wider">
+                VOUCH — CLINIC PORTAL
+              </h1>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-300 mt-2 font-mono">
+                <span>
+                  Logged in as:{' '}
+                  <strong className="text-white">
+                    {clinicProfile.doctorName} ({clinicProfile.clinicName})
+                  </strong>
+                </span>
+                <span className="text-slate-600">•</span>
+                <span className="text-emerald-400 flex items-center gap-1 font-medium">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Status: Ready to issue leave proofs
+                </span>
+              </div>
+            </div>
+
+            {/* Header Control Buttons */}
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => setShowSetupModal(true)}
+                className="px-3 py-1.5 bg-[#1E293B] hover:bg-slate-700 text-slate-200 hover:text-white rounded-md text-xs font-mono transition flex items-center gap-1.5 border border-slate-700 shadow-sm"
+                title="Configure clinic registration"
+              >
+                <Settings className="w-3.5 h-3.5 text-slate-400" />
+                <span>[Setup]</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowHelpModal(true)}
+                className="px-3 py-1.5 bg-[#1E293B] hover:bg-slate-700 text-slate-200 hover:text-white rounded-md text-xs font-mono transition flex items-center gap-1.5 border border-slate-700 shadow-sm"
+                title="Clinic guide & privacy architecture"
+              >
+                <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
+                <span>[Help]</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowResetConfirm(true)}
+                className="px-3 py-1.5 bg-[#1E293B] hover:bg-red-950/40 text-slate-300 hover:text-red-300 rounded-md text-xs font-mono transition flex items-center gap-1.5 border border-slate-700 shadow-sm"
+                title="Reset demo data"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
+                <span>[Reset]</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* 2-Column Main Layout: Left 40%, Right 60% */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          {/* Left Panel (40%): Registration + Attestation Builder */}
-          <div className="lg:col-span-5 space-y-6">
-            
-            {/* 2a. Clinic Registration Card */}
-            <div className="rounded-lg bg-[#0B1120] border border-[#1E293B] p-5 space-y-4 shadow-sm">
-              <div className="flex items-center justify-between border-b border-[#1E293B] pb-3">
-                <span className="text-xs font-bold uppercase tracking-wider font-condensed text-white flex items-center gap-1.5">
-                  <Building2 className="w-4 h-4 text-[#4A7C59]" />
-                  CLINIC REGISTRATION
-                </span>
-                <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
-                  isIssuerRevoked 
-                    ? 'bg-red-950 text-red-300 border border-red-800' 
-                    : 'bg-[#142319] text-[#94C3A3] border border-[#284230]'
-                }`}>
-                  {isIssuerRevoked ? '✗ REVOKED IN NMC' : '✓ REGISTERED'}
-                </span>
-              </div>
-
-              <div className="space-y-3 text-xs">
-                <div>
-                  <label className="text-[11px] font-semibold text-slate-400 font-condensed uppercase tracking-wider block mb-1">
-                    Clinic Name:
-                  </label>
-                  <input
-                    type="text"
-                    value={clinicName}
-                    onChange={(e) => setClinicName(e.target.value)}
-                    className="w-full px-3 py-2 rounded bg-[#0F172A] border border-[#334155] text-slate-200 focus:outline-none focus:border-[#4A7C59]"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-semibold text-slate-400 font-condensed uppercase tracking-wider block mb-1">
-                    NMC Registration No.:
-                  </label>
-                  <input
-                    type="text"
-                    value={regNumber}
-                    onChange={(e) => setRegNumber(e.target.value)}
-                    className="w-full px-3 py-2 rounded bg-[#0F172A] border border-[#334155] text-slate-200 font-mono focus:outline-none focus:border-[#4A7C59]"
-                  />
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-[11px] font-semibold text-slate-400 font-condensed uppercase tracking-wider flex items-center gap-1">
-                      <span>Issuer DID:</span>
-                      <Info className="w-3 h-3 text-slate-500" />
-                    </label>
-                    <button
-                      type="button"
-                      onClick={handleCopyDid}
-                      className="text-[10px] text-[#94C3A3] hover:underline flex items-center gap-1 font-mono"
-                    >
-                      {copiedDid ? <Check className="w-3 h-3 text-[#4A7C59]" /> : <Copy className="w-3 h-3" />}
-                      <span>{copiedDid ? 'COPIED' : 'COPY'}</span>
-                    </button>
-                  </div>
-                  <div className="px-3 py-1.5 rounded bg-[#0F172A] border border-[#334155] font-mono text-[11px] text-slate-300 break-all">
-                    {issuerDid}
-                  </div>
-                </div>
-
-                <div className="pt-1 flex items-center justify-between text-[11px] font-mono text-slate-400 border-t border-[#1E293B]">
-                  <span>Public Key Hash:</span>
-                  <strong className="text-white">{publicKeyHash}</strong>
-                </div>
-
-                <div className="flex items-center gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={handleGenerateNewKeyPair}
-                    className="flex-1 px-3 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-[#1E293B] hover:bg-[#334155] border border-slate-700 text-slate-200 transition-colors"
-                  >
-                    GENERATE NEW KEY PAIR
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleToggleClinicRevocation}
-                    className={`px-3 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold border transition-colors ${
-                      isIssuerRevoked
-                        ? 'bg-[#142319] text-[#94C3A3] border-[#284230] hover:bg-[#1f3727]'
-                        : 'bg-red-950/60 text-red-300 border-red-800 hover:bg-red-900'
-                    }`}
-                  >
-                    {isIssuerRevoked ? 'RE-ACTIVATE' : 'REVOKE'}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Attestation Builder Card */}
-            <form onSubmit={handleSignAndIssue} className="rounded-lg bg-[#0B1120] border border-[#1E293B] p-5 space-y-4 shadow-sm">
-              <div className="border-b border-[#1E293B] pb-3 flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider font-condensed text-white flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-[#4A7C59]" />
-                  CREATE ATTESTATION
-                </span>
-                <span className="text-[10px] font-mono text-slate-400">Zero Diagnosis Leak</span>
-              </div>
-
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="text-[11px] font-semibold text-slate-400 font-condensed uppercase tracking-wider block mb-1">
-                    Employee ID / Email:
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={employeeEmail}
-                    onChange={(e) => setEmployeeEmail(e.target.value)}
-                    placeholder="sarah@company.com"
-                    className="w-full px-3 py-2 rounded bg-[#0F172A] border border-[#334155] text-slate-200 focus:outline-none focus:border-[#4A7C59]"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-semibold text-slate-400 font-condensed uppercase tracking-wider block mb-1">
-                    Employee Full Name:
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={employeeName}
-                    onChange={(e) => setEmployeeName(e.target.value)}
-                    placeholder="Sarah Jenkins"
-                    className="w-full px-3 py-2 rounded bg-[#0F172A] border border-[#334155] text-slate-200 focus:outline-none focus:border-[#4A7C59]"
-                  />
-                </div>
-
-                {/* Leave Category Radio Group */}
-                <div>
-                  <label className="text-[11px] font-semibold text-slate-400 font-condensed uppercase tracking-wider block mb-2">
-                    Leave Category:
-                  </label>
-                  <div className="space-y-2 bg-[#0F172A] p-3 rounded border border-[#334155]">
-                    {[
-                      { id: 'STATUTORY_MATERNITY', label: 'STATUTORY_MATERNITY (Maternity Benefit Act)' },
-                      { id: 'STATUTORY_MEDICAL', label: 'STATUTORY_MEDICAL (Inpatient / ESI Act)' },
-                      { id: 'CAREGIVING', label: 'CAREGIVING (Family Medical Framework)' },
-                      { id: 'SELF_DECLARED', label: 'SELF_DECLARED (Menstrual / No Doctor Need)' }
-                    ].map((opt) => (
-                      <label key={opt.id} className="flex items-center gap-2.5 cursor-pointer text-xs text-slate-300">
-                        <input
-                          type="radio"
-                          name="leaveCategory"
-                          value={opt.id}
-                          checked={leaveCategory === opt.id}
-                          onChange={(e) => setLeaveCategory(e.target.value as CoarseCategory)}
-                          className="accent-[#4A7C59]"
-                        />
-                        <span className={leaveCategory === opt.id ? 'font-bold text-white font-mono' : 'font-mono'}>
-                          {opt.label}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Authorized Window */}
-                <div>
-                  <label className="text-[11px] font-semibold text-slate-400 font-condensed uppercase tracking-wider block mb-1">
-                    Authorized Window:
-                  </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <span className="text-[10px] text-slate-500 font-mono block">From:</span>
-                      <input
-                        type="date"
-                        required
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        className="w-full px-2.5 py-1.5 rounded bg-[#0F172A] border border-[#334155] text-slate-200 font-mono text-xs focus:outline-none focus:border-[#4A7C59]"
-                      />
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-slate-500 font-mono block">To:</span>
-                      <input
-                        type="date"
-                        required
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        className="w-full px-2.5 py-1.5 rounded bg-[#0F172A] border border-[#334155] text-slate-200 font-mono text-xs focus:outline-none focus:border-[#4A7C59]"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Occupational Status Radio Group */}
-                <div>
-                  <label className="text-[11px] font-semibold text-slate-400 font-condensed uppercase tracking-wider block mb-2">
-                    Occupational Status:
-                  </label>
-                  <div className="space-y-2 bg-[#0F172A] p-3 rounded border border-[#334155]">
-                    <label className="flex items-center gap-2.5 cursor-pointer text-xs text-slate-300">
-                      <input
-                        type="radio"
-                        name="occupationalStatus"
-                        value="full-rest"
-                        checked={occupationalStatus === 'full-rest'}
-                        onChange={() => setOccupationalStatus('full-rest')}
-                        className="accent-[#4A7C59]"
-                      />
-                      <span className={occupationalStatus === 'full-rest' ? 'font-bold text-white' : ''}>
-                        Unfit (Rest Mandated)
-                      </span>
-                    </label>
-
-                    <label className="flex items-center gap-2.5 cursor-pointer text-xs text-slate-300">
-                      <input
-                        type="radio"
-                        name="occupationalStatus"
-                        value="partial-remote"
-                        checked={occupationalStatus === 'partial-remote'}
-                        onChange={() => setOccupationalStatus('partial-remote')}
-                        className="accent-[#4A7C59]"
-                      />
-                      <span className={occupationalStatus === 'partial-remote' ? 'font-bold text-white' : ''}>
-                        Fit for Modified / Remote Duty
-                      </span>
-                    </label>
-
-                    <label className="flex items-center gap-2.5 cursor-pointer text-xs text-slate-300">
-                      <input
-                        type="radio"
-                        name="occupationalStatus"
-                        value="fit-post-leave"
-                        checked={occupationalStatus === 'fit-post-leave'}
-                        onChange={() => setOccupationalStatus('fit-post-leave')}
-                        className="accent-[#4A7C59]"
-                      />
-                      <span className={occupationalStatus === 'fit-post-leave' ? 'font-bold text-white' : ''}>
-                        Fit for Duty
-                      </span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Sign and Issue Button */}
-                <button
-                  type="submit"
-                  disabled={isSigning}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 rounded bg-[#4A7C59] hover:bg-[#3D6649] text-white font-condensed font-bold uppercase tracking-wider text-sm transition-colors disabled:opacity-50 shadow-sm"
-                >
-                  {isSigning ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                      <span>Generating Web Crypto ECDSA Signature...</span>
-                    </>
-                  ) : (
-                    <>
-                      <ShieldCheck className="w-5 h-5" />
-                      <span>SIGN &amp; ISSUE ATTESTATION</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-
-          </div>
-
-          {/* Right Panel (60%): Share/QR Output Card + Revocation Panel */}
-          <div className="lg:col-span-7 space-y-6">
-            
-            {/* 2b. Share/QR Output Card (Appears after signing or shows latest) */}
-            {latestIssued ? (
-              <div className="rounded-lg bg-[#0B1120] border border-[#1E293B] p-6 space-y-6 shadow-sm">
-                <div className="border-b border-[#1E293B] pb-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider font-condensed text-white">
-                      ATTESTATION ISSUED
-                    </span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#142319] text-[#94C3A3] border border-[#284230]">
-                      Status: ✓ Signed and ready to share
-                    </span>
-                  </div>
-                  <span className="text-xs font-mono text-slate-400">P-256 Validated</span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                  {/* QR Code */}
-                  <div className="md:col-span-5 flex flex-col items-center justify-center p-3 bg-white rounded border border-[#EDE6D6]">
-                    {renderQrSvg(canonicalizeJson(latestIssued.payload))}
-                    <span className="text-[10px] text-slate-600 font-mono mt-2">Scan with Employee Device</span>
-                  </div>
-
-                  {/* Share Instructions & Metadata */}
-                  <div className="md:col-span-7 space-y-4 text-xs">
-                    <div className="p-3 bg-[#0F172A] rounded border border-[#1E293B] space-y-1 text-slate-300">
-                      <span className="font-bold text-white uppercase font-condensed tracking-wider block">
-                        Share with employee:
-                      </span>
-                      <p>1. Print this page &amp; let her scan QR with her smartphone.</p>
-                      <p>2. Send secure link to her phone or employee vault.</p>
-                    </div>
-
-                    <div className="space-y-1.5 font-mono text-[11px] text-slate-300">
-                      <div className="flex justify-between border-b border-[#1E293B] pb-1">
-                        <span className="text-slate-400">Attestation ID:</span>
-                        <strong className="text-white">{latestIssued.payload.attestationId}</strong>
-                      </div>
-                      <div className="flex justify-between border-b border-[#1E293B] pb-1">
-                        <span className="text-slate-400">Signature Hash:</span>
-                        <span className="text-[#94C3A3]">{latestIssued.signatureHex.substring(0, 16)}...</span>
-                      </div>
-                      <div className="flex justify-between border-b border-[#1E293B] pb-1">
-                        <span className="text-slate-400">Valid From:</span>
-                        <span>{latestIssued.payload.startDate}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-400">Valid To:</span>
-                        <span>{latestIssued.payload.endDate}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-2 pt-2">
-                      <button
-                        type="button"
-                        onClick={() => window.print()}
-                        className="px-3.5 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-[#1E293B] hover:bg-[#334155] border border-slate-700 text-white transition-colors flex items-center gap-1.5"
-                      >
-                        <Printer className="w-3.5 h-3.5 text-[#4A7C59]" />
-                        <span>PRINT QR</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={handleCopySecureLink}
-                        className="px-3.5 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-[#1E293B] hover:bg-[#334155] border border-slate-700 text-white transition-colors flex items-center gap-1.5"
-                      >
-                        {copiedLink ? <Check className="w-3.5 h-3.5 text-[#4A7C59]" /> : <Copy className="w-3.5 h-3.5" />}
-                        <span>{copiedLink ? 'LINK COPIED' : 'COPY SECURE LINK'}</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => alert('Credential ready in employee vault.')}
-                        className="px-3.5 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-[#4A7C59] hover:bg-[#3D6649] text-white transition-colors"
-                      >
-                        DONE
-                      </button>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="p-8 rounded-lg bg-[#0B1120] border border-[#1E293B] text-center text-slate-400 text-xs font-mono">
-                Fill the attestation builder on the left and click [SIGN &amp; ISSUE ATTESTATION] to generate a Web Crypto credential.
-              </div>
-            )}
-
-            {/* 2c. Revocation Panel */}
-            <div className="rounded-lg bg-[#0B1120] border border-[#1E293B] p-5 space-y-4 shadow-sm">
-              <div className="border-b border-[#1E293B] pb-3 flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider font-condensed text-white flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-[#4A7C59]" />
-                  MANAGE ISSUED ATTESTATIONS
-                </span>
-                <span className="text-xs font-mono text-slate-400">{attestationsList.length} total records</span>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs font-mono">
-                  <thead>
-                    <tr className="border-b border-[#1E293B] text-slate-400 font-condensed uppercase tracking-wider">
-                      <th className="py-2 px-3">Attestation ID</th>
-                      <th className="py-2 px-3">Holder</th>
-                      <th className="py-2 px-3">Category</th>
-                      <th className="py-2 px-3">Status</th>
-                      <th className="py-2 px-3 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#1E293B]/60">
-                    {attestationsList.map((att) => {
-                      const isRevoked = att.isRevokedByIssuer;
-                      const isSelected = selectedRowId === att.payload.attestationId;
-                      return (
-                        <tr
-                          key={att.payload.attestationId}
-                          onClick={() => {
-                            setSelectedRowId(att.payload.attestationId);
-                            setLatestIssued(att);
-                          }}
-                          className={`cursor-pointer transition-colors ${
-                            isSelected ? 'bg-[#0F172A]' : 'hover:bg-[#0F172A]/50'
-                          }`}
-                        >
-                          <td className="py-2.5 px-3 font-bold text-white">{att.payload.attestationId}</td>
-                          <td className="py-2.5 px-3 text-slate-300">
-                            {att.payload.employeeName?.split(' ').map(n => n[0] + '.').join(' ') || 'S. J.'}
-                          </td>
-                          <td className="py-2.5 px-3 text-slate-400 text-[11px]">{att.payload.coarseCategory}</td>
-                          <td className="py-2.5 px-3">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                              isRevoked
-                                ? 'bg-red-950 text-red-300 border border-red-800'
-                                : 'bg-[#142319] text-[#94C3A3] border border-[#284230]'
-                            }`}>
-                              {isRevoked ? 'REVOKED' : 'ACTIVE'}
-                            </span>
-                          </td>
-                          <td className="py-2.5 px-3 text-right">
-                            {!isRevoked ? (
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleOpenRevokeModal(att.payload.attestationId);
-                                }}
-                                className="px-2.5 py-1 rounded text-[10px] font-condensed uppercase tracking-wider font-bold bg-red-950/80 hover:bg-red-900 text-red-200 border border-red-800 transition-colors"
-                              >
-                                REVOKE
-                              </button>
-                            ) : (
-                              <span className="text-slate-600 text-[10px]">—</span>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-              <p className="text-[11px] text-slate-500 font-sans">
-                Click any row above to view details in the QR card or trigger issuer revocation.
-              </p>
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* Confirmation Modal for Revocation */}
-        {showRevokeModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-[#0B1120] border border-slate-700 rounded-lg p-6 max-w-md w-full space-y-4 shadow-2xl">
-              <div className="flex items-start gap-3">
-                <ShieldAlert className="w-6 h-6 text-red-400 shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-base font-bold text-white font-condensed uppercase tracking-wider">
-                    Confirm Issuer Revocation
-                  </h3>
-                  <p className="text-xs text-slate-300 font-sans mt-1 leading-relaxed">
-                    Revoking attestation <strong>{attestationToRevoke}</strong> will invalidate all outstanding share codes. Any future HR verification will strictly fail. Proceed?
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#1E293B]">
-                <button
-                  type="button"
-                  onClick={() => setShowRevokeModal(false)}
-                  className="px-4 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-[#1E293B] hover:bg-[#334155] text-slate-300 border border-slate-700"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={confirmRevocation}
-                  className="px-4 py-2 rounded text-xs font-condensed uppercase tracking-wider font-bold bg-red-900 hover:bg-red-800 text-white border border-red-700 shadow-sm"
-                >
-                  Yes, Revoke Credential
-                </button>
-              </div>
-            </div>
-          </div>
+        {/* Step 1: Clinic Quick Setup banner if not yet setup */}
+        {!clinicProfile.isSetup && (
+          <ClinicSetup
+            isOpen={true}
+            isModal={false}
+            initialProfile={clinicProfile}
+            onSaved={(updated) => {
+              setClinicProfile(updated);
+            }}
+          />
         )}
 
+        {/* Two-Column Responsive Grid: LEFT (60%) / RIGHT (40%) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* LEFT (60%): CREATE LEAVE PROOF */}
+          <div className="lg:col-span-7">
+            <QuickCreateForm
+              key={formKey}
+              clinicProfile={clinicProfile}
+              onCreated={handleCreated}
+            />
+          </div>
+
+          {/* RIGHT (40%): RECENTLY ISSUED (Past 7 days) */}
+          <div className="lg:col-span-5">
+            <RecentlyIssuedList
+              attestations={attestations}
+              shareCodes={shareCodes}
+              onViewShareCode={handleViewShareCode}
+              onRefresh={loadAllData}
+            />
+          </div>
+        </div>
+
       </div>
+
+      {/* Success / Share Code Modal */}
+      <ShareCodeModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        onCreateAnother={handleCreateAnother}
+        attestation={activeAttestation}
+        shareCode={activeShareCode}
+        medicalDoc={activeMedicalDoc}
+        onDocumentDeleted={() => {
+          loadAllData();
+        }}
+      />
+
+      {/* Clinic Setup Modal */}
+      <ClinicSetup
+        isOpen={showSetupModal}
+        isModal={true}
+        initialProfile={clinicProfile}
+        onClose={() => setShowSetupModal(false)}
+        onSaved={(updated) => {
+          setClinicProfile(updated);
+          setShowSetupModal(false);
+          loadAllData();
+        }}
+      />
+
+      {/* Clinic Help Modal */}
+      <ClinicHelpModal
+        isOpen={showHelpModal}
+        onClose={() => setShowHelpModal(false)}
+      />
+
+      {/* Reset Confirmation Modal */}
+      {showResetConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-md bg-[#111C2E] border border-slate-700 rounded-xl p-6 shadow-2xl space-y-4 font-sans">
+            <div className="flex items-center gap-2.5 text-amber-400">
+              <AlertTriangle className="w-5 h-5" />
+              <h3 className="text-base font-bold text-white font-condensed uppercase tracking-wider">
+                Reset Demo Data?
+              </h3>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed font-mono">
+              This will reset all attestations, local clinic medical documents, share codes, and verification receipts to the initial demo baseline.
+            </p>
+            <div className="pt-3 border-t border-slate-800 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowResetConfirm(false)}
+                className="px-4 py-1.5 text-xs text-slate-400 hover:text-white bg-[#1E293B] rounded font-mono"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmReset}
+                className="px-4 py-1.5 text-xs font-semibold text-white bg-red-600 hover:bg-red-500 rounded font-mono uppercase tracking-wider"
+              >
+                Reset Everything
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

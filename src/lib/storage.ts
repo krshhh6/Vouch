@@ -12,7 +12,9 @@ import {
   ApprovalRecord,
   NotificationItem,
   AuditLogEntry,
-  QueueItem
+  QueueItem,
+  MedicalDocument,
+  ClinicProfile
 } from './types';
 import { TRUSTED_ISSUERS } from './registry';
 import { 
@@ -39,6 +41,8 @@ const STORAGE_KEYS = {
   NOTIFICATIONS: 'vouch_notifications_v2',
   AUDIT_LOGS: 'vouch_audit_logs_v2',
   PENDING_QUEUE: 'vouch_pending_queue_v2',
+  CLINIC_PROFILE: 'vouch_clinic_profile_v2',
+  CLINIC_DOCUMENTS: 'vouch_clinic_documents_v2',
 };
 
 const STATE_EVENT = 'vouch_state_updated';
@@ -869,6 +873,21 @@ export async function seedDemoData(force = false): Promise<void> {
   localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify([sampleNotif1, sampleNotif2]));
   localStorage.setItem(STORAGE_KEYS.PENDING_QUEUE, JSON.stringify(sampleQueue));
   localStorage.setItem(STORAGE_KEYS.AUDIT_LOGS, JSON.stringify(sampleAuditLogs));
+
+  // Seed sample local medical record for Sarah Jenkins (stays in clinic browser only)
+  const sampleClinicDoc: MedicalDocument = {
+    id: 'doc_demo_7729',
+    attestationId: sampleAttestation1.payload.attestationId,
+    fileName: 'maternity-ultrasound-report.pdf',
+    fileType: 'application/pdf',
+    fileSize: 245760,
+    base64Data: 'data:application/pdf;base64,JVBERi0xLjQKJcTl8uXrp/Og0MTGCjQgMCBvYmoKPDwgL0xlbmd0aCA1IDAgUiAvRmlsdGVyIC9GbGF0ZURlY29kZSA+PgpzdHJlYW0KeAFjYGBgYGJg',
+    uploadedAt: new Date(Date.now() - 3600 * 1000 * 24 * 3).toISOString(),
+    notes: 'Pelvic scan confirming gestational age and statutory maternity leave rest requirement.'
+  };
+  localStorage.setItem(STORAGE_KEYS.CLINIC_DOCUMENTS, JSON.stringify({ [sampleAttestation1.payload.attestationId]: sampleClinicDoc }));
+  localStorage.setItem(`medical_doc_for_attestation_${sampleAttestation1.payload.attestationId}`, JSON.stringify(sampleClinicDoc));
+
   localStorage.setItem(STORAGE_KEYS.INITIALIZED, 'true');
   notifyStateChange();
 }
@@ -884,6 +903,8 @@ export function resetAllData(): void {
   localStorage.removeItem(STORAGE_KEYS.NOTIFICATIONS);
   localStorage.removeItem(STORAGE_KEYS.PENDING_QUEUE);
   localStorage.removeItem(STORAGE_KEYS.AUDIT_LOGS);
+  localStorage.removeItem(STORAGE_KEYS.CLINIC_DOCUMENTS);
+  localStorage.removeItem(STORAGE_KEYS.CLINIC_PROFILE);
   localStorage.removeItem(STORAGE_KEYS.INITIALIZED);
   seedDemoData(true);
 }
@@ -1056,3 +1077,90 @@ export async function approveLeaveRequest(params: {
 
   return { approval, notification, receipt };
 }
+
+// ===================== CLINIC SETUP & MEDICAL DOCUMENTS (LOCAL-ONLY) =====================
+
+export const DEFAULT_CLINIC_PROFILE: ClinicProfile = {
+  doctorName: 'Dr. Elena Rostova',
+  clinicName: "Summit Women's Health Center",
+  regNumber: 'GMC-6849201',
+  email: 'dr.elena@summit-health.com',
+  isSetup: false
+};
+
+export function getClinicProfile(): ClinicProfile {
+  if (typeof window === 'undefined') return DEFAULT_CLINIC_PROFILE;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.CLINIC_PROFILE);
+    if (!raw) return DEFAULT_CLINIC_PROFILE;
+    return JSON.parse(raw);
+  } catch {
+    return DEFAULT_CLINIC_PROFILE;
+  }
+}
+
+export function saveClinicProfile(profile: ClinicProfile): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEYS.CLINIC_PROFILE, JSON.stringify(profile));
+  notifyStateChange();
+}
+
+export function resetClinicProfile(): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEYS.CLINIC_PROFILE, JSON.stringify(DEFAULT_CLINIC_PROFILE));
+  notifyStateChange();
+}
+
+export function getClinicDocuments(): Record<string, MedicalDocument> {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.CLINIC_DOCUMENTS);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function getClinicDocument(attestationId: string): MedicalDocument | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    // Check specific direct key first as per spec
+    const direct = localStorage.getItem(`medical_doc_for_attestation_${attestationId}`);
+    if (direct) return JSON.parse(direct);
+
+    // Fallback to map
+    const map = getClinicDocuments();
+    return map[attestationId] || null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveClinicDocument(doc: MedicalDocument): void {
+  if (typeof window === 'undefined') return;
+  const map = getClinicDocuments();
+  map[doc.attestationId] = doc;
+  localStorage.setItem(STORAGE_KEYS.CLINIC_DOCUMENTS, JSON.stringify(map));
+  // Store direct keys for spec compliance
+  localStorage.setItem(`medical_doc_${doc.id}`, JSON.stringify(doc));
+  localStorage.setItem(`medical_doc_for_attestation_${doc.attestationId}`, JSON.stringify(doc));
+  notifyStateChange();
+}
+
+export function deleteClinicDocument(attestationId: string): boolean {
+  if (typeof window === 'undefined') return false;
+  const map = getClinicDocuments();
+  const existing = map[attestationId];
+  if (existing) {
+    delete map[attestationId];
+    localStorage.setItem(STORAGE_KEYS.CLINIC_DOCUMENTS, JSON.stringify(map));
+    localStorage.removeItem(`medical_doc_${existing.id}`);
+    localStorage.removeItem(`medical_doc_for_attestation_${attestationId}`);
+    notifyStateChange();
+    return true;
+  }
+  localStorage.removeItem(`medical_doc_for_attestation_${attestationId}`);
+  notifyStateChange();
+  return false;
+}
+
