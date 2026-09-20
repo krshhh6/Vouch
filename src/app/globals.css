@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Oswald';
+  src: url('/fonts/oswald/Oswald-VariableFont_wght.ttf') format('truetype-variations'),
+       url('/fonts/oswald/Oswald-VariableFont_wght.ttf') format('truetype');
+  font-weight: 200 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Bowlby One SC';
+  src: url('/fonts/bowlby-one-sc/BowlbyOneSC-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+
 @layer base {
   :root {
     --background: 210 40% 98%;
@@ -19,13 +36,18 @@
   body {
     background-color: #e8ecf4;
     color: #192132;
-    font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-oswald), 'Oswald', sans-serif;
     overflow-x: hidden;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.01em;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    letter-spacing: -0.02em;
+  h1, .font-heading, .font-display {
+    font-family: var(--font-bowlby), 'Bowlby One SC', var(--font-oswald), 'Oswald', sans-serif;
+    letter-spacing: 0.02em;
+  }
+
+  h2, h3, h4, h5, h6 {
+    letter-spacing: 0.01em;
   }
 }
 

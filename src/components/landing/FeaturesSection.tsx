@@ -61,7 +61,7 @@ export default function FeaturesSection() {
             </span>
           </div>
           <h2
-            className="text-3xl sm:text-4xl font-black tracking-tight uppercase"
+            className="font-heading text-2xl sm:text-3xl lg:text-4xl tracking-wide uppercase"
             style={{ color: NEU.textPri }}
           >
             FOUR PILLARS OF MEDICAL LEAVE PRIVACY

@@ -52,7 +52,7 @@ export default function HowItWorksSection() {
           <span className="text-xs font-mono font-bold tracking-[0.2em] uppercase text-blue-600 block mb-2">
             02 • THREE ROLES, ZERO LEAKAGE
           </span>
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+          <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-slate-900 tracking-wide uppercase">
             How The Protocol Flows
           </h2>
           <p className="mt-2 text-sm text-slate-600 font-medium">

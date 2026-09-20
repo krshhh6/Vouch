@@ -81,7 +81,7 @@ export default function HeroSection() {
           {/* Monumental Neumorphic Title */}
           <div className="mb-4">
             <h1
-              className="text-5xl sm:text-7xl lg:text-[5.5rem] font-black tracking-tight leading-[0.92] select-none uppercase"
+              className="font-heading text-4xl sm:text-6xl lg:text-[4.8rem] tracking-tight leading-[0.95] select-none uppercase"
               style={{ color: NEU.textPri }}
             >
               VOUCH

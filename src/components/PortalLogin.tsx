@@ -97,7 +97,7 @@ export default function PortalLogin() {
           </div>
           
           <h1
-            className="text-4xl sm:text-5xl font-black tracking-tight leading-tight uppercase"
+            className="font-heading text-3xl sm:text-5xl font-black tracking-tight leading-tight uppercase"
             style={{ color: NEU.textPri }}
           >
             VOUCH PORTAL LOGIN

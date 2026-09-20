@@ -97,8 +97,8 @@ export default function DemoSection() {
           <span className="text-xs font-mono font-bold tracking-[0.2em] uppercase text-blue-600 block mb-2">
             04 • INTERACTIVE VERIFIER
           </span>
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            Live Protocol Demonstration
+          <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-slate-900 tracking-wide uppercase">
+            Interactive Verifier Simulator
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 font-medium mt-2">
             Simulate a zero-knowledge statutory leave verification from worker wallet to HR approval.
