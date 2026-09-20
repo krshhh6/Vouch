@@ -92,10 +92,10 @@ export default function InteractiveRedactor() {
       }
 
       // Entity style based on type
-      let badgeStyle = 'bg-zinc-900 text-white border-zinc-600';
-      if (ent.type === 'medication') badgeStyle = 'bg-zinc-900 text-zinc-200 border-zinc-500';
-      if (ent.type === 'icd_code') badgeStyle = 'bg-black text-white border-zinc-400';
-      if (ent.type === 'lab_value' || ent.type === 'personal_vitals') badgeStyle = 'bg-zinc-850 text-zinc-100 border-zinc-600';
+      let badgeStyle = 'bg-rose-50 text-rose-800 border-rose-200';
+      if (ent.type === 'medication') badgeStyle = 'bg-blue-50 text-blue-800 border-blue-200';
+      if (ent.type === 'icd_code') badgeStyle = 'bg-purple-50 text-purple-800 border-purple-200';
+      if (ent.type === 'lab_value' || ent.type === 'personal_vitals') badgeStyle = 'bg-amber-50 text-amber-800 border-amber-200';
 
       if (viewMode === 'blackout') {
         elements.push(
@@ -137,11 +137,11 @@ export default function InteractiveRedactor() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Sample Document Selector Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-zinc-950 p-4 rounded-2xl border border-zinc-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
         <div>
-          <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block mb-1 font-condensed">
+          <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider block mb-1">
             Choose Sample Clinical Record to Inspect
           </label>
           <div className="flex flex-wrap gap-2">
@@ -151,19 +151,19 @@ export default function InteractiveRedactor() {
                 onClick={() => handleSelectDoc(doc)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
                   selectedDocId === doc.id
-                    ? 'bg-white border-white text-black font-semibold shadow-sm'
-                    : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-700 hover:text-white'
+                    ? 'bg-blue-600 border-blue-600 text-white font-semibold shadow-xs'
+                    : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
                 }`}
               >
                 {doc.title}
               </button>
             ))}
 
-            <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border cursor-pointer transition-all bg-zinc-900 border-zinc-700 text-zinc-200 hover:bg-zinc-800 hover:text-white font-condensed uppercase tracking-wide">
+            <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border cursor-pointer transition-all bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 shadow-xs">
               {isUploading ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-600" />
               ) : (
-                <FileUp className="w-3.5 h-3.5 text-zinc-300" />
+                <FileUp className="w-3.5 h-3.5 text-slate-600" />
               )}
               <span>{isUploading ? 'Extracting Text...' : 'Upload PDF / Report'}</span>
               <input
@@ -178,27 +178,27 @@ export default function InteractiveRedactor() {
         </div>
 
         {/* View Mode Switcher */}
-        <div className="flex items-center gap-1 bg-zinc-900 p-1 rounded-xl border border-zinc-800 self-start sm:self-auto font-condensed">
+        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 self-start sm:self-auto">
           <button
             onClick={() => setViewMode('compare')}
-            className={`px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all ${
-              viewMode === 'compare' ? 'bg-white text-black shadow-sm' : 'text-zinc-400 hover:text-zinc-200'
+            className={`px-3 py-1 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+              viewMode === 'compare' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Before vs After
           </button>
           <button
             onClick={() => setViewMode('blackout')}
-            className={`px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all ${
-              viewMode === 'blackout' ? 'bg-white text-black shadow-sm' : 'text-zinc-400 hover:text-zinc-200'
+            className={`px-3 py-1 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+              viewMode === 'blackout' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Blackout Bars
           </button>
           <button
             onClick={() => setViewMode('highlight')}
-            className={`px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all ${
-              viewMode === 'highlight' ? 'bg-white text-black shadow-sm' : 'text-zinc-400 hover:text-zinc-200'
+            className={`px-3 py-1 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+              viewMode === 'highlight' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Entity Inspector
@@ -208,62 +208,62 @@ export default function InteractiveRedactor() {
 
       {/* Upload Feedback / Banner */}
       {uploadedFileName && (
-        <div className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-700 text-xs text-zinc-200">
+        <div className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-900">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-white shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-blue-700 shrink-0" />
             <span>
               Loaded document: <strong>{uploadedFileName}</strong> — Clinical entities parsed locally via <code>pdfjs-dist</code>.
             </span>
           </div>
-          <span className="text-[10px] font-mono bg-zinc-800 px-2 py-0.5 rounded text-zinc-200 shrink-0 border border-zinc-700">
+          <span className="text-[11px] font-mono bg-blue-100 px-2 py-0.5 rounded text-blue-800 shrink-0 border border-blue-200 font-semibold">
             0% Network Upload (Device-Local)
           </span>
         </div>
       )}
 
       {uploadError && (
-        <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-700 text-xs text-zinc-300">
-          <AlertTriangle className="w-4 h-4 text-white shrink-0" />
+        <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800">
+          <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
           <span>{uploadError}</span>
         </div>
       )}
 
       {/* Analytics & Exposure Metric Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-zinc-400 font-condensed uppercase tracking-wider">Entities Masked</span>
-            <ShieldCheck className="w-4 h-4 text-white" />
+            <span className="text-xs text-slate-500 uppercase font-semibold tracking-wider">Entities Masked</span>
+            <ShieldCheck className="w-4 h-4 text-blue-600" />
           </div>
-          <div className="text-2xl font-bold text-white mt-1 font-mono">{stats.totalEntities}</div>
-          <p className="text-[11px] text-zinc-400 mt-0.5">Masked from HR view</p>
+          <div className="text-2xl font-bold text-slate-900 mt-1 font-mono">{stats.totalEntities}</div>
+          <p className="text-xs text-slate-500 mt-0.5">Masked from HR view</p>
         </div>
 
-        <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-zinc-400 font-condensed uppercase tracking-wider">Diagnoses Shielded</span>
-            <Activity className="w-4 h-4 text-zinc-300" />
+            <span className="text-xs text-slate-500 uppercase font-semibold tracking-wider">Diagnoses Shielded</span>
+            <Activity className="w-4 h-4 text-emerald-600" />
           </div>
-          <div className="text-2xl font-bold text-white mt-1 font-mono">{stats.diagnosisCount}</div>
-          <p className="text-[11px] text-zinc-400 mt-0.5">e.g. IVF, depression, surgery</p>
+          <div className="text-2xl font-bold text-slate-900 mt-1 font-mono">{stats.diagnosisCount}</div>
+          <p className="text-xs text-slate-500 mt-0.5">e.g. IVF, depression, surgery</p>
         </div>
 
-        <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-zinc-400 font-condensed uppercase tracking-wider">Prescriptions Hidden</span>
-            <Pill className="w-4 h-4 text-zinc-300" />
+            <span className="text-xs text-slate-500 uppercase font-semibold tracking-wider">Prescriptions Hidden</span>
+            <Pill className="w-4 h-4 text-purple-600" />
           </div>
-          <div className="text-2xl font-bold text-white mt-1 font-mono">{stats.medicationCount}</div>
-          <p className="text-[11px] text-zinc-400 mt-0.5">Dosages & regimens hidden</p>
+          <div className="text-2xl font-bold text-slate-900 mt-1 font-mono">{stats.medicationCount}</div>
+          <p className="text-xs text-slate-500 mt-0.5">Dosages &amp; regimens hidden</p>
         </div>
 
-        <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-zinc-400 font-condensed uppercase tracking-wider">Residual Leakage</span>
-            <Flame className="w-4 h-4 text-white" />
+            <span className="text-xs text-slate-500 uppercase font-semibold tracking-wider">Residual Leakage</span>
+            <Flame className="w-4 h-4 text-blue-600" />
           </div>
-          <div className="text-2xl font-bold text-white mt-1 font-mono">0% on Vouch</div>
-          <p className="text-[11px] text-zinc-400 mt-0.5">vs 100% on standard PDF</p>
+          <div className="text-2xl font-bold text-emerald-700 mt-1 font-mono">0% on Vouch</div>
+          <p className="text-xs text-slate-500 mt-0.5">vs 100% on standard PDF</p>
         </div>
       </div>
 
@@ -272,33 +272,33 @@ export default function InteractiveRedactor() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
           {/* Left Column: Traditional Raw Upload (Privacy Hazard) */}
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-950 overflow-hidden shadow-xl">
-            <div className="bg-zinc-900 border-b border-zinc-800 px-5 py-3.5 flex items-center justify-between">
+          <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+            <div className="bg-rose-50 border-b border-rose-100 px-5 py-3.5 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-zinc-300" />
-                <h4 className="font-semibold text-xs text-zinc-200 uppercase tracking-wider font-condensed">
+                <AlertTriangle className="w-4 h-4 text-rose-600" />
+                <h4 className="font-semibold text-xs text-rose-900 uppercase tracking-wider">
                   Traditional HR Process: Full Raw PDF
                 </h4>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-black text-zinc-300 border border-zinc-700">
+              <span className="px-2.5 py-0.5 rounded text-[11px] font-mono font-bold bg-rose-100 text-rose-800 border border-rose-200">
                 HIGH PRIVACY RISK
               </span>
             </div>
 
             <div className="p-5 space-y-4">
-              <div className="p-3 rounded-lg bg-black border border-zinc-800 text-xs text-zinc-400">
+              <div className="p-3 rounded-lg bg-rose-50/60 border border-rose-200 text-xs text-rose-800 leading-relaxed">
                 Notice: Uploading raw files exposes confidential medical conditions (IVF cycle, psychiatric notes, surgical procedures) directly to HR and managers, creating workplace bias risks.
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider font-condensed">
+                <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider block">
                   Raw Physician Clinical Notes (Editable)
                 </label>
                 <textarea
                   value={customText}
                   onChange={(e) => setCustomText(e.target.value)}
                   rows={13}
-                  className="w-full p-4 rounded-xl bg-black border border-zinc-800 font-mono text-xs text-zinc-200 focus:outline-none focus:border-zinc-500 leading-relaxed resize-y"
+                  className="w-full p-4 rounded-xl bg-slate-50 border border-slate-300 font-mono text-xs text-slate-900 focus:outline-none focus:border-blue-600 leading-relaxed resize-y shadow-xs"
                   placeholder="Paste or edit doctor notes here..."
                 />
               </div>
@@ -306,62 +306,62 @@ export default function InteractiveRedactor() {
           </div>
 
           {/* Right Column: Vouch Minimal Disclosure Attestation */}
-          <div className="rounded-2xl border border-zinc-700 bg-zinc-950 overflow-hidden shadow-xl flex flex-col">
-            <div className="bg-zinc-900 border-b border-zinc-800 px-5 py-3.5 flex items-center justify-between">
+          <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm flex flex-col">
+            <div className="bg-emerald-50 border-b border-emerald-100 px-5 py-3.5 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-white" />
-                <h4 className="font-semibold text-xs text-white uppercase tracking-wider font-condensed">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <h4 className="font-semibold text-xs text-emerald-900 uppercase tracking-wider">
                   Vouch: Minimal Attestation
                 </h4>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-white text-black">
-                100% PRIVATE & VERIFIABLE
+              <span className="px-2.5 py-0.5 rounded text-[11px] font-mono font-bold bg-emerald-700 text-white shadow-xs">
+                100% PRIVATE &amp; VERIFIABLE
               </span>
             </div>
 
             <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
-              <div className="p-3 rounded-lg bg-black border border-zinc-800 text-xs text-zinc-300">
+              <div className="p-3 rounded-lg bg-emerald-50/60 border border-emerald-200 text-xs text-emerald-800 leading-relaxed">
                 HR only receives the cryptographic attestation: Leave duration is certified, provider is accredited, but <strong>zero diagnoses, medications, or clinical notes</strong> are ever transmitted.
               </div>
 
               {/* Minimal Payload Card */}
-              <div className="p-4 rounded-xl bg-black text-zinc-100 space-y-3 font-sans border border-zinc-800">
-                <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
+              <div className="p-4 rounded-xl bg-slate-50 text-slate-900 space-y-3 font-sans border border-slate-200">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-zinc-500 font-condensed">Holder</span>
-                    <p className="font-bold text-sm text-white">{activeDoc?.patientName || 'Sarah Jenkins'}</p>
+                    <span className="text-[11px] uppercase font-semibold text-slate-500">Holder</span>
+                    <p className="font-bold text-sm text-slate-900">{activeDoc?.patientName || 'Sarah Jenkins'}</p>
                   </div>
-                  <span className="px-2 py-0.5 rounded text-xs font-mono bg-zinc-900 text-zinc-200 border border-zinc-700">
+                  <span className="px-2.5 py-0.5 rounded text-xs font-mono font-semibold bg-blue-50 text-blue-800 border border-blue-200">
                     STATUTORY_MEDICAL
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-zinc-500 font-condensed">Leave Window</span>
-                    <p className="font-bold font-mono text-zinc-200">Sep 16, 2026 – Oct 07, 2026</p>
+                    <span className="text-[11px] uppercase font-semibold text-slate-500">Leave Window</span>
+                    <p className="font-bold font-mono text-slate-800">Sep 16, 2026 – Oct 07, 2026</p>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-zinc-500 font-condensed">Fit-For-Duty Status</span>
-                    <p className="font-bold text-zinc-300">Unfit (Total Rest Mandated)</p>
+                    <span className="text-[11px] uppercase font-semibold text-slate-500">Fit-For-Duty Status</span>
+                    <p className="font-semibold text-slate-700">Unfit (Total Rest Mandated)</p>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-zinc-800 flex items-center justify-between text-[11px] text-zinc-400">
+                <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
                   <div>
-                    <span className="font-semibold text-white">{activeDoc?.clinic || 'Summit Health'}</span>
-                    <p className="text-[10px]">Registry Reg: GMC-8849201</p>
+                    <span className="font-semibold text-slate-900">{activeDoc?.clinic || 'Summit Health'}</span>
+                    <p className="text-[11px]">Registry Reg: GMC-8849201</p>
                   </div>
                   <div className="text-right">
-                    <span className="font-mono text-white font-bold">✓ ECDSA P-256</span>
-                    <p className="text-[10px] text-zinc-500">Tamper-Proof</p>
+                    <span className="font-mono text-emerald-700 font-bold">✓ ECDSA P-256</span>
+                    <p className="text-[11px] text-slate-400">Tamper-Proof</p>
                   </div>
                 </div>
               </div>
 
               <div className="pt-2">
-                <p className="text-xs text-zinc-500 italic text-center">
-                  Notice: IVF treatments, ultrasound findings, progesterone doses, and panic ratings are 100% eliminated from the HR workflow.
+                <p className="text-xs text-slate-500 italic text-center">
+                  Notice: IVF treatments, ultrasound findings, progesterone doses, and clinical metrics are 100% eliminated from the HR workflow.
                 </p>
               </div>
             </div>
@@ -370,13 +370,13 @@ export default function InteractiveRedactor() {
         </div>
       ) : (
         /* Standalone Blackout or Highlight Inspector */
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 overflow-hidden shadow-xl p-6 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+        <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm p-6 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
             <div>
-              <h4 className="font-semibold text-white text-sm font-condensed uppercase tracking-wider">
+              <h4 className="font-semibold text-slate-900 text-sm uppercase tracking-wider">
                 {viewMode === 'blackout' ? 'Live Blackout Bar Preview' : 'Clinical Entity Inspector'}
               </h4>
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-slate-500">
                 {viewMode === 'blackout' 
                   ? 'Hover over any black bar to peek at the intercepted term and see why it is redacted'
                   : 'Categorized clinical tokens that present privacy exposure risks'}
@@ -384,7 +384,7 @@ export default function InteractiveRedactor() {
             </div>
           </div>
 
-          <div className="p-6 rounded-xl bg-black font-mono text-xs text-zinc-300 leading-relaxed border border-zinc-800 whitespace-pre-wrap">
+          <div className="p-6 rounded-xl bg-slate-50 font-mono text-xs text-slate-800 leading-relaxed border border-slate-200 whitespace-pre-wrap">
             {renderHighlightedDocument()}
           </div>
         </div>

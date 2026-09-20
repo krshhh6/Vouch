@@ -68,26 +68,26 @@ export default function ClinicSetup({
   if (!isOpen) return null;
 
   const content = (
-    <div className="w-full bg-[#111C2E] border border-slate-700/80 rounded-xl overflow-hidden shadow-2xl">
+    <div className="w-full bg-white border border-slate-200 rounded-xl overflow-hidden shadow-2xl text-slate-900">
       {/* Header */}
-      <div className="px-6 py-4 bg-[#0B1322] border-b border-slate-800 flex items-center justify-between">
+      <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-teal-700">
               VOUCH CLINIC PORTAL
             </span>
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 text-slate-700 border border-slate-200">
               Quick Setup
             </span>
           </div>
-          <h2 className="text-xl font-bold text-white font-condensed uppercase tracking-wide mt-0.5">
+          <h2 className="text-xl font-bold text-slate-900 font-condensed uppercase tracking-wide mt-0.5">
             Sign medical leave proofs
           </h2>
         </div>
         {isModal && onClose && (
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+            className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -97,14 +97,14 @@ export default function ClinicSetup({
       <div className="p-6 space-y-5">
         {savedSuccess ? (
           /* Post-save Display as specified in prompt */
-          <div className="p-6 rounded-xl bg-emerald-950/40 border border-emerald-600/50 space-y-4">
-            <div className="flex items-center gap-2.5 text-emerald-400">
+          <div className="p-6 rounded-xl bg-emerald-50 border border-emerald-200 space-y-4">
+            <div className="flex items-center gap-2.5 text-emerald-700">
               <CheckCircle2 className="w-6 h-6 shrink-0" />
-              <h3 className="text-lg font-bold font-condensed uppercase tracking-wider text-white">
+              <h3 className="text-lg font-bold font-condensed uppercase tracking-wider text-slate-900">
                 Your clinic is registered!
               </h3>
             </div>
-            <div className="space-y-1.5 text-xs font-mono text-slate-300 pl-8">
+            <div className="space-y-1.5 text-xs font-mono text-slate-700 pl-8">
               <p>
                 <span className="text-slate-500">Clinic:</span> {formData.clinicName}
               </p>
@@ -114,7 +114,7 @@ export default function ClinicSetup({
               <p>
                 <span className="text-slate-500">License:</span> {formData.regNumber}
               </p>
-              <p className="text-emerald-400 pt-1">
+              <p className="text-emerald-700 pt-1 font-semibold">
                 <span className="text-slate-500">Status:</span> ✓ Ready to sign leave proofs
               </p>
             </div>
@@ -122,22 +122,22 @@ export default function ClinicSetup({
         ) : (
           <>
             <div>
-              <p className="text-sm text-slate-300">
+              <p className="text-sm text-slate-800 font-medium">
                 Welcome! Let's set up your clinic in 30 seconds.
               </p>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-600 mt-0.5">
                 This identity signs cryptographic attestations for employees with mathematical certainty.
               </p>
             </div>
 
-            <form onSubmit={handleSave} className="space-y-4 bg-[#0D1626] p-5 rounded-lg border border-slate-800">
-              <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 border-b border-slate-800 pb-2">
+            <form onSubmit={handleSave} className="space-y-4 bg-slate-50 p-5 rounded-lg border border-slate-200">
+              <div className="text-[11px] font-mono uppercase tracking-wider text-slate-600 border-b border-slate-200 pb-2 font-semibold">
                 CLINIC INFORMATION
               </div>
 
               {/* Clinic / Doctor Name */}
               <div>
-                <label className="block text-xs font-medium text-slate-200 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Clinic / Doctor Name: *
                 </label>
                 <div className="relative">
@@ -148,14 +148,14 @@ export default function ClinicSetup({
                     value={formData.clinicName}
                     onChange={(e) => setFormData({ ...formData, clinicName: e.target.value })}
                     placeholder="Summit Women's Health Center"
-                    className="w-full pl-9 pr-3 py-2 bg-[#090F1B] border border-slate-700 rounded-md text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
+                    className="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-md text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-600 font-mono shadow-xs"
                   />
                 </div>
               </div>
 
               {/* License Number */}
               <div>
-                <label className="block text-xs font-medium text-slate-200 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   License Number (NMC/Medical Council): *
                 </label>
                 <div className="relative">
@@ -166,17 +166,17 @@ export default function ClinicSetup({
                     value={formData.regNumber}
                     onChange={(e) => setFormData({ ...formData, regNumber: e.target.value })}
                     placeholder="GMC-6849201"
-                    className="w-full pl-9 pr-3 py-2 bg-[#090F1B] border border-slate-700 rounded-md text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
+                    className="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-md text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-600 font-mono shadow-xs"
                   />
                 </div>
-                <p className="text-[10px] text-slate-400 mt-1 font-mono">
+                <p className="text-[10px] text-slate-500 mt-1 font-mono">
                   (This helps verify you're registered)
                 </p>
               </div>
 
               {/* Email */}
               <div>
-                <label className="block text-xs font-medium text-slate-200 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Email: *
                 </label>
                 <div className="relative">
@@ -187,23 +187,23 @@ export default function ClinicSetup({
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="dr.elena@summit-health.com"
-                    className="w-full pl-9 pr-3 py-2 bg-[#090F1B] border border-slate-700 rounded-md text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
+                    className="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-md text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-600 font-mono shadow-xs"
                   />
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-3 border-t border-slate-800 flex items-center justify-between gap-3">
+              <div className="pt-3 border-t border-slate-200 flex items-center justify-between gap-3">
                 <button
                   type="button"
                   onClick={handleSkip}
-                  className="px-4 py-2 text-xs text-slate-400 hover:text-white transition font-mono"
+                  className="px-4 py-2 text-xs text-slate-600 hover:text-slate-900 transition font-mono"
                 >
                   SKIP FOR NOW
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-xs font-semibold uppercase tracking-wider transition flex items-center gap-1.5 shadow-md"
+                  className="px-5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-md text-xs font-semibold uppercase tracking-wider transition flex items-center gap-1.5 shadow-sm"
                 >
                   <span>SAVE & CONTINUE</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -218,7 +218,7 @@ export default function ClinicSetup({
 
   if (isModal) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
         <div className="w-full max-w-lg">{content}</div>
       </div>
     );

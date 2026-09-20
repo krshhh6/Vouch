@@ -173,37 +173,37 @@ export default function DocumentUpload({
   };
 
   return (
-    <div className="border border-dashed border-slate-700 rounded-xl p-5 bg-[#141E2E]/80 transition-all hover:border-slate-600">
+    <div className="border border-dashed border-slate-300 rounded-xl p-5 bg-slate-50 transition-all hover:border-slate-400 text-slate-900">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-100 font-condensed">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-800 font-condensed">
               Attach Medical Proof (Optional but helpful)
             </h3>
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold">
               LOCAL ONLY
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+          <p className="text-xs text-slate-600 mt-1 leading-relaxed">
             Take a photo or upload the clinical document to keep in your clinic records. This is
-            stored locally on your device and <strong className="text-slate-200">never sent to HR</strong>.
+            stored locally on your device and <strong className="text-slate-900">never sent to HR</strong>.
           </p>
         </div>
       </div>
 
       {/* Bulleted medical document checklist */}
-      <div className="bg-[#0F172A]/70 rounded-lg p-2.5 mb-4 border border-slate-800 text-[11px] text-slate-400 flex flex-wrap gap-x-4 gap-y-1">
-        <span className="text-slate-500 font-mono text-[10px] uppercase">Supported records:</span>
-        <span className="text-slate-300">• Doctor's note</span>
-        <span className="text-slate-300">• Prescription sheet</span>
-        <span className="text-slate-300">• Lab report</span>
-        <span className="text-slate-300">• Ultrasound report</span>
-        <span className="text-slate-300">• Clinical certificate</span>
+      <div className="bg-white rounded-lg p-2.5 mb-4 border border-slate-200 text-[11px] text-slate-600 flex flex-wrap gap-x-4 gap-y-1">
+        <span className="text-slate-500 font-mono text-[10px] uppercase font-semibold">Supported records:</span>
+        <span className="text-slate-700">• Doctor's note</span>
+        <span className="text-slate-700">• Prescription sheet</span>
+        <span className="text-slate-700">• Lab report</span>
+        <span className="text-slate-700">• Ultrasound report</span>
+        <span className="text-slate-700">• Clinical certificate</span>
       </div>
 
       {errorMessage && (
-        <div className="mb-3 p-2.5 rounded-lg bg-red-950/40 border border-red-800/50 text-red-300 text-xs flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
+        <div className="mb-3 p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
           <span>{errorMessage}</span>
         </div>
       )}
@@ -220,23 +220,23 @@ export default function DocumentUpload({
             />
             {/* Camera Viewfinder Crosshairs */}
             <div className="absolute inset-4 border border-white/20 rounded pointer-events-none flex items-center justify-center">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 bg-black/50 px-2 py-0.5 rounded">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-white/70 bg-black/50 px-2 py-0.5 rounded">
                 Align Medical Document
               </span>
             </div>
           </div>
-          <div className="p-3 bg-[#0F172A] border-t border-slate-800 flex items-center justify-between gap-2">
+          <div className="p-3 bg-white border-t border-slate-200 flex items-center justify-between gap-2">
             <button
               type="button"
               onClick={stopCameraStream}
-              className="px-3 py-1.5 text-xs text-slate-400 hover:text-white bg-[#1E293B] border border-slate-700 rounded-md transition"
+              className="px-3 py-1.5 text-xs text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-md transition"
             >
               Cancel Camera
             </button>
             <button
               type="button"
               onClick={handleCaptureSnapshot}
-              className="px-4 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-md transition flex items-center gap-1.5 shadow-sm"
+              className="px-4 py-1.5 text-xs font-semibold text-white bg-emerald-700 hover:bg-emerald-800 rounded-md transition flex items-center gap-1.5 shadow-sm"
             >
               <Camera className="w-3.5 h-3.5" />
               Capture Photo
@@ -247,11 +247,11 @@ export default function DocumentUpload({
 
       {/* Active Document Preview */}
       {currentDoc ? (
-        <div className="p-3.5 rounded-lg bg-[#0F172A] border border-emerald-700/40 space-y-3">
+        <div className="p-3.5 rounded-lg bg-white border border-emerald-200 space-y-3 shadow-xs">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 overflow-hidden">
               {currentDoc.fileType.startsWith('image/') ? (
-                <div className="w-12 h-12 rounded bg-slate-800 border border-slate-700 overflow-hidden shrink-0 flex items-center justify-center">
+                <div className="w-12 h-12 rounded bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
                   <img
                     src={currentDoc.base64Data}
                     alt="Medical preview"
@@ -259,18 +259,18 @@ export default function DocumentUpload({
                   />
                 </div>
               ) : (
-                <div className="w-12 h-12 rounded bg-slate-800 border border-slate-700 shrink-0 flex items-center justify-center text-emerald-400">
+                <div className="w-12 h-12 rounded bg-slate-100 border border-slate-200 shrink-0 flex items-center justify-center text-emerald-700">
                   <FileText className="w-6 h-6" />
                 </div>
               )}
               <div className="min-w-0">
-                <p className="text-xs font-mono font-medium text-slate-100 truncate">
+                <p className="text-xs font-mono font-medium text-slate-900 truncate">
                   {currentDoc.fileName}
                 </p>
-                <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono">
+                <div className="flex items-center gap-2 text-[10px] text-slate-500 font-mono">
                   <span>{formatFileSize(currentDoc.fileSize)}</span>
                   <span>•</span>
-                  <span className="text-emerald-400">Ready for clinic records</span>
+                  <span className="text-emerald-700 font-medium">Ready for clinic records</span>
                 </div>
               </div>
             </div>
@@ -278,22 +278,22 @@ export default function DocumentUpload({
             <button
               type="button"
               onClick={() => onClear && onClear()}
-              className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-950/30 rounded transition"
+              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition"
               title="Remove document"
             >
               <Trash2 className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
-            <span className="text-emerald-400 flex items-center gap-1 font-mono text-[10px]">
-              <CheckCircle2 className="w-3.5 h-3.5" />
+          <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-[11px]">
+            <span className="text-emerald-700 flex items-center gap-1 font-mono text-[10px] font-semibold">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               Document attached
             </span>
             <button
               type="button"
               onClick={() => onClear && onClear()}
-              className="text-[11px] text-slate-400 hover:text-slate-200 underline font-mono"
+              className="text-[11px] text-slate-500 hover:text-slate-800 underline font-mono"
             >
               Clear
             </button>
@@ -308,25 +308,25 @@ export default function DocumentUpload({
             onDragOver={handleDrag}
             onDrop={handleDrop}
             className={`space-y-2.5 transition-all ${
-              dragActive ? 'border-2 border-emerald-500 bg-emerald-950/20 rounded-lg p-3' : ''
+              dragActive ? 'border-2 border-blue-500 bg-blue-50/50 rounded-lg p-3' : ''
             }`}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <button
                 type="button"
                 onClick={handleStartCamera}
-                className="py-2.5 px-3 rounded-lg border border-emerald-600/50 bg-emerald-950/30 text-emerald-300 hover:bg-emerald-900/40 hover:text-white transition flex items-center justify-center gap-2 text-xs font-medium"
+                className="py-2.5 px-3 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 transition flex items-center justify-center gap-2 text-xs font-semibold shadow-xs"
               >
-                <Camera className="w-4 h-4 text-emerald-400" />
+                <Camera className="w-4 h-4 text-emerald-700" />
                 <span>📱 Take Photo</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="py-2.5 px-3 rounded-lg border border-slate-700 bg-[#0F172A] text-slate-200 hover:bg-slate-800 hover:text-white transition flex items-center justify-center gap-2 text-xs font-medium"
+                className="py-2.5 px-3 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition flex items-center justify-center gap-2 text-xs font-medium shadow-xs"
               >
-                <Upload className="w-4 h-4 text-slate-400" />
+                <Upload className="w-4 h-4 text-slate-500" />
                 <span>📄 Upload File</span>
               </button>
 
@@ -340,7 +340,7 @@ export default function DocumentUpload({
             </div>
 
             {cameraError && (
-              <p className="text-[11px] text-amber-300 bg-amber-950/30 border border-amber-800/40 p-2 rounded">
+              <p className="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 p-2 rounded">
                 Note: {cameraError}
               </p>
             )}
@@ -349,8 +349,8 @@ export default function DocumentUpload({
       )}
 
       {/* Security note footer */}
-      <div className="mt-3 pt-2.5 border-t border-slate-800/60 flex items-center gap-1.5 text-[10px] text-slate-400 font-mono">
-        <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+      <div className="mt-3 pt-2.5 border-t border-slate-200 flex items-center gap-1.5 text-[10px] text-slate-500 font-mono">
+        <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
         <span>✓ File stored locally on your device only. Never sent to HR.</span>
       </div>
     </div>

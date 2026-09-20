@@ -175,33 +175,33 @@ function HRVerifierContent() {
   const approvedCount = applications.filter((a) => a.status === 'APPROVED').length;
 
   return (
-    <div className="w-full bg-[#0A101D] text-slate-100 min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="w-full bg-slate-50 text-slate-900 min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Header Strip */}
-        <div className="bg-[#111C2E] border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-400">
-                  PORTAL 2 • HR ENTERPRISE BENEFITS
+                <span className="text-xs font-semibold uppercase tracking-wider text-blue-700">
+                  Portal 2 • HR Enterprise Benefits
                 </span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">
+                <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
                   Zero-PHI Verifier
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white mt-1 font-condensed uppercase tracking-wider">
-                HR VERIFIER PORTAL
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-1 tracking-tight">
+                HR Benefits Verification Portal
               </h1>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-300 mt-2 font-mono">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-2 font-sans">
                 <span>
-                  Logged in as: <strong className="text-white">{currentUser.name}</strong>
+                  Logged in as: <strong className="text-slate-900">{currentUser.name}</strong>
                 </span>
-                <span className="text-slate-600">•</span>
-                <span className="text-blue-400">{currentUser.department || 'People Operations & Benefits'}</span>
-                <span className="text-slate-600">•</span>
-                <span className="text-emerald-400 flex items-center gap-1 font-medium">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
+                <span className="text-slate-300">•</span>
+                <span className="text-slate-700">{currentUser.department || 'People Operations & Benefits'}</span>
+                <span className="text-slate-300">•</span>
+                <span className="text-emerald-700 flex items-center gap-1 font-medium">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                   Statutory Rule: {VOUCH_POLICY_SPEC.policyVersion}
                 </span>
               </div>
@@ -209,41 +209,41 @@ function HRVerifierContent() {
           </div>
 
           {/* KPI Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-slate-800/80 text-xs font-mono">
-            <div className="p-3 bg-[#0A101D] border border-slate-800 rounded-xl">
-              <span className="text-slate-500 block text-[10px]">ALL LEAVE REQUESTS</span>
-              <span className="text-white font-bold text-base">{applications.length} Roster</span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-slate-200 text-xs font-sans">
+            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+              <span className="text-slate-500 block text-[11px] font-medium uppercase tracking-wider">ALL LEAVE REQUESTS</span>
+              <span className="text-slate-900 font-bold text-lg">{applications.length} Roster</span>
             </div>
-            <div className="p-3 bg-[#0A101D] border border-slate-800 rounded-xl">
-              <span className="text-amber-400 block text-[10px]">PENDING CONFIRMATIONS</span>
-              <span className="text-amber-400 font-bold text-base">{pendingCount} Action Required</span>
+            <div className="p-3.5 bg-amber-50/70 border border-amber-200 rounded-xl">
+              <span className="text-amber-800 block text-[11px] font-medium uppercase tracking-wider">PENDING CONFIRMATIONS</span>
+              <span className="text-amber-900 font-bold text-lg">{pendingCount} Action Required</span>
             </div>
-            <div className="p-3 bg-[#0A101D] border border-slate-800 rounded-xl">
-              <span className="text-emerald-400 block text-[10px]">CONFIRMED &amp; APPROVED</span>
-              <span className="text-emerald-400 font-bold text-base">{approvedCount} Active</span>
+            <div className="p-3.5 bg-emerald-50/70 border border-emerald-200 rounded-xl">
+              <span className="text-emerald-800 block text-[11px] font-medium uppercase tracking-wider">CONFIRMED &amp; APPROVED</span>
+              <span className="text-emerald-900 font-bold text-lg">{approvedCount} Active</span>
             </div>
-            <div className="p-3 bg-[#0A101D] border border-slate-800 rounded-xl">
-              <span className="text-blue-400 block text-[10px]">ZERO-PHI COMPLIANCE</span>
-              <span className="text-blue-300 font-bold text-base">100% Guaranteed</span>
+            <div className="p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl">
+              <span className="text-blue-800 block text-[11px] font-medium uppercase tracking-wider">ZERO-PHI COMPLIANCE</span>
+              <span className="text-blue-900 font-bold text-lg">100% Guaranteed</span>
             </div>
           </div>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex border-b border-slate-800 gap-2 overflow-x-auto">
+        <div className="flex border-b border-slate-200 gap-2 overflow-x-auto">
           <button
             type="button"
             onClick={() => setActiveTab('roster')}
-            className={`px-5 py-3 text-xs font-condensed uppercase tracking-wider font-bold border-b-2 transition flex items-center gap-2 shrink-0 ${
+            className={`px-5 py-3 text-xs font-semibold tracking-wide border-b-2 transition flex items-center gap-2 shrink-0 ${
               activeTab === 'roster'
-                ? 'border-blue-500 text-white'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-blue-600 text-blue-700 bg-white shadow-xs rounded-t-lg font-bold'
+                : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 rounded-t-lg'
             }`}
           >
-            <Users className="w-4 h-4 text-blue-400" />
+            <Users className="w-4 h-4 text-blue-600" />
             <span>All Employees Leave Status Roster</span>
             {pendingCount > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40">
+              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
                 {pendingCount}
               </span>
             )}
@@ -252,26 +252,26 @@ function HRVerifierContent() {
           <button
             type="button"
             onClick={() => setActiveTab('desk')}
-            className={`px-5 py-3 text-xs font-condensed uppercase tracking-wider font-bold border-b-2 transition flex items-center gap-2 shrink-0 ${
+            className={`px-5 py-3 text-xs font-semibold tracking-wide border-b-2 transition flex items-center gap-2 shrink-0 ${
               activeTab === 'desk'
-                ? 'border-blue-500 text-white'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-blue-600 text-blue-700 bg-white shadow-xs rounded-t-lg font-bold'
+                : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 rounded-t-lg'
             }`}
           >
-            <ShieldCheck className="w-4 h-4 text-blue-400" />
+            <ShieldCheck className="w-4 h-4 text-blue-600" />
             <span>Single Code Verification Desk</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('receipts')}
-            className={`px-5 py-3 text-xs font-condensed uppercase tracking-wider font-bold border-b-2 transition flex items-center gap-2 shrink-0 ${
+            className={`px-5 py-3 text-xs font-semibold tracking-wide border-b-2 transition flex items-center gap-2 shrink-0 ${
               activeTab === 'receipts'
-                ? 'border-blue-500 text-white'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-blue-600 text-blue-700 bg-white shadow-xs rounded-t-lg font-bold'
+                : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 rounded-t-lg'
             }`}
           >
-            <FileCheck className="w-4 h-4 text-blue-400" />
+            <FileCheck className="w-4 h-4 text-blue-600" />
             <span>Tamper-Evident Receipt Chain Log</span>
           </button>
         </div>

@@ -76,23 +76,23 @@ export default function PaperAttestationQR({ attestation, onClose }: PaperAttest
   const qrGrid = generateQRPattern();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
-      <div className="relative w-full max-w-2xl bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col font-sans">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in">
+      <div className="relative w-full max-w-2xl bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col font-sans">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-black">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
           <div className="flex items-center gap-2.5">
-            <QrCode className="w-5 h-5 text-white" />
+            <QrCode className="w-5 h-5 text-blue-700" />
             <div>
-              <h3 className="font-bold text-white text-base font-condensed uppercase tracking-wider">Paper-First Clinic Certificate & QR Bridge</h3>
-              <p className="text-xs text-zinc-400">Offline printable certificate for clinics using physical workflows</p>
+              <h3 className="font-bold text-slate-900 text-base">Paper-First Clinic Certificate &amp; QR Bridge</h3>
+              <p className="text-xs text-slate-500 font-sans">Offline printable certificate for clinics using physical workflows</p>
             </div>
           </div>
           
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-white hover:bg-zinc-200 text-black text-xs font-semibold font-condensed uppercase tracking-wider shadow-sm transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition-colors"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print Certificate</span>
@@ -100,7 +100,7 @@ export default function PaperAttestationQR({ attestation, onClose }: PaperAttest
 
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200"
             >
               <X className="w-5 h-5" />
             </button>
@@ -108,73 +108,73 @@ export default function PaperAttestationQR({ attestation, onClose }: PaperAttest
         </div>
 
         {/* Printable Formal Monochrome Certificate View */}
-        <div className="p-6 overflow-y-auto flex-1 bg-zinc-900">
-          <div className="bg-white rounded-xl p-8 text-black font-sans shadow-2xl border border-zinc-300 relative space-y-6">
+        <div className="p-6 overflow-y-auto flex-1 bg-slate-100">
+          <div className="bg-[#FFFDF9] rounded-xl p-8 text-slate-900 font-sans shadow-md border border-[#E2D7C3] relative space-y-6">
             
             {/* Stamp on right */}
-            <div className="absolute top-6 right-6 border-2 border-black rounded px-4 py-1.5 font-condensed text-[11px] font-bold text-center text-black uppercase tracking-wider">
+            <div className="absolute top-6 right-6 border-2 border-emerald-700 rounded px-4 py-1.5 text-[11px] font-bold text-center text-emerald-800 bg-emerald-50/50 uppercase tracking-wider">
               <div>✓ CLINIC REGISTERED</div>
-              <div className="text-[9px] tracking-normal font-sans font-normal text-zinc-600">
+              <div className="text-[9px] tracking-normal font-sans font-normal text-slate-500">
                 NMC Accreditation Anchor
               </div>
             </div>
 
             {/* Clinic Info Header */}
-            <div className="border-b border-zinc-200 pb-4">
-              <span className="font-condensed text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
+            <div className="border-b border-[#E2D7C3] pb-4">
+              <span className="text-[11px] uppercase font-semibold text-slate-500 tracking-wider">
                 Official Clinical Certificate of Medical Leave
               </span>
-              <h2 className="text-xl font-bold text-black mt-0.5">{payload.issuerName}</h2>
-              <p className="text-xs text-zinc-600">
-                Attending Practitioner: <strong>{payload.doctorName}</strong> (Medical Reg: <span className="font-mono font-bold">{payload.issuerRegNumber}</span>)
+              <h2 className="text-xl font-bold text-slate-900 mt-0.5">{payload.issuerName}</h2>
+              <p className="text-xs text-slate-600 font-sans mt-0.5">
+                Attending Practitioner: <strong>{payload.doctorName}</strong> (Medical Reg: <span className="font-mono font-bold text-slate-800">{payload.issuerRegNumber}</span>)
               </p>
             </div>
 
             {/* Patient & Certificate Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-3 border-b border-zinc-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-3 border-b border-[#E2D7C3]">
               <div>
-                <span className="text-[10px] font-bold uppercase text-zinc-500 font-condensed">Certified Patient</span>
-                <p className="text-base font-bold text-black">{payload.employeeName}</p>
-                {payload.employeeId && <p className="text-xs text-zinc-600 font-mono">Ref: {payload.employeeId}</p>}
+                <span className="text-[11px] font-semibold uppercase text-slate-500">Certified Patient</span>
+                <p className="text-base font-bold text-slate-900">{payload.employeeName}</p>
+                {payload.employeeId && <p className="text-xs text-slate-500 font-mono">Ref: {payload.employeeId}</p>}
               </div>
 
               <div>
-                <span className="text-[10px] font-bold uppercase text-zinc-500 font-condensed">Statutory Leave Class</span>
-                <p className="text-sm font-mono font-bold text-black">{payload.coarseCategory}</p>
-                <p className="text-xs text-zinc-500 italic">Zero clinical diagnoses disclosed</p>
+                <span className="text-[11px] font-semibold uppercase text-slate-500">Statutory Leave Class</span>
+                <p className="text-sm font-mono font-bold text-blue-700">{payload.coarseCategory}</p>
+                <p className="text-xs text-slate-500 italic">Zero clinical diagnoses disclosed</p>
               </div>
             </div>
 
             {/* Leave Dates & Clearance */}
-            <div className="grid grid-cols-3 gap-3 bg-zinc-50 p-3.5 rounded-xl border border-zinc-200 text-xs">
+            <div className="grid grid-cols-3 gap-3 bg-white p-3.5 rounded-xl border border-[#E2D7C3] text-xs">
               <div>
-                <span className="text-[10px] font-bold text-zinc-500 uppercase font-condensed">Start Date</span>
-                <p className="font-bold font-mono text-black">{payload.startDate}</p>
+                <span className="text-[11px] font-semibold text-slate-500 uppercase">Start Date</span>
+                <p className="font-bold font-mono text-slate-900">{payload.startDate}</p>
               </div>
               <div>
-                <span className="text-[10px] font-bold text-zinc-500 uppercase font-condensed">End Date</span>
-                <p className="font-bold font-mono text-black">{payload.endDate}</p>
+                <span className="text-[11px] font-semibold text-slate-500 uppercase">End Date</span>
+                <p className="font-bold font-mono text-slate-900">{payload.endDate}</p>
               </div>
               <div>
-                <span className="text-[10px] font-bold text-zinc-500 uppercase font-condensed">Return to Duty</span>
-                <p className="font-bold font-mono text-black">{payload.expectedReturnDate}</p>
+                <span className="text-[11px] font-semibold text-slate-500 uppercase">Return to Duty</span>
+                <p className="font-bold font-mono text-slate-900">{payload.expectedReturnDate}</p>
               </div>
             </div>
 
             {/* QR & Verification Block */}
-            <div className="pt-2 border-t border-zinc-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="space-y-1.5 text-xs text-zinc-700 flex-1">
-                <span className="font-bold text-black block font-condensed uppercase tracking-wider">Cryptographic Verification Anchor</span>
-                <p className="text-[11px] leading-relaxed">
+            <div className="pt-2 border-t border-[#E2D7C3] flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="space-y-1.5 text-xs text-slate-700 flex-1">
+                <span className="font-bold text-slate-900 block uppercase tracking-wider text-[11px]">Cryptographic Verification Anchor</span>
+                <p className="text-xs text-slate-600 leading-relaxed font-sans">
                   Scan this QR code to load the signed P-256 attestation directly into any verifier without manual data entry.
                 </p>
-                <p className="font-mono text-[9px] text-zinc-500 break-all bg-zinc-100 p-1.5 rounded border border-zinc-200">
+                <p className="font-mono text-[10px] text-slate-600 break-all bg-white p-2 rounded border border-[#E2D7C3]">
                   Signature: {attestation.signatureHex.substring(0, 48)}...
                 </p>
               </div>
 
               {/* Offline SVG QR Code */}
-              <div className="p-2.5 bg-white rounded-xl border border-zinc-300 shadow-sm shrink-0">
+              <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-xs shrink-0">
                 <svg width="100" height="100" viewBox="0 0 21 21" className="shape-rendering-crispEdges">
                   {qrGrid.map((row, r) =>
                     row.map((cell, c) => (
@@ -184,12 +184,12 @@ export default function PaperAttestationQR({ attestation, onClose }: PaperAttest
                         y={r}
                         width="1"
                         height="1"
-                        fill={cell ? '#000000' : '#FFFFFF'}
+                        fill={cell ? '#0F172A' : '#FFFFFF'}
                       />
                     ))
                   )}
                 </svg>
-                <span className="text-[9px] font-mono text-zinc-500 block text-center mt-1">
+                <span className="text-[10px] font-mono text-slate-500 block text-center mt-1">
                   {payload.attestationId}
                 </span>
               </div>

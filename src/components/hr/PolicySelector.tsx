@@ -22,19 +22,19 @@ export default function PolicySelector({
   ];
 
   return (
-    <div className="rounded-xl bg-[#0B1120] border border-[#1E293B] p-5 space-y-4 shadow-sm">
+    <div className="rounded-xl bg-white border border-slate-200 p-5 space-y-4 shadow-sm font-sans">
       {/* Header */}
-      <div className="border-b border-[#1E293B] pb-3">
+      <div className="border-b border-slate-200 pb-3">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-[#142319] border border-[#284230] flex items-center justify-center text-[#94C3A3]">
+          <div className="w-6 h-6 rounded bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
             <Scale className="w-3.5 h-3.5" />
           </div>
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider font-condensed text-white block">
-              POLICY-CONSTRAINED BUILDER (H2 / F2)
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-900 block">
+              Policy-Constrained Verification
             </span>
-            <span className="text-[10px] text-slate-400 font-sans">
-              Policy: {VOUCH_POLICY_SPEC.policyVersion}
+            <span className="text-xs text-slate-500 font-sans">
+              Rule Spec: {VOUCH_POLICY_SPEC.policyVersion}
             </span>
           </div>
         </div>
@@ -42,15 +42,15 @@ export default function PolicySelector({
 
       {/* Category selector */}
       <div className="space-y-2">
-        <label className="text-[11px] font-bold text-slate-300 font-condensed uppercase tracking-wider block">
+        <label className="text-xs font-semibold text-slate-700 block">
           Select Leave Policy:
         </label>
-        <div className="space-y-1.5 bg-[#0F172A] p-3 rounded-lg border border-[#334155] text-xs">
+        <div className="space-y-1.5 bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs">
           {categories.map((opt) => (
             <label
               key={opt.id}
-              className={`flex items-start gap-2.5 p-1.5 rounded cursor-pointer transition-colors ${
-                selectedCategory === opt.id ? 'bg-[#1E293B]/80 text-white' : 'text-slate-300 hover:text-white'
+              className={`flex items-start gap-2.5 p-2 rounded-lg cursor-pointer transition-colors ${
+                selectedCategory === opt.id ? 'bg-white text-slate-900 shadow-xs border border-slate-200' : 'text-slate-600 hover:bg-slate-100/50'
               }`}
             >
               <input
@@ -59,13 +59,13 @@ export default function PolicySelector({
                 value={opt.id}
                 checked={selectedCategory === opt.id}
                 onChange={() => onSelectCategory(opt.id)}
-                className="mt-0.5 accent-[#4A7C59]"
+                className="mt-0.5 text-blue-600 focus:ring-blue-500"
               />
               <div>
-                <span className={`font-mono block ${selectedCategory === opt.id ? 'font-bold text-[#94C3A3]' : ''}`}>
+                <span className={`block ${selectedCategory === opt.id ? 'font-bold text-blue-700' : 'font-medium'}`}>
                   {opt.label}
                 </span>
-                <span className="text-[10px] text-slate-400 font-sans block leading-tight">
+                <span className="text-[11px] text-slate-500 font-sans block leading-tight">
                   {opt.desc}
                 </span>
               </div>
@@ -75,60 +75,60 @@ export default function PolicySelector({
       </div>
 
       {/* Policy Claims Spec (Read-only display) */}
-      <div className="p-3.5 bg-[#0F172A] rounded-lg border border-[#1E293B] space-y-2.5 text-xs font-mono">
+      <div className="p-3.5 bg-slate-50 rounded-lg border border-slate-200 space-y-2.5 text-xs font-sans">
         <div>
-          <span className="font-bold text-white uppercase text-[11px] block font-condensed tracking-wider">
+          <span className="font-bold text-slate-900 uppercase text-[11px] block tracking-wider">
             Required Claims (Verified):
           </span>
-          <ul className="text-[#94C3A3] text-[11px] space-y-0.5 mt-1">
+          <ul className="text-emerald-800 text-xs space-y-1 mt-1 font-mono">
             <li className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3 h-3 text-[#94C3A3]" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               <span>issuerIsLicensed: true</span>
             </li>
             <li className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3 h-3 text-[#94C3A3]" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               <span>coarseCategory: {selectedCategory}</span>
             </li>
             <li className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3 h-3 text-[#94C3A3]" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               <span>validFrom / validTo dates</span>
             </li>
             <li className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3 h-3 text-[#94C3A3]" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               <span>fitForDuty: occupational status</span>
             </li>
           </ul>
         </div>
 
-        <div className="pt-2 border-t border-[#1E293B]">
-          <span className="font-bold text-red-400 uppercase text-[11px] block font-condensed tracking-wider">
+        <div className="pt-2 border-t border-slate-200">
+          <span className="font-bold text-rose-800 uppercase text-[11px] block tracking-wider">
             Forbidden Claims (Never Requested):
           </span>
-          <ul className="text-red-300 text-[11px] space-y-0.5 mt-1">
+          <ul className="text-rose-800 text-xs space-y-1 mt-1 font-mono">
             <li className="flex items-center gap-1.5">
-              <XCircle className="w-3 h-3 text-red-400" />
+              <XCircle className="w-3.5 h-3.5 text-rose-600" />
               <span>diagnosis (ICD-10 / notes)</span>
             </li>
             <li className="flex items-center gap-1.5">
-              <XCircle className="w-3 h-3 text-red-400" />
+              <XCircle className="w-3.5 h-3.5 text-rose-600" />
               <span>issuerName &amp; doctorName</span>
             </li>
             <li className="flex items-center gap-1.5">
-              <XCircle className="w-3 h-3 text-red-400" />
+              <XCircle className="w-3.5 h-3.5 text-rose-600" />
               <span>fineCategory &amp; prescriptions</span>
             </li>
           </ul>
         </div>
 
-        <div className="pt-2 border-t border-[#1E293B] text-[10px] text-slate-400 font-sans italic">
+        <div className="pt-2 border-t border-slate-200 text-xs text-slate-500 font-sans italic">
           &ldquo;This request is generated from policy {VOUCH_POLICY_SPEC.policyVersion} and cannot be widened.&rdquo;
         </div>
       </div>
 
       {/* Strict Absence of File Upload Notice */}
-      <div className="p-2.5 rounded-lg bg-[#0F172A]/80 border border-[#1E293B] flex items-center gap-2 text-[10px] font-mono text-slate-400">
-        <ShieldAlert className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-        <span>Strict Zero-PHI Boundary: No PDF or medical file upload permitted on HR portal.</span>
+      <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-200 flex items-center gap-2 text-xs font-sans text-amber-800">
+        <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
+        <span>Strict Zero-PHI Boundary: No medical file upload permitted on HR portal.</span>
       </div>
     </div>
   );

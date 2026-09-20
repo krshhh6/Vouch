@@ -123,34 +123,34 @@ export default function ClinicPortalPage() {
   };
 
   return (
-    <div className="w-full bg-[#0A101D] text-slate-100 min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="w-full bg-slate-50 text-slate-900 min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Header Strip matching: VOUCH — CLINIC PORTAL [Setup] [Help] [Reset] */}
-        <div className="bg-[#111C2E] border border-slate-800 rounded-xl p-6 shadow-xl">
+        <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
-                  1. CLINIC PORTAL
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-teal-700">
+                  CLINIC ISSUER PORTAL
                 </span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 text-slate-700 border border-slate-200">
                   P-256 Web Crypto
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white mt-1 font-condensed uppercase tracking-wider">
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-1 font-condensed uppercase tracking-wider">
                 VOUCH — CLINIC PORTAL
               </h1>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-300 mt-2 font-mono">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-2 font-mono">
                 <span>
                   Logged in as:{' '}
-                  <strong className="text-white">
+                  <strong className="text-slate-900">
                     {clinicProfile.doctorName} ({clinicProfile.clinicName})
                   </strong>
                 </span>
-                <span className="text-slate-600">•</span>
-                <span className="text-emerald-400 flex items-center gap-1 font-medium">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
+                <span className="text-slate-300">•</span>
+                <span className="text-emerald-700 flex items-center gap-1 font-medium">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                   Status: Ready to issue leave proofs
                 </span>
               </div>
@@ -161,30 +161,30 @@ export default function ClinicPortalPage() {
               <button
                 type="button"
                 onClick={() => setShowSetupModal(true)}
-                className="px-3 py-1.5 bg-[#1E293B] hover:bg-slate-700 text-slate-200 hover:text-white rounded-md text-xs font-mono transition flex items-center gap-1.5 border border-slate-700 shadow-sm"
+                className="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 rounded-md text-xs font-mono transition flex items-center gap-1.5 border border-slate-300 shadow-sm"
                 title="Configure clinic registration"
               >
-                <Settings className="w-3.5 h-3.5 text-slate-400" />
+                <Settings className="w-3.5 h-3.5 text-slate-500" />
                 <span>[Setup]</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setShowHelpModal(true)}
-                className="px-3 py-1.5 bg-[#1E293B] hover:bg-slate-700 text-slate-200 hover:text-white rounded-md text-xs font-mono transition flex items-center gap-1.5 border border-slate-700 shadow-sm"
+                className="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 rounded-md text-xs font-mono transition flex items-center gap-1.5 border border-slate-300 shadow-sm"
                 title="Clinic guide & privacy overview"
               >
-                <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
+                <HelpCircle className="w-3.5 h-3.5 text-slate-500" />
                 <span>[Help]</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setShowResetConfirm(true)}
-                className="px-3 py-1.5 bg-[#1E293B] hover:bg-red-950/40 text-slate-300 hover:text-red-300 rounded-md text-xs font-mono transition flex items-center gap-1.5 border border-slate-700 shadow-sm"
+                className="px-3 py-1.5 bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-700 rounded-md text-xs font-mono transition flex items-center gap-1.5 border border-slate-300 shadow-sm"
                 title="Reset demo data"
               >
-                <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
+                <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
                 <span>[Reset]</span>
               </button>
             </div>
@@ -261,29 +261,29 @@ export default function ClinicPortalPage() {
 
       {/* Reset Confirmation Modal */}
       {showResetConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-[#111C2E] border border-slate-700 rounded-xl p-6 shadow-2xl space-y-4 font-sans">
-            <div className="flex items-center gap-2.5 text-amber-400">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-xl p-6 shadow-2xl space-y-4 font-sans text-slate-900">
+            <div className="flex items-center gap-2.5 text-amber-600">
               <AlertTriangle className="w-5 h-5" />
-              <h3 className="text-base font-bold text-white font-condensed uppercase tracking-wider">
+              <h3 className="text-base font-bold text-slate-900 font-condensed uppercase tracking-wider">
                 Reset Demo Data?
               </h3>
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed font-mono">
+            <p className="text-xs text-slate-600 leading-relaxed font-mono">
               This will reset all attestations, local clinic medical documents, share codes, and verification receipts to the initial demo baseline.
             </p>
-            <div className="pt-3 border-t border-slate-800 flex items-center justify-end gap-2">
+            <div className="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setShowResetConfirm(false)}
-                className="px-4 py-1.5 text-xs text-slate-400 hover:text-white bg-[#1E293B] rounded font-mono"
+                className="px-4 py-1.5 text-xs text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-300 rounded font-mono"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleConfirmReset}
-                className="px-4 py-1.5 text-xs font-semibold text-white bg-red-600 hover:bg-red-500 rounded font-mono uppercase tracking-wider"
+                className="px-4 py-1.5 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded font-mono uppercase tracking-wider shadow-sm"
               >
                 Reset Everything
               </button>

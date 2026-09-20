@@ -25,21 +25,21 @@ export default function AttestationWallet({
   isRefreshing = false,
 }: AttestationWalletProps) {
   return (
-    <div className="rounded-xl bg-[#0B1120] border border-[#1E293B] p-5 space-y-4 shadow-sm">
+    <div className="rounded-xl bg-white border border-slate-200 p-5 space-y-4 shadow-sm text-slate-900">
       {/* Wallet Header */}
-      <div className="border-b border-[#1E293B] pb-3 flex items-center justify-between">
+      <div className="border-b border-slate-200 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-[#142319] border border-[#284230] flex items-center justify-center text-[#94C3A3]">
+          <div className="w-6 h-6 rounded bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
             <Lock className="w-3.5 h-3.5" />
           </div>
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider font-condensed text-white block">
+            <span className="text-xs font-bold uppercase tracking-wider font-condensed text-slate-900 block">
               ATTESTATIONS LIST (E1)
             </span>
-            <span className="text-[10px] text-slate-400 font-sans">Self-sovereign vault</span>
+            <span className="text-[10px] text-slate-500 font-sans">Self-sovereign vault</span>
           </div>
         </div>
-        <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#0F172A] text-slate-300 border border-slate-800">
+        <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 text-slate-700 border border-slate-200 font-semibold">
           {attestations.length} total
         </span>
       </div>
@@ -47,7 +47,7 @@ export default function AttestationWallet({
       {/* Attestations Cards */}
       <div className="space-y-3">
         {attestations.length === 0 ? (
-          <div className="p-6 text-center text-xs text-slate-500 font-sans border border-dashed border-[#1E293B] rounded-lg">
+          <div className="p-6 text-center text-xs text-slate-500 font-sans border border-dashed border-slate-300 rounded-lg">
             No attestations in vault. Issue one from Clinic Issuer.
           </div>
         ) : (
@@ -77,15 +77,15 @@ export default function AttestationWallet({
                 onClick={() => onSelectAttestation(att)}
                 className={`p-4 rounded-xl border transition-all cursor-pointer space-y-2.5 text-xs ${
                   isSelected
-                    ? 'bg-[#0F172A] border-[#4A7C59] shadow-md ring-1 ring-[#4A7C59]/40'
-                    : 'bg-[#0F172A]/40 border-[#1E293B] hover:border-slate-700 hover:bg-[#0F172A]/80'
+                    ? 'bg-blue-50/60 border-blue-600 shadow-sm ring-1 ring-blue-500 text-slate-900'
+                    : 'bg-slate-50 border-slate-200 hover:border-slate-300 hover:bg-slate-100/70 text-slate-800'
                 }`}
               >
                 {/* Title & Dates */}
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <div className="font-bold text-white flex items-center gap-1.5 text-sm font-condensed tracking-wide">
-                      <span className={isRevoked ? 'text-red-400' : 'text-[#94C3A3]'}>
+                    <div className="font-bold text-slate-900 flex items-center gap-1.5 text-sm font-condensed tracking-wide">
+                      <span className={isRevoked ? 'text-rose-600' : 'text-emerald-700'}>
                         {isRevoked ? '✗' : '✓'}
                       </span>
                       <span>
@@ -95,49 +95,49 @@ export default function AttestationWallet({
                           ? 'Medical'
                           : 'Caregiving'}
                       </span>
-                      <span className="text-slate-400 text-xs font-mono font-normal">
+                      <span className="text-slate-500 text-xs font-mono font-normal">
                         ({att.payload.startDate} – {att.payload.endDate})
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-400 mt-0.5 font-sans">
+                    <p className="text-[11px] text-slate-500 mt-0.5 font-sans">
                       {att.payload.doctorName}, {att.payload.issuerName}
                     </p>
                   </div>
 
                   <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider ${
-                    isRevoked ? 'bg-red-950/60 text-red-400 border border-red-800' :
-                    isApproved ? 'bg-[#142319] text-[#94C3A3] border border-[#284230]' :
-                    'bg-[#1E293B] text-slate-300 border border-slate-700'
+                    isRevoked ? 'bg-rose-50 text-rose-700 border border-rose-200' :
+                    isApproved ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
+                    'bg-slate-100 text-slate-700 border border-slate-200'
                   }`}>
                     {isRevoked ? 'REVOKED' : isApproved ? 'APPROVED ✓' : 'ACTIVE'}
                   </span>
                 </div>
 
                 {/* Status Badges Row */}
-                <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[#1E293B]/80 text-[11px] font-mono">
+                <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-200 text-[11px] font-mono">
                   {/* Share indicator */}
                   {!isShared ? (
-                    <span className="text-slate-400 bg-[#0B1120] px-2 py-0.5 rounded border border-slate-800">
+                    <span className="text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200 font-medium">
                       Not yet shared
                     </span>
                   ) : (
-                    <span className="text-[#94C3A3] bg-[#142319] px-2 py-0.5 rounded border border-[#284230] flex items-center gap-1">
+                    <span className="text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 flex items-center gap-1 font-medium">
                       <span>Shared ({totalViews} {totalViews === 1 ? 'view' : 'views'})</span>
                     </span>
                   )}
 
                   {/* Pending verification indicator */}
                   {isPendingVerification && (
-                    <span className="text-amber-300 bg-amber-950/40 px-2 py-0.5 rounded border border-amber-800/60 flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
+                    <span className="text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-300 flex items-center gap-1 font-medium">
+                      <Clock className="w-3 h-3 text-amber-600" />
                       <span>⏳ Verification pending</span>
                     </span>
                   )}
 
                   {/* Approved indicator */}
                   {isApproved && (
-                    <span className="text-[#94C3A3] font-bold flex items-center gap-0.5">
-                      <CheckCircle2 className="w-3 h-3 text-[#94C3A3]" />
+                    <span className="text-emerald-700 font-bold flex items-center gap-0.5">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                       <span>Approved</span>
                     </span>
                   )}
@@ -149,24 +149,24 @@ export default function AttestationWallet({
       </div>
 
       {/* Action Footer */}
-      <div className="pt-2 border-t border-[#1E293B] space-y-2">
+      <div className="pt-2 border-t border-slate-200 space-y-2">
         <button
           type="button"
           onClick={onRefreshStatus}
           disabled={isRefreshing}
-          className="w-full py-2.5 rounded-lg text-xs font-condensed uppercase tracking-wider font-bold bg-[#1E293B] hover:bg-[#334155] border border-slate-700 text-slate-200 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+          className="w-full py-2.5 rounded-lg text-xs font-condensed uppercase tracking-wider font-bold bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-xs"
         >
-          <RefreshCw className={`w-3.5 h-3.5 text-[#94C3A3] ${isRefreshing ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 text-emerald-700 ${isRefreshing ? 'animate-spin' : ''}`} />
           <span>[REFRESH STATUS]</span>
         </button>
 
-        <div className="p-2.5 rounded-lg bg-[#0F172A] border border-[#1E293B] flex items-center justify-between">
-          <span className="text-[11px] text-slate-400 font-sans">
+        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
+          <span className="text-[11px] text-slate-600 font-sans">
             Clinic Portal →
           </span>
           <Link
             href="/clinic"
-            className="text-xs font-condensed font-bold uppercase tracking-wider text-[#94C3A3] hover:text-white flex items-center gap-1"
+            className="text-xs font-condensed font-bold uppercase tracking-wider text-blue-700 hover:text-blue-900 flex items-center gap-1"
           >
             <span>[SWITCH TO ISSUER]</span>
             <ArrowRight className="w-3 h-3" />

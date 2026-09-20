@@ -72,25 +72,25 @@ export default function LeakageMeter({
   const residualInferences = getResidualInferences();
 
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 space-y-5 text-xs text-zinc-300 shadow-xl">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-5 text-xs text-slate-700 shadow-sm font-sans">
       
       {/* Header with Academic Honesty Banner */}
-      <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
         <div className="flex items-center gap-2">
-          <Scale className="w-4 h-4 text-white" />
-          <h4 className="font-bold text-white text-xs uppercase tracking-wider font-condensed">
+          <Scale className="w-4 h-4 text-slate-700" />
+          <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider font-sans">
             Protocol Leakage Meter & Residual Inference Analysis
           </h4>
         </div>
-        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-900 text-zinc-200 border border-zinc-700">
+        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-200">
           RESEARCH AUDIT ACTIVE
         </span>
       </div>
 
-      <div className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 leading-relaxed flex items-start gap-2.5">
-        <Info className="w-4 h-4 text-zinc-300 shrink-0 mt-0.5" />
+      <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-[11px] text-blue-900 leading-relaxed flex items-start gap-2.5">
+        <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
         <p>
-          <strong className="text-white font-semibold">Scientific Honesty Note:</strong> Cryptographic selective disclosure eliminates direct diagnosis exposure, but <em>duration and timing</em> remain side-channel inference vectors. Vouch does not claim magical &quot;100% privacy&quot;—here is the exact breakdown:
+          <strong className="text-blue-950 font-semibold">Scientific Transparency Note:</strong> Cryptographic selective disclosure eliminates direct diagnosis exposure, but <em>duration and timing</em> remain side-channel inference vectors. Vouch provides complete audit transparency—here is the exact protocol breakdown:
         </p>
       </div>
 
@@ -98,37 +98,37 @@ export default function LeakageMeter({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         
         {/* Pillar 1: Exactly What HR Learns */}
-        <div className="p-3.5 rounded-xl bg-zinc-900/90 border border-zinc-800 space-y-2.5">
-          <div className="flex items-center gap-1.5 text-white font-bold text-[11px] uppercase font-condensed tracking-wider">
-            <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+        <div className="p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-2.5">
+          <div className="flex items-center gap-1.5 text-emerald-900 font-bold text-[11px] uppercase tracking-wider">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
             1. Exact Claims HR Learns
           </div>
-          <ul className="space-y-1.5 text-[11px] text-zinc-300 list-disc list-inside">
+          <ul className="space-y-1.5 text-[11px] text-slate-700 list-disc list-inside">
             <li>
-              <strong className="text-white font-mono">coarseCategory:</strong> {coarseCategory}
+              <strong className="text-slate-900 font-mono">coarseCategory:</strong> {coarseCategory}
             </li>
             <li>
-              <strong className="text-white font-mono">issuerIsLicensed:</strong> true (Boolean)
+              <strong className="text-slate-900 font-mono">issuerIsLicensed:</strong> true (Boolean)
             </li>
             <li>
-              <strong className="text-white font-mono">validFrom / validTo:</strong> {startDate} → {endDate}
+              <strong className="text-slate-900 font-mono">validFrom / validTo:</strong> {startDate} → {endDate}
             </li>
             <li>
-              <strong className="text-white font-mono">issuerRefHash:</strong> Opaque SHA-256
+              <strong className="text-slate-900 font-mono">issuerRefHash:</strong> Opaque SHA-256
             </li>
             <li>
-              <strong className="text-white font-mono">Predicates:</strong> 4 Pass/Fail Booleans
+              <strong className="text-slate-900 font-mono">Predicates:</strong> 4 Pass/Fail Booleans
             </li>
           </ul>
         </div>
 
         {/* Pillar 2: What HR Could Still Infer */}
-        <div className="p-3.5 rounded-xl bg-black border border-zinc-800 space-y-2.5">
-          <div className="flex items-center gap-1.5 text-zinc-200 font-bold text-[11px] uppercase font-condensed tracking-wider">
-            <AlertTriangle className="w-3.5 h-3.5 text-zinc-400" />
+        <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 space-y-2.5">
+          <div className="flex items-center gap-1.5 text-amber-900 font-bold text-[11px] uppercase tracking-wider">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
             2. Residual Inferences HR Can Make
           </div>
-          <div className="space-y-1.5 text-[11px] text-zinc-400 leading-relaxed font-sans">
+          <div className="space-y-1.5 text-[11px] text-slate-700 leading-relaxed font-sans">
             {residualInferences.map((inf, idx) => (
               <p key={idx}>• {inf}</p>
             ))}
@@ -136,12 +136,12 @@ export default function LeakageMeter({
         </div>
 
         {/* Pillar 3: What Raw PDF Would Have Leaked */}
-        <div className="p-3.5 rounded-xl bg-zinc-900/40 border border-zinc-800 space-y-2.5">
-          <div className="flex items-center gap-1.5 text-zinc-400 font-bold text-[11px] uppercase font-condensed tracking-wider">
-            <ShieldAlert className="w-3.5 h-3.5 text-zinc-500" />
+        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+          <div className="flex items-center gap-1.5 text-slate-700 font-bold text-[11px] uppercase tracking-wider">
+            <ShieldAlert className="w-3.5 h-3.5 text-rose-500" />
             3. Blocked Raw PDF Leaks
           </div>
-          <ul className="space-y-1 text-[11px] text-zinc-500 line-through">
+          <ul className="space-y-1 text-[11px] text-slate-400 line-through">
             <li>ICD-10 Diagnostic Billing Codes</li>
             <li>Ultrasound / Surgical Complication Notes</li>
             <li>Prescription Dosages & Regimens</li>

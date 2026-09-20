@@ -125,47 +125,47 @@ export default function ShareModal({ attestation, onClose, onCreated }: ShareMod
     : `/hr?code=${generatedCode?.code || ''}`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-950/85 backdrop-blur-md animate-in fade-in">
-      <div className="relative w-full max-w-2xl bg-ink-900 border border-ink-700/80 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in">
+      <div className="relative w-full max-w-2xl bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden max-h-[90vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-black">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
               <Share2 className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-bold text-white text-base font-condensed tracking-wider uppercase">Generate Policy-Constrained Share Code</h3>
-              <p className="text-xs text-zinc-400 font-sans">
-                Statutory Policy: <strong className="text-zinc-200">{policyRule.source}</strong> ({VOUCH_POLICY_SPEC.policyVersion})
+              <h3 className="font-bold text-slate-900 text-base font-sans">Generate Policy-Constrained Share Code</h3>
+              <p className="text-xs text-slate-500 font-sans">
+                Statutory Policy: <strong className="text-slate-800">{policyRule.source}</strong> ({VOUCH_POLICY_SPEC.policyVersion})
               </p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="p-6 space-y-6 overflow-y-auto flex-1 bg-zinc-950 font-sans">
+        <div className="p-6 space-y-6 overflow-y-auto flex-1 bg-white font-sans">
           {!generatedCode ? (
             <>
               {/* Policy Mapping Notice */}
-              <div className="p-4 rounded-xl bg-black border border-zinc-800 space-y-2">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5 font-condensed">
-                    <Scale className="w-4 h-4 text-zinc-300" />
-                    Statutory Claim-Set Mapping (F5)
+                  <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5 font-sans">
+                    <Scale className="w-4 h-4 text-slate-600" />
+                    Statutory Claim-Set Mapping
                   </span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-900 text-zinc-200 border border-zinc-700">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-800 border border-blue-200">
                     {coarseCategory}
                   </span>
                 </div>
-                <p className="text-xs text-zinc-400 leading-relaxed font-sans">
-                  Your wallet holds the clinical record (<em>{payload.fineCategory}</em>). Under statutory policy <strong>{policyRule.id}</strong>, this is collapsed into coarse public category <strong className="text-white">{coarseCategory}</strong> with <strong>zero clinic names or diagnoses disclosed</strong>.
+                <p className="text-xs text-slate-600 leading-relaxed font-sans">
+                  Your wallet holds the clinical record (<em>{payload.fineCategory}</em>). Under statutory policy <strong>{policyRule.id}</strong>, this is collapsed into coarse public category <strong className="text-slate-900">{coarseCategory}</strong> with <strong>zero clinic names or diagnoses disclosed</strong>.
                 </p>
               </div>
 
@@ -180,8 +180,8 @@ export default function ShareModal({ attestation, onClose, onCreated }: ShareMod
 
               {/* Expiration Settings */}
               <div className="space-y-2">
-                <span className="text-xs font-semibold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5 font-condensed">
-                  <Clock className="w-3.5 h-3.5 text-zinc-300" />
+                <span className="text-xs font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 font-sans">
+                  <Clock className="w-3.5 h-3.5 text-slate-500" />
                   Code Expiration Window
                 </span>
                 
@@ -197,12 +197,12 @@ export default function ShareModal({ attestation, onClose, onCreated }: ShareMod
                       onClick={() => setExpiryHours(opt.hours)}
                       className={`p-3 rounded-xl border text-left transition-all ${
                         expiryHours === opt.hours
-                          ? 'bg-white border-white text-black shadow-sm'
-                          : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200'
+                          ? 'bg-blue-50 border-blue-600 text-blue-950 shadow-xs'
+                          : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
                       }`}
                     >
-                      <div className="text-xs font-bold font-condensed uppercase tracking-wider">{opt.label}</div>
-                      <div className={`text-[10px] mt-0.5 ${expiryHours === opt.hours ? 'text-zinc-700' : 'text-zinc-500'}`}>{opt.sub}</div>
+                      <div className="text-xs font-bold font-sans uppercase tracking-wider">{opt.label}</div>
+                      <div className={`text-[10px] mt-0.5 ${expiryHours === opt.hours ? 'text-blue-800' : 'text-slate-500'}`}>{opt.sub}</div>
                     </button>
                   ))}
                 </div>
@@ -210,7 +210,7 @@ export default function ShareModal({ attestation, onClose, onCreated }: ShareMod
 
               {/* Recipient Label */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-zinc-300 font-condensed uppercase tracking-wider">
+                <label className="text-xs font-semibold text-slate-700 font-sans uppercase tracking-wider">
                   Intended Recipient (Audit Trail Label)
                 </label>
                 <input
@@ -218,14 +218,14 @@ export default function ShareModal({ attestation, onClose, onCreated }: ShareMod
                   value={recipient}
                   onChange={(e) => setRecipient(e.target.value)}
                   placeholder="e.g. Acme Corp People & Culture Team"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-black border border-zinc-800 text-zinc-200 text-xs focus:outline-none focus:border-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                 />
               </div>
 
               {/* Policy Error if any */}
               {policyError && (
-                <div className="p-3.5 rounded-xl bg-black border border-zinc-600 text-xs text-zinc-200 flex items-start gap-2 font-mono">
-                  <AlertOctagon className="w-4 h-4 text-white shrink-0 mt-0.5" />
+                <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-900 flex items-start gap-2 font-mono">
+                  <AlertOctagon className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
                   <p>{policyError}</p>
                 </div>
               )}
@@ -234,7 +234,7 @@ export default function ShareModal({ attestation, onClose, onCreated }: ShareMod
               <div className="pt-2">
                 <button
                   onClick={handleGenerate}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-sm shadow-sm transition-all font-condensed uppercase tracking-wider"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-all font-sans uppercase tracking-wider"
                 >
                   <Lock className="w-4 h-4" />
                   <span>Enforce Policy & Generate Share Code</span>
@@ -244,50 +244,50 @@ export default function ShareModal({ attestation, onClose, onCreated }: ShareMod
           ) : (
             /* Generated Code Display */
             <div className="space-y-6 py-2">
-              <div className="p-6 rounded-2xl bg-black border border-zinc-800 text-center space-y-3">
-                <div className="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-800 mx-auto flex items-center justify-center text-white">
+              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-200 mx-auto flex items-center justify-center text-emerald-700">
                   <ShieldCheck className="w-6 h-6" />
                 </div>
                 
                 <div>
-                  <p className="text-xs text-zinc-400 uppercase font-condensed tracking-wider">Your HR Share Code</p>
-                  <div className="text-4xl font-extrabold text-white font-mono tracking-widest my-2">
+                  <p className="text-xs text-slate-500 uppercase font-sans tracking-wider">Your HR Share Code</p>
+                  <div className="text-4xl font-extrabold text-slate-900 font-mono tracking-widest my-2">
                     {generatedCode.code}
                   </div>
-                  <p className="text-xs text-zinc-500 font-mono">
+                  <p className="text-xs text-slate-500 font-mono">
                     Padded to {generatedCode.paddedByteLength} bytes • Valid for {expiryHours} hours
                   </p>
                 </div>
 
-                <div className="pt-2 flex items-center justify-center gap-3 font-condensed uppercase tracking-wider text-xs">
+                <div className="pt-2 flex items-center justify-center gap-3 font-sans uppercase tracking-wider text-xs">
                   <button
                     onClick={() => copyToClipboard(generatedCode.code)}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white font-semibold border border-zinc-800 transition-colors"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold border border-slate-300 shadow-xs transition-colors"
                   >
-                    {copied ? <Check className="w-4 h-4 text-white" /> : <Copy className="w-4 h-4" />}
+                    {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
                     <span>{copied ? 'Code Copied!' : 'Copy Code'}</span>
                   </button>
 
                   <button
                     onClick={() => copyToClipboard(shareUrl, true)}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 font-semibold border border-zinc-800 transition-colors"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold border border-slate-300 shadow-xs transition-colors"
                   >
-                    {copiedLink ? <Check className="w-4 h-4 text-white" /> : <ExternalLink className="w-4 h-4" />}
+                    {copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <ExternalLink className="w-4 h-4" />}
                     <span>{copiedLink ? 'Link Copied!' : 'Copy HR Direct Link'}</span>
                   </button>
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-black border border-zinc-800 flex items-center justify-between">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
                 <div>
-                  <h4 className="text-xs font-semibold text-zinc-200 font-condensed uppercase tracking-wider">Test Verification as HR</h4>
-                  <p className="text-[11px] text-zinc-400 font-sans">Test how HR cryptographically verifies this code right now</p>
+                  <h4 className="text-xs font-semibold text-slate-800 font-sans uppercase tracking-wider">Test Verification as HR</h4>
+                  <p className="text-[11px] text-slate-500 font-sans">Test how HR cryptographically verifies this code right now</p>
                 </div>
 
                 <Link
                   href={`/hr?code=${generatedCode.code}`}
                   onClick={onClose}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white hover:bg-zinc-200 text-black text-xs font-semibold transition-colors font-condensed uppercase tracking-wider"
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors font-sans uppercase tracking-wider shadow-sm"
                 >
                   <span>Open HR Verifier</span>
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -297,7 +297,7 @@ export default function ShareModal({ attestation, onClose, onCreated }: ShareMod
               <div className="flex justify-end">
                 <button
                   onClick={onClose}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white bg-ink-800 hover:bg-ink-700"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 bg-white border border-slate-300 shadow-xs"
                 >
                   Done
                 </button>

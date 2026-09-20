@@ -22,21 +22,21 @@ export default function ApprovalHistory({
   };
 
   return (
-    <div className="rounded-xl bg-[#0B1120] border border-[#1E293B] p-5 space-y-4 shadow-sm">
+    <div className="rounded-xl bg-white border border-slate-200 p-5 space-y-4 shadow-sm font-sans">
       {/* Header */}
-      <div className="border-b border-[#1E293B] pb-3 flex items-center justify-between">
+      <div className="border-b border-slate-200 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-[#142319] border border-[#284230] flex items-center justify-center text-[#94C3A3]">
+          <div className="w-6 h-6 rounded bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
             <CheckCircle2 className="w-3.5 h-3.5" />
           </div>
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider font-condensed text-white block">
-              APPROVAL HISTORY (E6)
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-900 block">
+              Approval History
             </span>
-            <span className="text-[10px] text-slate-400 font-sans">Cumulative approved leaves</span>
+            <span className="text-xs text-slate-500 font-sans">Cumulative approved leaves</span>
           </div>
         </div>
-        <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#0F172A] text-[#94C3A3] border border-[#284230]">
+        <span className="px-2.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
           {approvals.length} approved
         </span>
       </div>
@@ -44,7 +44,7 @@ export default function ApprovalHistory({
       {/* Approvals Card List */}
       <div className="space-y-3">
         {approvals.length === 0 ? (
-          <div className="p-6 text-center text-xs text-slate-500 font-sans border border-dashed border-[#1E293B] rounded-lg">
+          <div className="p-6 text-center text-xs text-slate-500 font-sans border border-dashed border-slate-200 rounded-lg">
             No approved leaves on record yet. Approvals from HR will appear here.
           </div>
         ) : (
@@ -61,73 +61,73 @@ export default function ApprovalHistory({
             return (
               <div
                 key={app.approvalId}
-                className={`p-4 rounded-xl border transition-all text-xs space-y-2 ${
+                className={`p-4 rounded-xl border transition-all text-xs space-y-2.5 ${
                   isSelected
-                    ? 'bg-[#142319]/50 border-[#4A7C59] ring-1 ring-[#4A7C59]'
-                    : 'bg-[#0F172A]/70 border-[#1E293B] hover:border-slate-700'
+                    ? 'bg-blue-50/60 border-blue-500 ring-1 ring-blue-500/30'
+                    : 'bg-slate-50 border-slate-200 hover:border-slate-300'
                 }`}
               >
                 {/* Header Row */}
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <div className="font-bold text-white flex items-center gap-1.5 font-condensed text-sm tracking-wide">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#94C3A3]" />
-                      <span>✓ {appCode}</span>
+                    <div className="font-bold text-slate-900 flex items-center gap-1.5 text-sm">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      <span>{appCode}</span>
                       <span className="text-slate-400">•</span>
                       <span>{categoryLabel}</span>
                     </div>
-                    <p className="text-[11px] font-mono text-slate-400 mt-0.5">
+                    <p className="text-xs font-mono text-slate-500 mt-0.5">
                       {app.validFrom} – {app.validTo}
                     </p>
                   </div>
 
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-[#142319] text-[#94C3A3] border border-[#284230]">
-                    {app.status || 'ACTIVE'}
+                  <span className="px-2.5 py-0.5 rounded text-xs font-medium uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    {app.status || 'Active'}
                   </span>
                 </div>
 
                 {/* Validity Notice */}
-                <p className="text-[11px] text-slate-300 font-sans leading-snug bg-[#0B1120] p-2 rounded-lg border border-[#1E293B]">
-                  This leave is valid from <strong>{app.validFrom}</strong> – <strong>{app.validTo}</strong>. You may begin leave period.
+                <p className="text-xs text-slate-700 font-sans leading-relaxed bg-white p-2.5 rounded-lg border border-slate-200">
+                  This leave is valid from <strong>{app.validFrom}</strong> to <strong>{app.validTo}</strong>. You may begin the approved leave period.
                 </p>
 
                 {/* Footer Controls */}
-                <div className="flex items-center justify-between pt-1 border-t border-[#1E293B] text-[10px] font-mono text-slate-400">
-                  <span>ID: <strong className="text-slate-300">{app.approvalId}</strong></span>
+                <div className="flex items-center justify-between pt-1 border-t border-slate-200 text-xs font-mono text-slate-500">
+                  <span>ID: <strong className="text-slate-700">{app.approvalId}</strong></span>
 
                   <button
                     type="button"
                     onClick={() => toggleExpand(app.approvalId)}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded bg-[#1E293B] hover:bg-[#334155] text-slate-200 font-condensed uppercase font-bold tracking-wider transition-colors"
+                    className="flex items-center gap-1 px-2.5 py-1 rounded bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs border border-slate-300 shadow-xs transition-colors"
                   >
-                    <span>[VIEW]</span>
-                    {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    <span>View Details</span>
+                    {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                   </button>
                 </div>
 
                 {/* Expandable Underlying Attestation (Zero Medical Data) */}
                 {isExpanded && (
-                  <div className="mt-2 p-3 rounded-lg bg-[#0B1120] border border-[#284230] space-y-2 text-[11px] font-mono text-slate-300 animate-in fade-in">
-                    <div className="flex items-center justify-between border-b border-[#1E293B] pb-1.5 text-slate-400">
-                      <span className="font-bold text-white font-condensed uppercase">
+                  <div className="mt-2 p-3.5 rounded-lg bg-white border border-slate-200 space-y-2 text-xs text-slate-700 animate-in fade-in">
+                    <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 text-slate-500">
+                      <span className="font-semibold text-slate-900">
                         Verified Credential Reference
                       </span>
-                      <span>Share: {app.shareCode}</span>
+                      <span className="font-mono text-xs">Share: {app.shareCode}</span>
                     </div>
 
-                    <div className="space-y-1 text-[11px]">
-                      <div>Coarse Category: <strong className="text-white">{app.category}</strong></div>
-                      <div>Approved By: <strong className="text-slate-200">{app.approvedBy}</strong></div>
-                      <div>Approved At: <span className="text-slate-400">{new Date(app.approvedAt).toLocaleDateString()} {new Date(app.approvedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC</span></div>
+                    <div className="space-y-1 text-xs">
+                      <div>Coarse Category: <strong className="text-slate-900 font-mono">{app.category}</strong></div>
+                      <div>Approved By: <strong className="text-slate-800">{app.approvedBy}</strong></div>
+                      <div>Approved At: <span className="text-slate-500 font-mono">{new Date(app.approvedAt).toLocaleDateString()} {new Date(app.approvedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC</span></div>
                       {app.receiptId && (
-                        <div>Receipt ID: <strong className="text-[#94C3A3]">{app.receiptId}</strong></div>
+                        <div>Receipt ID: <strong className="text-blue-700 font-mono">{app.receiptId}</strong></div>
                       )}
                       {app.comment && (
-                        <div>HR Notes: <span className="text-slate-300 italic">{app.comment}</span></div>
+                        <div>HR Notes: <span className="text-slate-600 italic">{app.comment}</span></div>
                       )}
                     </div>
 
-                    <p className="text-[10px] text-slate-500 font-sans pt-1 border-t border-[#1E293B]">
+                    <p className="text-xs text-slate-400 font-sans pt-1.5 border-t border-slate-100">
                       Zero health records retained: only leave window, approval timestamp, and cryptographic receipt hash.
                     </p>
                   </div>

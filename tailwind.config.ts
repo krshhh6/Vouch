@@ -9,6 +9,37 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Primary: Deep navy (like Dock Labs)
+        navy: {
+          50: '#F8FAFC',
+          100: '#F1F5F9',
+          700: '#334155',
+          800: '#1E293B',
+          900: '#0F172A',      // Dark background
+          950: '#020617',      // Darker accents
+        },
+        // Accent: Bright blue (like Dock Labs)
+        primary: {
+          50: '#EFF6FF',
+          100: '#DBEAFE',
+          400: '#60A5FA',
+          500: '#3B82F6',
+          600: '#2563EB',      // CTA buttons
+          700: '#1D4ED8',
+        },
+        // Semantic feedback colors
+        success: '#10B981',
+        danger: '#EF4444',
+        neutral: {
+          50: '#F9FAFB',
+          100: '#F3F4F6',
+          200: '#E5E7EB',
+          300: '#D1D5DB',
+          400: '#9CA3AF',
+          500: '#6B7280',
+          800: '#1F2937',
+          900: '#111827',
+        },
         ink: {
           950: '#020617', // deepest midnight
           900: '#0B1120', // deep dark background
@@ -54,12 +85,20 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['Geist', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['Inter', 'Geist', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
         condensed: ['"Roboto Condensed"', 'sans-serif'],
-        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+        mono: ['"Roboto Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
         serif: ['Georgia', 'Cambria', '"Times New Roman"', 'serif'],
       },
+      borderRadius: {
+        'card': '8px',
+        'button': '6px',
+        'lg': '12px',
+      },
       boxShadow: {
+        'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.15)',
         'parchment': '0 2px 4px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.08)',
         'seal': '0 2px 6px 0 rgba(74, 124, 89, 0.25)',
         'elevated': '0 4px 12px -2px rgba(15, 23, 42, 0.35)',
