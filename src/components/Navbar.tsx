@@ -121,7 +121,7 @@ export default function Navbar({ forceVisible = false }: { forceVisible?: boolea
       >
         {/* Brand & Actions Line */}
         <div className="flex items-center justify-between pb-2.5 border-b border-slate-200/60">
-          <Link href="/login" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center gap-3 group" title="Return to Vouch Home Landing Page">
             <div
               className="w-9 h-9 rounded-2xl flex items-center justify-center text-blue-600 transition-all group-hover:scale-105"
               style={NEU.raisedSm}
