@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Sun, Palette, Layers, Grid } from 'lucide-react';
+import { ShieldCheck, Cpu, Database, UserCheck } from 'lucide-react';
 
 const NEU = {
   raised: {
@@ -19,31 +19,31 @@ export default function FeaturesSection() {
   const pillars = [
     {
       num: '01',
-      title: 'SOFT SHADOWS',
-      subtitle: 'Zero-Knowledge Proofs',
-      desc: 'Subtle shadows create the illusion of depth. In Vouch, cryptographic zero-knowledge attestations prove statutory leave duration without ever revealing ICD-10 medical codes, diagnosis descriptions, or clinic names.',
-      icon: Sun,
+      title: 'ZERO-KNOWLEDGE VERIFICATION',
+      subtitle: 'Cryptographic Predicate Proofs',
+      desc: 'Prove statutory medical leave duration and entitlement validity to employers with mathematical certainty without ever exposing ICD-10 medical codes, clinical notes, or specialist clinic names.',
+      icon: ShieldCheck,
     },
     {
       num: '02',
-      title: 'MONOCHROMATIC COLOR',
-      subtitle: 'Minimal Data Footprint',
-      desc: 'Work with a single base color and its shades. By stripping away multi-page doctor notes, clinic letterheads, and prescription slips, HR systems store only an unforgeable, clean eligibility token.',
-      icon: Palette,
+      title: 'ON-DEVICE CLIENT SANDBOX',
+      subtitle: 'Local Document Parsing & Signing',
+      desc: "Medical certificates and doctor attestations are parsed, scrubbed, and signed locally within the employee's browser sandbox using Web Crypto ECDSA P-256 keys. Raw PHI never leaves the user's device.",
+      icon: Cpu,
     },
     {
       num: '03',
-      title: 'RAISED & PRESSED',
-      subtitle: 'Append-Only Audit Ledger',
-      desc: 'Elements appear to raise up or press down. Every verification event is cryptographically sealed onto a SHA-256 hash-chained receipt ledger that employees inspect in their private wallet.',
-      icon: Layers,
+      title: 'TAMPER-EVIDENT AUDIT CHAIN',
+      subtitle: 'Append-Only Hash Ledger',
+      desc: 'Every leave verification event is cryptographically anchored onto an append-only, SHA-256 hash-chained receipt ledger in Neon Postgres, creating an unforgeable compliance record with zero health disclosures.',
+      icon: Database,
     },
     {
       num: '04',
-      title: 'MINIMAL UI',
-      subtitle: '1-Click Statutory Verification',
-      desc: 'Clean, simple and focused on what matters. HR administrators receive a decisive, tamper-proof PASS/FAIL confirmation in seconds, completely exempt from PHI retention risks and compliance liability.',
-      icon: Grid,
+      title: 'WORKPLACE ANTI-BIAS SHIELD',
+      subtitle: 'Eliminating Diagnostic Stigma',
+      desc: 'Shields employees from early pregnancy career penalties, chronic illness bias, and mental health stigmas by preventing invasive health disclosures before statutory approval thresholds.',
+      icon: UserCheck,
     },
   ];
 
@@ -55,20 +55,19 @@ export default function FeaturesSection() {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-4"
             style={NEU.raisedSm}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
-            <span className="text-[10px] font-mono font-bold tracking-[0.2em] uppercase text-slate-600">
-              CORE PROTOCOL PILLARS
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
+            <span className="text-[10px] font-mono font-bold tracking-[0.2em] uppercase text-slate-700">
+              CORE PROTOCOL GUARANTEES
             </span>
           </div>
           <h2
-            className="text-3xl sm:text-4xl font-black tracking-tight"
+            className="text-3xl sm:text-4xl font-black tracking-tight uppercase"
             style={{ color: NEU.textPri }}
           >
-            FOUR PILLARS OF NEUMORPHIC PRIVACY
+            FOUR PILLARS OF MEDICAL LEAVE PRIVACY
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-600 font-medium">
-            Form follows function. The four tenets of soft physical depth translated into
-            uncompromising cryptographic healthcare privacy.
+            Mathematical certainty without compromise. Engineered to protect employees from diagnosis exposure, pregnancy penalties, and permanent HR data retention.
           </p>
         </div>
 
@@ -106,8 +105,8 @@ export default function FeaturesSection() {
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-slate-200/50 flex items-center justify-between text-[11px] font-mono text-slate-500">
-                  <span>SPEC COMPLIANT</span>
-                  <span className="text-emerald-600 font-bold">✓ PASS</span>
+                  <span>PROTOCOL SPEC</span>
+                  <span className="text-emerald-600 font-bold">✓ VERIFIED</span>
                 </div>
               </div>
             );

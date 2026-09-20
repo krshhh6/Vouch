@@ -27,47 +27,45 @@ export default function Footer() {
     <footer className="mt-16 py-16 px-4 sm:px-8 border-t border-slate-200/60">
       <div className="max-w-7xl mx-auto space-y-14">
         
-        {/* Quote Card & Concentric Lotus Section */}
+        {/* Privacy Charter & Protocol Emblem Section */}
         <div className="flex flex-col md:flex-row items-center gap-8 justify-between">
-          {/* Joni Ive Quote Card (from bottom-left of reference image) */}
+          {/* Vouch Protocol Privacy Charter */}
           <div className="p-8 rounded-3xl max-w-lg w-full relative" style={NEU.raised}>
             <div
-              className="w-10 h-10 rounded-2xl flex items-center justify-center text-xl font-black text-slate-400 mb-4"
+              className="w-10 h-10 rounded-2xl flex items-center justify-center text-emerald-600 mb-4"
               style={NEU.pressed}
             >
-              “
+              <ShieldCheck className="w-5 h-5" />
             </div>
             <p className="text-base sm:text-lg font-bold text-slate-800 leading-relaxed mb-3">
-              Good design is invisible.
-              <br />
-              Great design is felt.
+              No worker should ever be forced to forfeit clinical confidentiality in order to claim statutory leave.
             </p>
-            <span className="text-xs font-mono tracking-widest text-slate-500 uppercase font-semibold">
-              — JONI IVE
+            <span className="text-xs font-mono tracking-widest text-blue-600 uppercase font-bold block">
+              — VOUCH PROTOCOL SPECIFICATION
             </span>
-            <div className="mt-4 pt-3 border-t border-slate-200/50 text-xs text-slate-500 font-medium">
-              True healthcare privacy requires no cumbersome paperwork. Verifiable trust is simply felt.
+            <div className="mt-4 pt-3 border-t border-slate-200/50 text-xs text-slate-500 font-medium leading-relaxed">
+              Zero Protected Health Information (PHI) retained in corporate databases. Verifiable credentials backed by Web Crypto ECDSA P-256 signatures.
             </div>
           </div>
 
-          {/* Concentric Lotus Emblem & Less Noise Pill (from bottom-right of reference image) */}
+          {/* Concentric Protocol Emblem & Cryptographic Assurance Pill */}
           <div className="flex flex-col items-center gap-5">
             <div className="relative w-36 h-36 rounded-full flex items-center justify-center" style={NEU.raised}>
               <div className="absolute inset-2 rounded-full border border-dashed border-slate-300 pointer-events-none" />
               <div className="w-24 h-24 rounded-full flex items-center justify-center" style={NEU.pressed}>
-                <div className="w-14 h-14 rounded-full flex items-center justify-center text-blue-600" style={NEU.raisedSm}>
-                  <Sparkles className="w-6 h-6" />
+                <div className="w-14 h-14 rounded-full flex items-center justify-center text-emerald-600" style={NEU.raisedSm}>
+                  <ShieldCheck className="w-6 h-6" />
                 </div>
               </div>
             </div>
 
             <div className="px-6 py-3 rounded-full flex items-center gap-3 transition-transform hover:scale-105" style={NEU.raised}>
-              <div className="w-7 h-7 rounded-full flex items-center justify-center text-blue-600" style={NEU.pressed}>
-                <ArrowDown className="w-3.5 h-3.5" />
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-emerald-600" style={NEU.pressed}>
+                <ShieldCheck className="w-3.5 h-3.5" />
               </div>
               <div className="text-xs font-mono font-bold tracking-wider">
-                <span className="text-slate-500 uppercase">LESS NOISE. </span>
-                <span className="text-blue-600 uppercase">MORE PRIVACY.</span>
+                <span className="text-slate-500 uppercase">ZERO PHI. </span>
+                <span className="text-emerald-600 uppercase">MATHEMATICAL CERTAINTY.</span>
               </div>
             </div>
           </div>
@@ -89,7 +87,7 @@ export default function Footer() {
               Eliminating protected health information leakage in corporate HR systems through zero-knowledge verifiable credentials.
             </p>
             <div className="text-[11px] font-mono text-slate-500">
-              ECDSA P-256 &bull; Neon Serverless Postgres &bull; Neumorphic Edition
+              ECDSA P-256 Web Crypto &bull; Neon Lakebase Postgres &bull; Append-Only Hash Chain
             </div>
           </div>
 
