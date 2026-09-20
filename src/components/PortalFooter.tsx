@@ -2,24 +2,41 @@
 
 import { usePathname } from 'next/navigation';
 
-export default function PortalFooter() {
+const NEU = {
+  raisedSm: {
+    backgroundColor: '#e8ecf4',
+    boxShadow: '4px 4px 10px #c5cedd, -4px -4px 10px #ffffff',
+  },
+  pressed: {
+    backgroundColor: '#e6ebf3',
+    boxShadow: 'inset 3px 3px 6px #c5cedd, inset -3px -3px 6px #ffffff',
+  },
+};
+
+export default function PortalFooter({ forceVisible = false }: { forceVisible?: boolean } = {}) {
   const pathname = usePathname();
 
-  // Do not render the portal footer on the root landing page (which has its own Dock Labs footer)
-  if (pathname === '/') {
+  // Do not render the portal footer on the root landing page unless forceVisible is true
+  if (pathname === '/' && !forceVisible) {
     return null;
   }
 
   return (
-    <footer className="border-t border-slate-200 bg-white py-6 text-xs text-slate-500 font-mono shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+    <footer className="mt-8 py-6 px-4 sm:px-6 lg:px-8 border-t border-slate-200/50">
+      <div
+        className="max-w-7xl mx-auto rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-600 font-mono"
+        style={NEU.raisedSm}
+      >
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-          <span className="font-semibold text-slate-800 uppercase tracking-wider font-condensed">VOUCH-2026.1</span>
-          <span className="text-slate-300">|</span>
-          <span className="text-slate-500">ECDSA P-256 / SHA-256 • Neon Lakebase Postgres</span>
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="font-bold text-slate-800 uppercase tracking-wider">VOUCH-2026.1</span>
+          <span className="text-slate-400">•</span>
+          <span>ECDSA P-256 / SHA-256 • Neon Serverless Postgres</span>
         </div>
-        <div className="flex items-center gap-4 text-[11px] text-slate-500 uppercase tracking-wider font-condensed">
+        <div
+          className="flex items-center gap-3 text-[10px] uppercase tracking-wider font-bold px-3 py-1 rounded-xl text-slate-500"
+          style={NEU.pressed}
+        >
           <span>Zero PHI Retention</span>
           <span>/</span>
           <span>Time-Bound Attestations</span>

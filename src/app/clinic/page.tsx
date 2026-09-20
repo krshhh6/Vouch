@@ -123,18 +123,18 @@ export default function ClinicPortalPage() {
   };
 
   return (
-    <div className="w-full bg-slate-50 text-slate-900 min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="w-full text-slate-900 min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 font-sans" style={{ backgroundColor: '#e8ecf4' }}>
       <div className="max-w-7xl mx-auto space-y-6">
 
-        {/* Header Strip matching: VOUCH — CLINIC PORTAL [Setup] [Help] [Reset] */}
-        <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        {/* Header Strip */}
+        <div className="rounded-3xl p-6 transition-all" style={{ backgroundColor: '#e8ecf4', boxShadow: '9px 9px 18px #c4cede, -9px -9px 18px #ffffff' }}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-bold uppercase tracking-wider text-teal-700">
                   CLINIC ISSUER PORTAL
                 </span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 text-slate-700 border border-slate-200">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold text-slate-600" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 2px 2px 5px #c5cedd, inset -2px -2px 5px #ffffff' }}>
                   P-256 Web Crypto
                 </span>
               </div>

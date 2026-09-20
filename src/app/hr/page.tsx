@@ -175,32 +175,32 @@ function HRVerifierContent() {
   const approvedCount = applications.filter((a) => a.status === 'APPROVED').length;
 
   return (
-    <div className="w-full bg-slate-50 text-slate-900 min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="w-full text-slate-900 min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 font-sans" style={{ backgroundColor: '#e8ecf4' }}>
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Header Strip */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <div className="rounded-3xl p-6 transition-all" style={{ backgroundColor: '#e8ecf4', boxShadow: '9px 9px 18px #c4cede, -9px -9px 18px #ffffff' }}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-blue-700">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-700">
                   Portal 2 • HR Enterprise Benefits
                 </span>
-                <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold text-slate-600" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 2px 2px 5px #c5cedd, inset -2px -2px 5px #ffffff' }}>
                   Zero-PHI Verifier
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-1 tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1 uppercase tracking-wider">
                 HR Benefits Verification Portal
               </h1>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-2 font-sans">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-2 font-mono">
                 <span>
                   Logged in as: <strong className="text-slate-900">{currentUser.name}</strong>
                 </span>
-                <span className="text-slate-300">•</span>
-                <span className="text-slate-700">{currentUser.department || 'People Operations & Benefits'}</span>
-                <span className="text-slate-300">•</span>
-                <span className="text-emerald-700 flex items-center gap-1 font-medium">
+                <span>•</span>
+                <span>{currentUser.department || 'People Operations & Benefits'}</span>
+                <span>•</span>
+                <span className="text-emerald-700 flex items-center gap-1 font-bold">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                   Statutory Rule: {VOUCH_POLICY_SPEC.policyVersion}
                 </span>
@@ -209,41 +209,42 @@ function HRVerifierContent() {
           </div>
 
           {/* KPI Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-slate-200 text-xs font-sans">
-            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
-              <span className="text-slate-500 block text-[11px] font-medium uppercase tracking-wider">ALL LEAVE REQUESTS</span>
-              <span className="text-slate-900 font-bold text-lg">{applications.length} Roster</span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-slate-200/50 text-xs font-mono">
+            <div className="p-3.5 rounded-2xl" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 3px 3px 6px #c5cedd, inset -3px -3px 6px #ffffff' }}>
+              <span className="text-slate-500 block text-[10px] font-bold uppercase tracking-wider">ALL LEAVE REQUESTS</span>
+              <span className="text-slate-900 font-black text-lg">{applications.length} Roster</span>
             </div>
-            <div className="p-3.5 bg-amber-50/70 border border-amber-200 rounded-xl">
-              <span className="text-amber-800 block text-[11px] font-medium uppercase tracking-wider">PENDING CONFIRMATIONS</span>
-              <span className="text-amber-900 font-bold text-lg">{pendingCount} Action Required</span>
+            <div className="p-3.5 rounded-2xl" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 3px 3px 6px #c5cedd, inset -3px -3px 6px #ffffff' }}>
+              <span className="text-amber-800 block text-[10px] font-bold uppercase tracking-wider">PENDING CONFIRMATIONS</span>
+              <span className="text-amber-900 font-black text-lg">{pendingCount} Action Required</span>
             </div>
-            <div className="p-3.5 bg-emerald-50/70 border border-emerald-200 rounded-xl">
-              <span className="text-emerald-800 block text-[11px] font-medium uppercase tracking-wider">CONFIRMED &amp; APPROVED</span>
-              <span className="text-emerald-900 font-bold text-lg">{approvedCount} Active</span>
+            <div className="p-3.5 rounded-2xl" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 3px 3px 6px #c5cedd, inset -3px -3px 6px #ffffff' }}>
+              <span className="text-emerald-800 block text-[10px] font-bold uppercase tracking-wider">CONFIRMED &amp; APPROVED</span>
+              <span className="text-emerald-900 font-black text-lg">{approvedCount} Active</span>
             </div>
-            <div className="p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl">
-              <span className="text-blue-800 block text-[11px] font-medium uppercase tracking-wider">ZERO-PHI COMPLIANCE</span>
-              <span className="text-blue-900 font-bold text-lg">100% Guaranteed</span>
+            <div className="p-3.5 rounded-2xl" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 3px 3px 6px #c5cedd, inset -3px -3px 6px #ffffff' }}>
+              <span className="text-blue-800 block text-[10px] font-bold uppercase tracking-wider">ZERO-PHI COMPLIANCE</span>
+              <span className="text-blue-900 font-black text-lg">100% Guaranteed</span>
             </div>
           </div>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex border-b border-slate-200 gap-2 overflow-x-auto">
+        <div className="p-1.5 rounded-2xl flex gap-2 overflow-x-auto w-fit" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 3px 3px 6px #c5cedd, inset -3px -3px 6px #ffffff' }}>
           <button
             type="button"
             onClick={() => setActiveTab('roster')}
-            className={`px-5 py-3 text-xs font-semibold tracking-wide border-b-2 transition flex items-center gap-2 shrink-0 ${
+            className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition flex items-center gap-2 shrink-0 ${
               activeTab === 'roster'
-                ? 'border-blue-600 text-blue-700 bg-white shadow-xs rounded-t-lg font-bold'
-                : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 rounded-t-lg'
+                ? 'text-blue-700'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
+            style={activeTab === 'roster' ? { backgroundColor: '#e8ecf4', boxShadow: '4px 4px 10px #c5cedd, -4px -4px 10px #ffffff' } : undefined}
           >
             <Users className="w-4 h-4 text-blue-600" />
             <span>All Employees Leave Status Roster</span>
             {pendingCount > 0 && (
-              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-200 text-amber-900">
                 {pendingCount}
               </span>
             )}
@@ -252,11 +253,12 @@ function HRVerifierContent() {
           <button
             type="button"
             onClick={() => setActiveTab('desk')}
-            className={`px-5 py-3 text-xs font-semibold tracking-wide border-b-2 transition flex items-center gap-2 shrink-0 ${
+            className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition flex items-center gap-2 shrink-0 ${
               activeTab === 'desk'
-                ? 'border-blue-600 text-blue-700 bg-white shadow-xs rounded-t-lg font-bold'
-                : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 rounded-t-lg'
+                ? 'text-blue-700'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
+            style={activeTab === 'desk' ? { backgroundColor: '#e8ecf4', boxShadow: '4px 4px 10px #c5cedd, -4px -4px 10px #ffffff' } : undefined}
           >
             <ShieldCheck className="w-4 h-4 text-blue-600" />
             <span>Single Code Verification Desk</span>
@@ -265,11 +267,12 @@ function HRVerifierContent() {
           <button
             type="button"
             onClick={() => setActiveTab('receipts')}
-            className={`px-5 py-3 text-xs font-semibold tracking-wide border-b-2 transition flex items-center gap-2 shrink-0 ${
+            className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition flex items-center gap-2 shrink-0 ${
               activeTab === 'receipts'
-                ? 'border-blue-600 text-blue-700 bg-white shadow-xs rounded-t-lg font-bold'
-                : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 rounded-t-lg'
+                ? 'text-blue-700'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
+            style={activeTab === 'receipts' ? { backgroundColor: '#e8ecf4', boxShadow: '4px 4px 10px #c5cedd, -4px -4px 10px #ffffff' } : undefined}
           >
             <FileCheck className="w-4 h-4 text-blue-600" />
             <span>Tamper-Evident Receipt Chain Log</span>

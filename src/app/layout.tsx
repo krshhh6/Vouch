@@ -5,7 +5,7 @@ import DemoDataInitializer from "@/components/DemoDataInitializer";
 import PortalFooter from "@/components/PortalFooter";
 
 export const metadata: Metadata = {
-  title: "Vouch — Zero-Knowledge Medical Leave Protocol",
+  title: "Vouch — Neumorphic Medical Leave Protocol",
   description: "Selective-disclosure leave attestation verifier. Prove medical & pregnancy leave eligibility to HR without exposing sensitive raw health reports.",
   keywords: [
     "privacy",
@@ -34,7 +34,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white flex flex-col">
+      <body className="min-h-screen bg-[#e8ecf4] text-[#192132] font-sans antialiased selection:bg-blue-200 selection:text-blue-900 flex flex-col">
         <DemoDataInitializer />
         <Navbar />
         <main className="flex-1 w-full">

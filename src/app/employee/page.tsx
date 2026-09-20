@@ -125,14 +125,14 @@ export default function EmployeePortalPage() {
   const approvedCount = applications.filter(a => a.status === 'APPROVED').length;
 
   return (
-    <div className="w-full bg-slate-50 text-slate-900 min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="w-full text-slate-900 min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 font-sans" style={{ backgroundColor: '#e8ecf4' }}>
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Real-Time Toast Notification for HR decisions */}
         {activeToast && (
-          <div className="bg-emerald-50 border-2 border-emerald-600 rounded-2xl p-4 shadow-xl flex items-center justify-between gap-4 animate-in fade-in duration-300 text-slate-900">
+          <div className="rounded-2xl p-4 shadow-xl flex items-center justify-between gap-4 animate-in fade-in duration-300 text-slate-900" style={{ backgroundColor: '#e8ecf4', boxShadow: '9px 9px 18px #c4cede, -9px -9px 18px #ffffff' }}>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-100 border border-emerald-300 flex items-center justify-center text-emerald-800">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-emerald-700" style={{ backgroundColor: '#e8ecf4', boxShadow: '4px 4px 10px #c5cedd, -4px -4px 10px #ffffff' }}>
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <div>
@@ -155,82 +155,95 @@ export default function EmployeePortalPage() {
         )}
 
         {/* Header Strip */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <div className="rounded-3xl p-6 transition-all" style={{ backgroundColor: '#e8ecf4', boxShadow: '9px 9px 18px #c4cede, -9px -9px 18px #ffffff' }}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700">
                   PORTAL 1 • WORKER SELF-SERVICE
                 </span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 text-slate-700 border border-slate-200 font-medium">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono text-slate-600 font-bold" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 2px 2px 5px #c5cedd, inset -2px -2px 5px #ffffff' }}>
                   Private Vault
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-1 font-condensed uppercase tracking-wider">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1 uppercase tracking-wider">
                 EMPLOYEE PORTAL
               </h1>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-2 font-mono">
                 <span>
                   Logged in as: <strong className="text-slate-900">{currentUser.name}</strong>
                 </span>
-                <span className="text-slate-300">•</span>
-                <span className="text-emerald-700 font-medium">
-                  ID: {currentUser.employeeId || 'EMP-9021'}
-                </span>
-                <span className="text-slate-300">•</span>
-                <span className="text-slate-600">{currentUser.department}</span>
+                <span>•</span>
+                <span>{currentUser.email}</span>
+                <span>•</span>
+                <span>{currentUser.employeeId}</span>
+                <span>•</span>
+                <span>{currentUser.department}</span>
               </div>
             </div>
 
-            {/* Quick Apply Button */}
-            <div className="flex items-center gap-2.5">
+            {/* Quick Actions */}
+            <div className="flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={() => setShowApplyModal(true)}
-                className="px-5 py-3 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition flex items-center gap-2 shadow-sm"
+                className="px-5 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-white transition hover:scale-105 active:scale-95 flex items-center gap-2"
+                style={{ background: 'linear-gradient(145deg, #059669, #047857)', boxShadow: '5px 5px 12px rgba(5,150,105,0.35), -5px -5px 12px #ffffff' }}
               >
                 <Plus className="w-4 h-4" />
-                <span>Apply For Leave</span>
+                <span>Apply for Leave</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowAuditModal(true)}
+                className="px-4 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-700 transition hover:scale-105 active:scale-95 flex items-center gap-1.5"
+                style={{ backgroundColor: '#e8ecf4', boxShadow: '4px 4px 10px #c5cedd, -4px -4px 10px #ffffff' }}
+                title="View cryptographically hash-chained audit ledger"
+              >
+                <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                <span className="hidden sm:inline">Audit Log</span>
               </button>
             </div>
           </div>
 
-          {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-slate-200 text-xs font-mono">
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
-              <span className="text-slate-500 block text-[10px] uppercase font-semibold">TOTAL REQUESTS</span>
-              <span className="text-slate-900 font-bold text-base">{applications.length}</span>
+          {/* Mini Status Counters */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-slate-200/50">
+            <div className="p-3 rounded-2xl" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 3px 3px 6px #c5cedd, inset -3px -3px 6px #ffffff' }}>
+              <span className="text-slate-500 block text-[10px] uppercase font-bold font-mono">TOTAL LEAVES</span>
+              <span className="text-slate-900 font-black text-base">{applications.length} Requests</span>
             </div>
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
-              <span className="text-amber-700 block text-[10px] uppercase font-semibold">PENDING HR</span>
-              <span className="text-amber-700 font-bold text-base">{pendingCount}</span>
+            <div className="p-3 rounded-2xl" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 3px 3px 6px #c5cedd, inset -3px -3px 6px #ffffff' }}>
+              <span className="text-slate-500 block text-[10px] uppercase font-bold font-mono">PENDING HR</span>
+              <span className="text-amber-700 font-black text-base">{pendingCount} Waiting</span>
             </div>
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
-              <span className="text-emerald-700 block text-[10px] uppercase font-semibold">APPROVED LEAVES</span>
-              <span className="text-emerald-700 font-bold text-base">{approvedCount}</span>
+            <div className="p-3 rounded-2xl" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 3px 3px 6px #c5cedd, inset -3px -3px 6px #ffffff' }}>
+              <span className="text-slate-500 block text-[10px] uppercase font-bold font-mono">APPROVED</span>
+              <span className="text-emerald-700 font-black text-base">{approvedCount}</span>
             </div>
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
-              <span className="text-slate-500 block text-[10px] uppercase font-semibold">CREDENTIALS</span>
-              <span className="text-slate-700 font-bold text-base">{attestations.length} Verified</span>
+            <div className="p-3 rounded-2xl" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 3px 3px 6px #c5cedd, inset -3px -3px 6px #ffffff' }}>
+              <span className="text-slate-500 block text-[10px] uppercase font-bold font-mono">CREDENTIALS</span>
+              <span className="text-slate-700 font-black text-base">{attestations.length} Verified</span>
             </div>
           </div>
         </div>
 
         {/* Tab Switcher: 1. Leave Requests & Status, 2. Medical Credentials & Wallet */}
-        <div className="flex border-b border-slate-200 gap-2">
+        <div className="p-1.5 rounded-2xl flex gap-2 w-fit" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 3px 3px 6px #c5cedd, inset -3px -3px 6px #ffffff' }}>
           <button
             type="button"
             onClick={() => setActiveTab('tracker')}
-            className={`px-5 py-3 text-xs font-condensed uppercase tracking-wider font-bold border-b-2 transition flex items-center gap-2 ${
+            className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition flex items-center gap-2 ${
               activeTab === 'tracker'
-                ? 'border-emerald-600 text-emerald-800'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
+                ? 'text-emerald-700'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
+            style={activeTab === 'tracker' ? { backgroundColor: '#e8ecf4', boxShadow: '4px 4px 10px #c5cedd, -4px -4px 10px #ffffff' } : undefined}
           >
             <Calendar className="w-4 h-4 text-emerald-700" />
             <span>My Leave Requests &amp; Status</span>
             {pendingCount > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-100 text-amber-800 border border-amber-300 font-bold">
+              <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-200 text-amber-900 font-black">
                 {pendingCount}
               </span>
             )}
@@ -239,11 +252,12 @@ export default function EmployeePortalPage() {
           <button
             type="button"
             onClick={() => setActiveTab('wallet')}
-            className={`px-5 py-3 text-xs font-condensed uppercase tracking-wider font-bold border-b-2 transition flex items-center gap-2 ${
+            className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition flex items-center gap-2 ${
               activeTab === 'wallet'
-                ? 'border-emerald-600 text-emerald-800'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
+                ? 'text-emerald-700'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
+            style={activeTab === 'wallet' ? { backgroundColor: '#e8ecf4', boxShadow: '4px 4px 10px #c5cedd, -4px -4px 10px #ffffff' } : undefined}
           >
             <Lock className="w-4 h-4 text-emerald-700" />
             <span>Doctor Credentials &amp; Wallet</span>

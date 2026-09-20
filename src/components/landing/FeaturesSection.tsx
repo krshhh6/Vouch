@@ -1,93 +1,118 @@
 'use client';
 
 import React from 'react';
-import { 
-  ShieldCheck, 
-  EyeOff, 
-  Clock, 
-  CheckCircle2, 
-  FileLock2, 
-  Layers, 
-  Scale, 
-  Fingerprint 
-} from 'lucide-react';
-import Card from './Card';
+import { Sun, Palette, Layers, Grid } from 'lucide-react';
+
+const NEU = {
+  raised: {
+    backgroundColor: '#e8ecf4',
+    boxShadow: '9px 9px 18px #c4cede, -9px -9px 18px #ffffff',
+  },
+  raisedSm: {
+    backgroundColor: '#e8ecf4',
+    boxShadow: '5px 5px 12px #c5cedd, -5px -5px 12px #ffffff',
+  },
+  textPri: '#192132',
+};
 
 export default function FeaturesSection() {
-  const features = [
+  const pillars = [
     {
-      icon: ShieldCheck,
-      title: 'ECDSA P-256 Signatures',
-      description: 'Cryptographic proof that an authorized clinical authority signed the attestation using Web Crypto keys, verifiable without phone-home tracking.',
-      tag: 'NIST P-256 / SHA-256',
+      num: '01',
+      title: 'SOFT SHADOWS',
+      subtitle: 'Zero-Knowledge Proofs',
+      desc: 'Subtle shadows create the illusion of depth. In Vouch, cryptographic zero-knowledge attestations prove statutory leave duration without ever revealing ICD-10 medical codes, diagnosis descriptions, or clinic names.',
+      icon: Sun,
     },
     {
-      icon: EyeOff,
-      title: '0% Diagnosis Leak',
-      description: 'HR never sees medical conditions, ICD-10 billing codes, prescription regimens, or doctor notes—only binary statutory eligibility booleans.',
-      tag: 'SELECTIVE DISCLOSURE',
+      num: '02',
+      title: 'MONOCHROMATIC COLOR',
+      subtitle: 'Minimal Data Footprint',
+      desc: 'Work with a single base color and its shades. By stripping away multi-page doctor notes, clinic letterheads, and prescription slips, HR systems store only an unforgeable, clean eligibility token.',
+      icon: Palette,
     },
     {
-      icon: Clock,
-      title: 'Time-Bound Proofs',
-      description: 'Share codes are single-use or time-delimited (1 to 48 hours), automatically expiring with instant employee revocation capability.',
-      tag: 'EPHEMERAL CREDENTIALS',
+      num: '03',
+      title: 'RAISED & PRESSED',
+      subtitle: 'Append-Only Audit Ledger',
+      desc: 'Elements appear to raise up or press down. Every verification event is cryptographically sealed onto a SHA-256 hash-chained receipt ledger that employees inspect in their private wallet.',
+      icon: Layers,
     },
     {
-      icon: CheckCircle2,
-      title: '100% Tamper Proof',
-      description: 'Compliance receipts are cryptographically hash-chained from genesis, providing labor inspectors irrefutable audit trails with zero PHI stored.',
-      tag: 'AUDITABLE LEDGER',
+      num: '04',
+      title: 'MINIMAL UI',
+      subtitle: '1-Click Statutory Verification',
+      desc: 'Clean, simple and focused on what matters. HR administrators receive a decisive, tamper-proof PASS/FAIL confirmation in seconds, completely exempt from PHI retention risks and compliance liability.',
+      icon: Grid,
     },
   ];
 
   return (
-    <section id="features" className="bg-navy-900 text-white py-16 sm:py-24 px-6 sm:px-8 border-t border-navy-800">
+    <section id="pillars" className="py-16 sm:py-24 px-4 sm:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="text-sm text-primary-400 font-semibold mb-4 tracking-wider uppercase font-mono">
-          03 &bull; PROTOCOL GUARANTEES
-        </div>
-
-        <div className="max-w-2xl mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 font-sans">
-            Key Features
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-4"
+            style={NEU.raisedSm}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+            <span className="text-[10px] font-mono font-bold tracking-[0.2em] uppercase text-slate-600">
+              CORE PROTOCOL PILLARS
+            </span>
+          </div>
+          <h2
+            className="text-3xl sm:text-4xl font-black tracking-tight"
+            style={{ color: NEU.textPri }}
+          >
+            FOUR PILLARS OF NEUMORPHIC PRIVACY
           </h2>
-          <p className="text-gray-300 text-base sm:text-lg leading-relaxed font-sans">
-            Designed to satisfy both labor compliance inspectors and the strictest enterprise privacy mandates.
+          <p className="mt-3 text-sm sm:text-base text-slate-600 font-medium">
+            Form follows function. The four tenets of soft physical depth translated into
+            uncompromising cryptographic healthcare privacy.
           </p>
         </div>
 
-        {/* 2x2 Feature Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-          {features.map((feature) => {
-            const Icon = feature.icon;
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {pillars.map((p) => {
+            const Icon = p.icon;
             return (
-              <Card 
-                key={feature.title} 
-                variant="dark" 
-                className="p-8 group hover:border-primary-500/50 hover:bg-navy-800/90 transition-all duration-300"
+              <div
+                key={p.num}
+                className="p-6 rounded-3xl flex flex-col justify-between transition-all duration-300 hover:scale-[1.02]"
+                style={NEU.raised}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-lg bg-primary-600/20 border border-primary-500/30 flex items-center justify-center text-primary-400 group-hover:bg-primary-600 group-hover:text-white transition-colors">
-                    <Icon className="w-6 h-6" />
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="text-2xl font-black font-sans text-slate-400">
+                      {p.num}
+                    </span>
+                    <div
+                      className="w-12 h-12 rounded-2xl flex items-center justify-center text-blue-600"
+                      style={NEU.raisedSm}
+                    >
+                      <Icon className="w-6 h-6" />
+                    </div>
                   </div>
-                  <span className="text-[10px] font-mono text-gray-400 bg-navy-950 px-2.5 py-1 rounded border border-navy-700">
-                    {feature.tag}
-                  </span>
+
+                  <h3 className="text-base font-black tracking-tight text-slate-800 mb-1">
+                    {p.title}
+                  </h3>
+                  <div className="text-[11px] font-mono text-blue-600 font-bold mb-3">
+                    {p.subtitle}
+                  </div>
+                  <p className="text-xs leading-relaxed text-slate-600 font-medium">
+                    {p.desc}
+                  </p>
                 </div>
 
-                <h3 className="font-semibold text-xl mb-3 text-white font-sans">
-                  {feature.title}
-                </h3>
-                
-                <p className="text-gray-300 text-sm leading-relaxed font-sans">
-                  {feature.description}
-                </p>
-              </Card>
+                <div className="mt-6 pt-4 border-t border-slate-200/50 flex items-center justify-between text-[11px] font-mono text-slate-500">
+                  <span>SPEC COMPLIANT</span>
+                  <span className="text-emerald-600 font-bold">✓ PASS</span>
+                </div>
+              </div>
             );
           })}
         </div>
-
       </div>
     </section>
   );
