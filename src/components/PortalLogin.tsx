@@ -89,7 +89,7 @@ export default function PortalLogin() {
         {/* Portal Header */}
         <div className="text-center space-y-4">
           <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono font-bold text-blue-600"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold text-blue-600"
             style={NEU.raisedSm}
           >
             <ShieldCheck className="w-4 h-4 text-blue-600" />
@@ -97,13 +97,13 @@ export default function PortalLogin() {
           </div>
           
           <h1
-            className="font-heading text-3xl sm:text-5xl font-black tracking-tight leading-tight uppercase"
+            className="font-heading text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight uppercase"
             style={{ color: NEU.textPri }}
           >
             VOUCH PORTAL LOGIN
           </h1>
           
-          <p className="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto leading-relaxed font-medium">
+          <p className="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto leading-relaxed font-normal">
             Select your role to sign into the dedicated portal. Separate interfaces engineered for Employees and HR Benefits Officers.
           </p>
         </div>
@@ -125,7 +125,7 @@ export default function PortalLogin() {
                   <UserCheck className="w-7 h-7" />
                 </div>
                 <span
-                  className="px-3 py-1 rounded-full text-[11px] font-mono font-bold text-emerald-700 uppercase tracking-wider"
+                  className="px-3 py-1 rounded-full text-[11px] font-semibold text-emerald-800 uppercase tracking-wider"
                   style={NEU.pressed}
                 >
                   PORTAL 1
@@ -133,35 +133,35 @@ export default function PortalLogin() {
               </div>
 
               <div>
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700 block">
+                <span className="text-xs font-semibold uppercase tracking-wider text-emerald-700 block">
                   Worker Self-Service
                 </span>
                 <h2
-                  className="text-2xl font-black tracking-tight uppercase mt-1"
+                  className="text-2xl font-bold tracking-tight uppercase mt-1 font-heading"
                   style={{ color: NEU.textPri }}
                 >
                   Employee Portal
                 </h2>
-                <p className="text-xs text-slate-600 mt-2 leading-relaxed font-medium">
+                <p className="text-xs text-slate-600 mt-2 leading-relaxed font-normal">
                   Apply for statutory leave in seconds, track real-time HR approval statuses, and protect your diagnosis with zero-knowledge credentials.
                 </p>
               </div>
 
               {/* Test User Badge */}
-              <div className="p-4 rounded-2xl space-y-1.5 font-mono text-xs" style={NEU.pressed}>
-                <span className="text-[10px] text-slate-500 uppercase tracking-widest block font-bold">
+              <div className="p-4 rounded-2xl space-y-1.5 text-xs" style={NEU.pressed}>
+                <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-semibold">
                   TEST ACCOUNT
                 </span>
-                <p className="text-slate-900 font-black text-sm">{TEST_USERS.EMPLOYEE.name}</p>
-                <p className="text-emerald-700 font-bold text-xs">{TEST_USERS.EMPLOYEE.email}</p>
-                <p className="text-slate-500 text-[11px]">{TEST_USERS.EMPLOYEE.employeeId} • {TEST_USERS.EMPLOYEE.department}</p>
+                <p className="text-slate-900 font-bold text-sm font-heading">{TEST_USERS.EMPLOYEE.name}</p>
+                <p className="text-emerald-700 font-mono font-semibold text-xs">{TEST_USERS.EMPLOYEE.email}</p>
+                <p className="text-slate-500 text-[11px] font-mono">{TEST_USERS.EMPLOYEE.employeeId} • {TEST_USERS.EMPLOYEE.department}</p>
               </div>
             </div>
 
             <button
               type="button"
               onClick={() => handleLoginAs('EMPLOYEE')}
-              className="w-full py-4 px-5 rounded-2xl text-xs font-mono font-bold uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+              className="w-full py-4 px-5 rounded-2xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
               style={NEU.btnEmployee}
             >
               <span>CONTINUE AS EMPLOYEE</span>
@@ -183,7 +183,7 @@ export default function PortalLogin() {
                   <Building2 className="w-7 h-7" />
                 </div>
                 <span
-                  className="px-3 py-1 rounded-full text-[11px] font-mono font-bold text-blue-700 uppercase tracking-wider"
+                  className="px-3 py-1 rounded-full text-[11px] font-semibold text-blue-800 uppercase tracking-wider"
                   style={NEU.pressed}
                 >
                   PORTAL 2
@@ -191,38 +191,38 @@ export default function PortalLogin() {
               </div>
 
               <div>
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-700 block">
+                <span className="text-xs font-semibold uppercase tracking-wider text-blue-700 block">
                   Benefits Operations
                 </span>
                 <h2
-                  className="text-2xl font-black tracking-tight uppercase mt-1"
+                  className="text-2xl font-bold tracking-tight uppercase mt-1 font-heading"
                   style={{ color: NEU.textPri }}
                 >
                   HR Verifier Portal
                 </h2>
-                <p className="text-xs text-slate-600 mt-2 leading-relaxed font-medium">
+                <p className="text-xs text-slate-600 mt-2 leading-relaxed font-normal">
                   Review all employee leave statuses across the company, receive live application alerts, and confirm or decline leaves with full statutory receipts.
                 </p>
               </div>
 
               {/* Test User Badge */}
-              <div className="p-4 rounded-2xl space-y-1.5 font-mono text-xs" style={NEU.pressed}>
-                <span className="text-[10px] text-slate-500 uppercase tracking-widest block font-bold">
+              <div className="p-4 rounded-2xl space-y-1.5 text-xs" style={NEU.pressed}>
+                <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-semibold">
                   TEST ACCOUNT
                 </span>
-                <p className="text-slate-900 font-black text-sm">{TEST_USERS.HR.name}</p>
-                <p className="text-blue-700 font-bold text-xs">{TEST_USERS.HR.email}</p>
-                <p className="text-slate-500 text-[11px]">Administrator • {TEST_USERS.HR.department}</p>
+                <p className="text-slate-900 font-bold text-sm font-heading">{TEST_USERS.HR.name}</p>
+                <p className="text-blue-700 font-mono font-semibold text-xs">{TEST_USERS.HR.email}</p>
+                <p className="text-slate-500 text-[11px] font-mono">Administrator • {TEST_USERS.HR.department}</p>
               </div>
             </div>
 
             <button
               type="button"
               onClick={() => handleLoginAs('HR')}
-              className="w-full py-4 px-5 rounded-2xl text-xs font-mono font-bold uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+              className="w-full py-4 px-5 rounded-2xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
               style={NEU.btnHr}
             >
-              <span>CONTINUE AS HR ADMIN</span>
+              <span>CONTINUE AS HR</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

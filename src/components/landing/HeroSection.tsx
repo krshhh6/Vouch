@@ -73,7 +73,7 @@ export default function HeroSection() {
             style={NEU.raisedSm}
           >
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-slate-700 font-mono">
+            <span className="text-[11px] font-semibold tracking-wider uppercase text-slate-700">
               ZERO-KNOWLEDGE SELECTIVE-DISCLOSURE PROTOCOL
             </span>
           </div>
@@ -81,7 +81,7 @@ export default function HeroSection() {
           {/* Monumental Neumorphic Title */}
           <div className="mb-4">
             <h1
-              className="font-heading text-4xl sm:text-6xl lg:text-[4.8rem] tracking-tight leading-[0.95] select-none uppercase"
+              className="font-heading text-4xl sm:text-6xl lg:text-[4.8rem] font-extrabold tracking-tight leading-[0.98] select-none uppercase"
               style={{ color: NEU.textPri }}
             >
               VOUCH
@@ -90,19 +90,19 @@ export default function HeroSection() {
             </h1>
           </div>
 
-          <div className="text-xs font-mono font-bold tracking-[0.25em] uppercase text-slate-500 mb-8">
+          <div className="text-xs font-semibold tracking-widest uppercase text-slate-500 mb-8">
             MATHEMATICAL CERTAINTY • ZERO PHI EXPOSURE
           </div>
 
           {/* Tactile Raised Manifesto Card */}
           <div className="p-6 sm:p-8 rounded-3xl mb-8 transition-all" style={NEU.raised}>
             <h2
-              className="text-xl sm:text-2xl font-black mb-3 tracking-tight uppercase"
+              className="text-xl sm:text-2xl font-bold mb-3 tracking-tight uppercase font-heading"
               style={{ color: NEU.textPri }}
             >
               PROVE LEAVE. PROTECT YOUR DIAGNOSIS.
             </h2>
-            <p className="text-sm sm:text-base leading-relaxed text-slate-600 font-medium">
+            <p className="text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
               Traditional doctor certificates expose sensitive health diagnoses, pregnancy stages, and mental health treatments to employer HR files. Vouch replaces raw document handoffs with <b>client-side Web Crypto attestations</b> — proving statutory leave eligibility with mathematical certainty and <b>0.0% health data leakage</b>.
             </p>
           </div>
@@ -111,7 +111,7 @@ export default function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10">
             <Link
               href="/employee"
-              className="inline-flex items-center justify-center gap-3 px-7 py-4 rounded-2xl text-xs font-mono font-bold uppercase tracking-wider transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center justify-center gap-3 px-7 py-4 rounded-2xl text-xs font-semibold uppercase tracking-wider transition-transform hover:scale-[1.02] active:scale-[0.98]"
               style={NEU.btnEmployee}
             >
               <UserCheck className="w-4 h-4" />
@@ -121,7 +121,7 @@ export default function HeroSection() {
 
             <Link
               href="/hr"
-              className="inline-flex items-center justify-center gap-3 px-7 py-4 rounded-2xl text-xs font-mono font-bold uppercase tracking-wider transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center justify-center gap-3 px-7 py-4 rounded-2xl text-xs font-semibold uppercase tracking-wider transition-transform hover:scale-[1.02] active:scale-[0.98]"
               style={NEU.btnHr}
             >
               <Building2 className="w-4 h-4" />
@@ -140,7 +140,7 @@ export default function HeroSection() {
             ].map((badge) => (
               <div
                 key={badge}
-                className="text-[11px] font-bold text-slate-600 px-3.5 py-1.5 rounded-xl font-mono flex items-center gap-1.5"
+                className="text-[11px] font-medium text-slate-700 px-3.5 py-1.5 rounded-xl flex items-center gap-1.5"
                 style={NEU.raisedSm}
               >
                 <Check className="w-3.5 h-3.5 text-emerald-600" />
@@ -160,11 +160,11 @@ export default function HeroSection() {
               {/* Entitlement Days Readout */}
               <div className="p-6 rounded-3xl flex flex-col justify-between" style={NEU.raised}>
                 <div>
-                  <span className="text-xs font-mono font-bold tracking-[0.2em] text-slate-500 uppercase block mb-1">
+                  <span className="text-xs font-semibold tracking-wider text-slate-500 uppercase block mb-1">
                     STATUTORY
                   </span>
                   <div
-                    className="text-6xl font-black font-sans leading-none tracking-tighter"
+                    className="text-6xl font-black font-heading leading-none tracking-tighter"
                     style={{
                       color: NEU.textPri,
                       textShadow: '2px 2px 4px rgba(255,255,255,0.8), -2px -2px 4px rgba(186,197,214,0.7)',
@@ -174,10 +174,10 @@ export default function HeroSection() {
                   </div>
                 </div>
                 <div className="mt-4 pt-3 border-t border-slate-200/60">
-                  <span className="text-[10px] font-mono text-slate-500 block uppercase font-bold">
+                  <span className="text-[11px] font-semibold text-slate-500 block uppercase tracking-wider">
                     Eligible Entitlement
                   </span>
-                  <span className="text-xs font-bold text-emerald-600 font-mono">
+                  <span className="text-xs font-bold text-emerald-700 tracking-wide font-mono">
                     MATHEMATICALLY VERIFIED
                   </span>
                 </div>
@@ -185,7 +185,7 @@ export default function HeroSection() {
 
               {/* 3D Tactile Rotary Knob / Dial */}
               <div className="p-5 rounded-3xl flex flex-col items-center justify-center relative select-none" style={NEU.raised}>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 mb-2">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
                   Rotate Leave Dial
                 </span>
 
@@ -217,7 +217,7 @@ export default function HeroSection() {
                     <span className="text-base font-black text-slate-800 leading-none">
                       {dialDays}
                     </span>
-                    <span className="text-[9px] font-mono text-slate-500 uppercase">
+                    <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                       Days
                     </span>
                   </div>
@@ -265,7 +265,7 @@ export default function HeroSection() {
 
               {/* Physical Zero-Knowledge Toggle */}
               <div className="p-3 rounded-2xl flex items-center justify-between" style={NEU.raised}>
-                <span className="text-[10px] font-mono font-bold uppercase text-slate-700">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-700">
                   {zkpMode ? 'Zero-PHI Mode' : 'Raw PHI Mode'}
                 </span>
                 <div
@@ -289,30 +289,30 @@ export default function HeroSection() {
 
             {/* Physical Recessed LCD Cryptographic Status Well */}
             <div className="p-4 rounded-2xl space-y-2.5" style={NEU.raised}>
-              <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 font-bold uppercase">
+              <div className="flex items-center justify-between text-[11px] font-semibold text-slate-600 uppercase tracking-wider">
                 <span className="flex items-center gap-1.5">
                   <KeyRound className="w-3.5 h-3.5 text-blue-600" />
                   <span>ECDSA Cryptographic Key Status</span>
                 </span>
-                <span className="text-emerald-600 flex items-center gap-1">
+                <span className="text-emerald-700 flex items-center gap-1 font-mono font-bold text-[10px]">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
                   P-256 VALID
                 </span>
               </div>
 
               {/* Recessed Terminal Well */}
-              <div className="p-3 rounded-xl font-mono text-[11px] space-y-1 text-slate-700" style={NEU.pressed}>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Issuer Key:</span>
-                  <span className="font-bold text-slate-800">0x7F8C...D34B</span>
+              <div className="p-3.5 rounded-xl text-xs space-y-1.5 text-slate-700" style={NEU.pressed}>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 font-medium">Issuer Key:</span>
+                  <span className="font-bold font-mono text-[11px] text-slate-900">0x7F8C...D34B</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Hash-Chained Audit:</span>
-                  <span className="font-bold text-blue-700">GENESIS → BLOCK_8429</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 font-medium">Hash-Chained Audit:</span>
+                  <span className="font-bold font-mono text-[11px] text-blue-700">GENESIS → BLOCK_8429</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Clinical PHI Leakage:</span>
-                  <span className="font-bold text-emerald-700">0.00% (VERIFIED)</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 font-medium">Clinical PHI Leakage:</span>
+                  <span className="font-bold font-mono text-[11px] text-emerald-700">0.00% (VERIFIED)</span>
                 </div>
               </div>
             </div>
@@ -324,10 +324,10 @@ export default function HeroSection() {
                   <FileCheck2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-xs font-black text-slate-800 block leading-tight">
+                  <span className="text-xs font-bold text-slate-900 block leading-tight">
                     Tamper-Proof
                   </span>
-                  <span className="text-[10px] font-mono text-slate-500">
+                  <span className="text-[11px] font-mono text-slate-500">
                     Neon Postgres
                   </span>
                 </div>
@@ -338,10 +338,10 @@ export default function HeroSection() {
                   <Cpu className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-xs font-black text-slate-800 block leading-tight">
+                  <span className="text-xs font-bold text-slate-900 block leading-tight">
                     On-Device
                   </span>
-                  <span className="text-[10px] font-mono text-slate-500">
+                  <span className="text-[11px] font-mono text-slate-500">
                     Client Sandbox
                   </span>
                 </div>

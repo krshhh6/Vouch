@@ -159,24 +159,24 @@ export default function EmployeePortalPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700">
+                <span className="text-xs font-semibold uppercase tracking-wider text-emerald-700">
                   PORTAL 1 • WORKER SELF-SERVICE
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono text-slate-600 font-bold" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 2px 2px 5px #c5cedd, inset -2px -2px 5px #ffffff' }}>
                   Private Vault
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1 uppercase tracking-wider">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 font-heading uppercase tracking-tight">
                 EMPLOYEE PORTAL
               </h1>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-2 font-mono">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-2">
                 <span>
-                  Logged in as: <strong className="text-slate-900">{currentUser.name}</strong>
+                  Logged in as: <strong className="text-slate-900 font-semibold">{currentUser.name}</strong>
                 </span>
                 <span>•</span>
-                <span>{currentUser.email}</span>
+                <span className="font-mono text-[11px]">{currentUser.email}</span>
                 <span>•</span>
-                <span>{currentUser.employeeId}</span>
+                <span className="font-mono text-[11px]">{currentUser.employeeId}</span>
                 <span>•</span>
                 <span>{currentUser.department}</span>
               </div>
@@ -187,7 +187,7 @@ export default function EmployeePortalPage() {
               <button
                 type="button"
                 onClick={() => setShowApplyModal(true)}
-                className="px-5 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-white transition hover:scale-105 active:scale-95 flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider text-white transition hover:scale-105 active:scale-95 flex items-center gap-2"
                 style={{ background: 'linear-gradient(145deg, #059669, #047857)', boxShadow: '5px 5px 12px rgba(5,150,105,0.35), -5px -5px 12px #ffffff' }}
               >
                 <Plus className="w-4 h-4" />

@@ -131,7 +131,7 @@ export default function Navbar({ forceVisible = false }: { forceVisible?: boolea
             <div>
               <div className="flex items-center gap-2">
                 <span
-                  className="font-black text-lg tracking-wider"
+                  className="font-heading font-extrabold text-lg tracking-tight"
                   style={{ color: NEU.textPri }}
                 >
                   VOUCH
@@ -143,7 +143,7 @@ export default function Navbar({ forceVisible = false }: { forceVisible?: boolea
                   OFFICIAL PORTAL
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 font-sans leading-tight">
+              <p className="text-[11px] text-slate-500 font-normal leading-tight">
                 Statutory Medical Leave Verification System
               </p>
             </div>
@@ -153,11 +153,11 @@ export default function Navbar({ forceVisible = false }: { forceVisible?: boolea
           <div className="flex items-center gap-2.5">
             {!isLoginPage && (
               <div
-                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-mono text-slate-700"
+                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs text-slate-700"
                 style={NEU.pressed}
               >
                 <span className={`w-2 h-2 rounded-full ${pathname.startsWith('/hr') ? 'bg-blue-500' : pathname.startsWith('/clinic') ? 'bg-teal-500' : 'bg-emerald-500'}`}></span>
-                <span className="font-bold text-slate-800">
+                <span className="font-semibold text-slate-800">
                   {currentUser.name}
                 </span>
                 <span className="text-slate-500 text-[11px]">
@@ -170,7 +170,7 @@ export default function Navbar({ forceVisible = false }: { forceVisible?: boolea
               <button
                 type="button"
                 onClick={handleToggleRole}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-bold text-slate-700 transition hover:scale-105 active:scale-95"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 transition hover:scale-105 active:scale-95"
                 style={NEU.raisedSm}
                 title="Switch between Employee and HR portal"
               >
@@ -196,7 +196,7 @@ export default function Navbar({ forceVisible = false }: { forceVisible?: boolea
             <button
               onClick={handleResetDemo}
               title="Reset data and restore initial baseline"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-bold text-slate-700 hover:text-slate-900 transition hover:scale-105 active:scale-95"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-900 transition hover:scale-105 active:scale-95"
               style={NEU.raisedSm}
             >
               <RotateCcw className="w-3.5 h-3.5 text-blue-600" />
@@ -218,9 +218,9 @@ export default function Navbar({ forceVisible = false }: { forceVisible?: boolea
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 whitespace-nowrap ${
+                  className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 whitespace-nowrap ${
                     active
-                      ? 'text-blue-600'
+                      ? 'text-blue-600 font-bold'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                   style={active ? NEU.raisedSm : undefined}
@@ -232,10 +232,10 @@ export default function Navbar({ forceVisible = false }: { forceVisible?: boolea
             })}
           </nav>
           
-          <div className="hidden md:flex items-center gap-2 text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest px-3 py-1 rounded-xl" style={NEU.pressed}>
+          <div className="hidden md:flex items-center gap-2 text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-3 py-1 rounded-xl" style={NEU.pressed}>
             <span>Role-Based Portal</span>
             <span>•</span>
-            <span className="text-blue-600">Zero-PHI Protocol</span>
+            <span className="text-blue-600 font-bold">Zero-PHI Protocol</span>
           </div>
         </div>
 

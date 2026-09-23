@@ -94,10 +94,10 @@ export default function DemoSection() {
     <section id="demo" className="py-16 sm:py-24 px-4 sm:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-xl mx-auto mb-14">
-          <span className="text-xs font-mono font-bold tracking-[0.2em] uppercase text-blue-600 block mb-2">
+          <span className="text-xs font-semibold tracking-wider uppercase text-blue-600 block mb-2">
             04 • INTERACTIVE VERIFIER
           </span>
-          <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-slate-900 tracking-wide uppercase">
+          <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight uppercase">
             Interactive Verifier Simulator
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 font-medium mt-2">
@@ -133,7 +133,7 @@ export default function DemoSection() {
                   <div className="text-[11px] font-mono text-blue-600 font-bold mb-2">
                     {s.pill}
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed">
+                  <p className="text-xs text-slate-600 leading-relaxed font-normal">
                     {s.desc}
                   </p>
                 </div>
@@ -155,10 +155,10 @@ export default function DemoSection() {
                   <Lock className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-black text-slate-800 leading-none">
+                  <h4 className="text-sm font-bold text-slate-900 leading-none">
                     Employee Private Wallet
                   </h4>
-                  <span className="text-[10px] font-mono text-slate-500">
+                  <span className="text-[11px] font-mono text-slate-500">
                     ECDSA P-256 Web Crypto
                   </span>
                 </div>
@@ -172,23 +172,23 @@ export default function DemoSection() {
             </div>
 
             <div className="p-5 rounded-2xl space-y-3" style={NEU.convex}>
-              <div className="flex justify-between items-center text-xs font-mono text-slate-500">
-                <span>STATUTORY CLAIM</span>
-                <span className="text-blue-600 font-bold">NIST P-256</span>
+              <div className="flex justify-between items-center text-xs font-medium text-slate-500">
+                <span className="uppercase tracking-wider text-[11px] font-semibold">Statutory Claim</span>
+                <span className="text-blue-600 font-mono font-bold">NIST P-256</span>
               </div>
-              <div className="text-lg font-black text-slate-800">
+              <div className="text-lg font-bold text-slate-900">
                 Maternity & Medical Leave Act
               </div>
               <div className="flex items-center justify-between pt-2 text-xs font-medium text-slate-600">
                 <span>Entitlement Period:</span>
-                <b className="font-mono text-blue-600">{requestedDays} Days</b>
+                <b className="font-mono text-blue-600 font-semibold">{requestedDays} Days</b>
               </div>
             </div>
 
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-mono text-slate-600">
-                <span>ADJUST CLAIM DURATION</span>
-                <span className="font-bold text-blue-600">{requestedDays} Days</span>
+              <div className="flex justify-between text-xs font-medium text-slate-700">
+                <span className="font-semibold uppercase tracking-wider text-[11px]">Adjust Claim Duration</span>
+                <span className="font-bold font-mono text-blue-600">{requestedDays} Days</span>
               </div>
               <input
                 type="range"
@@ -203,16 +203,16 @@ export default function DemoSection() {
 
             <div className="p-4 rounded-2xl flex items-center justify-between" style={NEU.pressed}>
               <div>
-                <span className="text-[9px] font-mono text-slate-500 block uppercase">
+                <span className="text-[10px] font-semibold text-slate-500 block uppercase tracking-wider">
                   ACTIVE TIME-BOUND SHARE CODE
                 </span>
-                <span className="text-xl font-black font-mono tracking-widest text-slate-900">
+                <span className="text-xl font-bold font-mono tracking-widest text-slate-900">
                   {shareCode}
                 </span>
               </div>
               <button
                 onClick={handleCopy}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95"
                 style={NEU.raisedSm}
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
@@ -232,21 +232,21 @@ export default function DemoSection() {
                   <Building2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-black text-slate-800 leading-none">
+                  <h4 className="text-sm font-bold text-slate-900 leading-none">
                     HR Verification Terminal
                   </h4>
-                  <span className="text-[10px] font-mono text-slate-500">
+                  <span className="text-[11px] font-mono text-slate-500">
                     Statutory Leave Audit Gateway
                   </span>
                 </div>
               </div>
-              <span className="text-[10px] font-mono text-slate-500">
+              <span className="text-[10px] font-mono text-slate-500 font-semibold">
                 0% PHI INGESTION
               </span>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-mono uppercase tracking-wider text-slate-600 block">
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-700 block">
                 ENTER EMPLOYEE SHARE CODE
               </label>
               <div className="flex gap-3">
@@ -254,7 +254,7 @@ export default function DemoSection() {
                   type="text"
                   value={shareCode}
                   onChange={(e) => setShareCode(e.target.value.toUpperCase())}
-                  className="flex-1 px-4 py-3 rounded-2xl font-mono text-base font-bold text-slate-800 tracking-wider neu-input"
+                  className="flex-1 px-4 py-3 rounded-2xl font-mono text-base font-semibold text-slate-900 tracking-wider neu-input"
                 />
                 <button
                   onClick={handleVerify}
@@ -268,46 +268,46 @@ export default function DemoSection() {
             </div>
 
             <div className="p-5 rounded-2xl space-y-3" style={NEU.pressed}>
-              <span className="text-[10px] font-mono text-slate-500 uppercase block">
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
                 VERIFICATION RECEIPT (ZERO-KNOWLEDGE)
               </span>
 
               {verifiedState === 'success' ? (
                 <div className="space-y-3 animate-in fade-in duration-300">
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700">
+                  <div className="flex items-center justify-between p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-800">
                     <span className="text-xs font-bold flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4" /> STATUTORY CRITERIA MET
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" /> STATUTORY CRITERIA MET
                     </span>
-                    <span className="text-xs font-mono font-bold">
+                    <span className="text-xs font-mono font-bold text-emerald-700">
                       {requestedDays} DAYS APPROVED
                     </span>
                   </div>
 
-                  <div className="space-y-1.5 text-[11px] font-mono text-slate-600">
-                    <div className="flex justify-between">
-                      <span>Cryptographic Hash:</span>
-                      <span className="text-slate-800 font-bold">e3b0c442...890b</span>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-500 font-medium">Cryptographic Hash:</span>
+                      <span className="text-slate-800 font-mono font-semibold text-[11px]">e3b0c442...890b</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Diagnosis Records:</span>
-                      <span className="text-emerald-600 font-bold">0 BYTES (SCRUBBED)</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-500 font-medium">Diagnosis Records:</span>
+                      <span className="text-emerald-700 font-mono font-bold text-[11px]">0 BYTES (SCRUBBED)</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Doctor Clinic Identity:</span>
-                      <span className="text-emerald-600 font-bold">ANONYMIZED KEY</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-500 font-medium">Doctor Clinic Identity:</span>
+                      <span className="text-emerald-700 font-mono font-bold text-[11px]">ANONYMIZED KEY</span>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="py-6 text-center text-slate-500 text-xs font-mono">
+                <div className="py-6 text-center text-slate-500 text-xs font-medium">
                   Enter worker&apos;s code and click &quot;VERIFY&quot; to execute proof check.
                 </div>
               )}
             </div>
 
-            <div className="pt-2 flex items-center justify-between text-[10px] font-mono text-slate-500">
-              <span>SHA-256 CHAINED</span>
-              <span>AUDITABLE RECEIPT APPENDED</span>
+            <div className="pt-2 flex items-center justify-between text-[11px] font-medium text-slate-500">
+              <span className="font-mono text-[10px] tracking-wider uppercase">SHA-256 CHAINED</span>
+              <span className="font-mono text-[10px] tracking-wider uppercase">AUDITABLE RECEIPT APPENDED</span>
             </div>
           </div>
         </div>

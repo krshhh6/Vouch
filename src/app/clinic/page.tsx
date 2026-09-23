@@ -131,20 +131,20 @@ export default function ClinicPortalPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-teal-700">
+                <span className="text-xs font-semibold uppercase tracking-wider text-teal-700">
                   CLINIC ISSUER PORTAL
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold text-slate-600" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 2px 2px 5px #c5cedd, inset -2px -2px 5px #ffffff' }}>
                   P-256 Web Crypto
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-1 font-condensed uppercase tracking-wider">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 font-heading uppercase tracking-tight">
                 VOUCH — CLINIC PORTAL
               </h1>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-2 font-mono">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-2">
                 <span>
                   Logged in as:{' '}
-                  <strong className="text-slate-900">
+                  <strong className="text-slate-900 font-semibold">
                     {clinicProfile.doctorName} ({clinicProfile.clinicName})
                   </strong>
                 </span>

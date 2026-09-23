@@ -49,13 +49,13 @@ export default function HowItWorksSection() {
     <section id="how-it-works" className="py-16 sm:py-24 px-4 sm:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-xl mx-auto mb-14">
-          <span className="text-xs font-mono font-bold tracking-[0.2em] uppercase text-blue-600 block mb-2">
+          <span className="text-xs font-semibold tracking-wider uppercase text-blue-600 block mb-2">
             02 • THREE ROLES, ZERO LEAKAGE
           </span>
-          <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-slate-900 tracking-wide uppercase">
+          <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight uppercase">
             How The Protocol Flows
           </h2>
-          <p className="mt-2 text-sm text-slate-600 font-medium">
+          <p className="mt-2 text-sm text-slate-600 font-normal">
             Doctor signs → Employee shares → HR verifies. No diagnosis codes, no clinic names stored.
           </p>
         </div>
@@ -77,18 +77,18 @@ export default function HowItWorksSection() {
                     >
                       <Icon className="w-6 h-6" />
                     </div>
-                    <span className="text-xs font-mono font-black text-slate-400">
+                    <span className="text-xs font-mono font-bold text-slate-400">
                       STEP 0{i + 1}
                     </span>
                   </div>
 
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-blue-600 font-bold block mb-1">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-blue-600 block mb-1">
                     {r.badge}
                   </span>
-                  <h3 className="text-lg font-black text-slate-800 mb-2">
+                  <h3 className="text-lg font-bold text-slate-900 mb-2 font-heading">
                     {r.role}
                   </h3>
-                  <p className="text-xs leading-relaxed text-slate-600 font-medium">
+                  <p className="text-xs leading-relaxed text-slate-600 font-normal">
                     {r.desc}
                   </p>
                 </div>
@@ -96,7 +96,7 @@ export default function HowItWorksSection() {
                 <div className="mt-6 pt-4 border-t border-slate-200/50">
                   <Link
                     href={r.href}
-                    className="text-xs font-bold text-blue-600 flex items-center gap-1.5 hover:text-blue-700 transition-colors"
+                    className="text-xs font-semibold text-blue-600 flex items-center gap-1.5 hover:text-blue-700 transition-colors"
                   >
                     <span>Open {r.role}</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -111,18 +111,18 @@ export default function HowItWorksSection() {
         <div className="p-8 rounded-3xl" style={NEU.raised}>
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-slate-200/60">
             <div>
-              <h3 className="text-lg font-black text-slate-800">
+              <h3 className="text-lg font-bold text-slate-900 font-heading">
                 Protocol Boundary Separation
               </h3>
-              <p className="text-xs text-slate-500 font-mono mt-1">
+              <p className="text-xs text-slate-600 mt-1">
                 Zero Personal Health Information (PHI) crosses organizational perimeters
               </p>
             </div>
             <div className="flex gap-2">
-              <span className="text-[11px] font-mono px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-700 font-bold border border-emerald-500/20">
+              <span className="text-xs font-semibold px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-800 border border-emerald-500/20">
                 ✓ ZERO-KNOWLEDGE
               </span>
-              <span className="text-[11px] font-mono px-3 py-1 rounded-xl bg-blue-500/10 text-blue-700 font-bold border border-blue-500/20">
+              <span className="text-xs font-mono font-semibold px-3 py-1 rounded-xl bg-blue-500/10 text-blue-800 border border-blue-500/20">
                 ECDSA P-256
               </span>
             </div>

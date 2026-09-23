@@ -54,7 +54,7 @@ export default function Header() {
           </div>
           <div className="flex items-baseline gap-2">
             <span
-              className="font-black text-xl tracking-[0.18em]"
+              className="font-heading font-extrabold text-xl tracking-tight"
               style={{ color: NEU.textPri }}
             >
               VOUCH
@@ -83,8 +83,8 @@ export default function Header() {
                 key={link.label}
                 href={link.href}
                 onClick={() => setActiveTab(link.label)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold tracking-wider uppercase transition-all duration-200 ${
-                  isActive ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900'
+                className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 ${
+                  isActive ? 'text-blue-600 font-bold' : 'text-slate-600 hover:text-slate-900'
                 }`}
                 style={isActive ? NEU.raisedSm : undefined}
               >

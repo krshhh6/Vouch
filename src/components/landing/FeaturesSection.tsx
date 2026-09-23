@@ -56,17 +56,17 @@ export default function FeaturesSection() {
             style={NEU.raisedSm}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
-            <span className="text-[10px] font-mono font-bold tracking-[0.2em] uppercase text-slate-700">
+            <span className="text-[11px] font-semibold tracking-wider uppercase text-slate-700">
               CORE PROTOCOL GUARANTEES
             </span>
           </div>
           <h2
-            className="font-heading text-2xl sm:text-3xl lg:text-4xl tracking-wide uppercase"
+            className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight uppercase"
             style={{ color: NEU.textPri }}
           >
             FOUR PILLARS OF MEDICAL LEAVE PRIVACY
           </h2>
-          <p className="mt-3 text-sm sm:text-base text-slate-600 font-medium">
+          <p className="mt-3 text-sm sm:text-base text-slate-600 font-normal">
             Mathematical certainty without compromise. Engineered to protect employees from diagnosis exposure, pregnancy penalties, and permanent HR data retention.
           </p>
         </div>
@@ -82,7 +82,7 @@ export default function FeaturesSection() {
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
-                    <span className="text-2xl font-black font-sans text-slate-400">
+                    <span className="text-2xl font-black font-heading text-slate-400">
                       {p.num}
                     </span>
                     <div
@@ -93,20 +93,20 @@ export default function FeaturesSection() {
                     </div>
                   </div>
 
-                  <h3 className="text-base font-black tracking-tight text-slate-800 mb-1">
+                  <h3 className="text-base font-bold tracking-tight text-slate-900 mb-1 font-heading">
                     {p.title}
                   </h3>
-                  <div className="text-[11px] font-mono text-blue-600 font-bold mb-3">
+                  <div className="text-xs font-semibold text-blue-600 mb-3">
                     {p.subtitle}
                   </div>
-                  <p className="text-xs leading-relaxed text-slate-600 font-medium">
+                  <p className="text-xs leading-relaxed text-slate-600 font-normal">
                     {p.desc}
                   </p>
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-slate-200/50 flex items-center justify-between text-[11px] font-mono text-slate-500">
-                  <span>PROTOCOL SPEC</span>
-                  <span className="text-emerald-600 font-bold">✓ VERIFIED</span>
+                  <span className="text-[10px] tracking-wider uppercase">PROTOCOL SPEC</span>
+                  <span className="text-emerald-700 font-bold">✓ VERIFIED</span>
                 </div>
               </div>
             );

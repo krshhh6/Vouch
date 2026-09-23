@@ -2,23 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'Oswald';
-  src: url('/fonts/oswald/Oswald-VariableFont_wght.ttf') format('truetype-variations'),
-       url('/fonts/oswald/Oswald-VariableFont_wght.ttf') format('truetype');
-  font-weight: 200 700;
-  font-display: swap;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Bowlby One SC';
-  src: url('/fonts/bowlby-one-sc/BowlbyOneSC-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-display: swap;
-  font-style: normal;
-}
-
 @layer base {
   :root {
     --background: 210 40% 98%;
@@ -36,18 +19,21 @@
   body {
     background-color: #e8ecf4;
     color: #192132;
-    font-family: var(--font-oswald), 'Oswald', sans-serif;
+    font-family: var(--font-inter), 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     overflow-x: hidden;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  h1, .font-heading, .font-display {
-    font-family: var(--font-bowlby), 'Bowlby One SC', var(--font-oswald), 'Oswald', sans-serif;
-    letter-spacing: 0.02em;
+  h1, h2, h3, h4, h5, h6, .font-heading, .font-display {
+    font-family: var(--font-plus-jakarta), 'Plus Jakarta Sans', var(--font-inter), 'Inter', sans-serif;
+    letter-spacing: -0.025em;
   }
 
-  h2, h3, h4, h5, h6 {
-    letter-spacing: 0.01em;
+  code, kbd, samp, pre, .font-mono {
+    font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    letter-spacing: -0.01em;
   }
 }
 
@@ -162,12 +148,12 @@
 /* Formal Clinical Seal-Green Stamp */
 .official-stamp {
   border: 2px solid #15803D;
-  border-radius: 4px;
+  border-radius: 6px;
   color: #15803D;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  font-family: 'Roboto Condensed', sans-serif;
-  font-weight: 700;
+  letter-spacing: 0.12em;
+  font-family: var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
   position: relative;
   background: rgba(21, 128, 61, 0.06);
   padding: 4px 12px;
@@ -175,12 +161,12 @@
 
 .official-stamp-red {
   border: 2px solid #B91C1C;
-  border-radius: 4px;
+  border-radius: 6px;
   color: #B91C1C;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  font-family: 'Roboto Condensed', sans-serif;
-  font-weight: 700;
+  letter-spacing: 0.12em;
+  font-family: var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
   position: relative;
   background: rgba(185, 28, 28, 0.06);
   padding: 4px 12px;

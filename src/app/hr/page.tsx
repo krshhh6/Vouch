@@ -183,26 +183,26 @@ function HRVerifierContent() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-700">
+                <span className="text-xs font-semibold uppercase tracking-wider text-blue-700">
                   Portal 2 • HR Enterprise Benefits
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold text-slate-600" style={{ backgroundColor: '#e6ebf3', boxShadow: 'inset 2px 2px 5px #c5cedd, inset -2px -2px 5px #ffffff' }}>
                   Zero-PHI Verifier
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1 uppercase tracking-wider">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 font-heading uppercase tracking-tight">
                 HR Benefits Verification Portal
               </h1>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-2 font-mono">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-2">
                 <span>
-                  Logged in as: <strong className="text-slate-900">{currentUser.name}</strong>
+                  Logged in as: <strong className="text-slate-900 font-semibold">{currentUser.name}</strong>
                 </span>
                 <span>•</span>
                 <span>{currentUser.department || 'People Operations & Benefits'}</span>
                 <span>•</span>
-                <span className="text-emerald-700 flex items-center gap-1 font-bold">
+                <span className="text-emerald-700 flex items-center gap-1 font-semibold">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  Statutory Rule: {VOUCH_POLICY_SPEC.policyVersion}
+                  Statutory Rule: <span className="font-mono text-[11px] font-bold">{VOUCH_POLICY_SPEC.policyVersion}</span>
                 </span>
               </div>
             </div>
